@@ -1,0 +1,261 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Connecting</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API"></head>
+
+<body leftmargin="0" topmargin="0" style="background-color: rgb(255, 255, 255);" alink="#003399" link="#003399" marginheight="0" marginwidth="0" vlink="#003399">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><br>
+<br>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92"><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="3"><span class="RakNetWhiteHeader"><img src="spacer.gif" height="1" width="8">Connecting
+to other systems</span></td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><span class="RakNetBlueHeader">Find
+who to connect to<br>
+</span><br>
+ There are 5 ways to find other systems to connect to:<br>
+<ol>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Direct IP entry (you already know it)</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">LAN Broadcast</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the CloudServer/CloudClient plugins</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using the Lobby server or RoomsPlugin</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Using MasterServer2</li>
+</ol>
+<span class="RakNetBlueHeader">Option 1: Direct IP Entry</span><br>
+<br>
+The simplest and easiest way from a coding perspective is to either
+hardcode an IP address or domain name, or present a GUI to the user
+asking them to enter the IP address of the other system they would like
+to connect to. Most of the samples use this method. Back when networked
+games first came out, this was the only option available.<br>
+<br>
+<span style="font-style: italic;">Advantages:<br>
+</span>
+
+<ul>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Little to no GUI work required of programmers and
+artists</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">If the IP address or domain name is fixed, such as if
+you are running a dedicated server, this is the correct solution</li>
+</ul>
+<span style="font-style: italic;"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Disadvantages:<br>
+</span>
+<ul>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Inflexible</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Users will only be able to play with people they
+already know.</li>
+</ul>
+<p><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Note: Use
+  127.0.0.1, or localhost, to connect to another instance of RakPeer on
+  the same computer, or the same application.</p>
+<span class="RakNetBlueHeader">Option 2: Lan Broadcast</span>
+<p>  RakNet supports the ability to broadcast a packet to find other systems
+  on a local LAN, with optional data to send and retrieve identifying the
+  application. The sample <span style="font-weight: bold;">LANServerDiscovery</span>
+  demonstrates this technique.<br>
+  <br>
+  In RakPeerInterface.h, the Ping function will can do this, as follows<br>
+  <br>
+  <span style="font-style: italic;"></span><small>rakPeer-&gt;Ping("255.255.255.255",
+    REMOTE_GAME_PORT, onlyReplyOnAcceptingConnections);</small><br>
+    <span style="font-weight: bold;"></span><br>
+  REMOTE_GAME_PORT should be whatever port the other system is running
+  the application you care about on. onlyReplyOnAcceptingConnections is a
+  boolean indicating if the other system should reply, even if they have
+  no connections available for you to connect to.<br>
+  <br>
+  Open systems will reply with ID_UNCONNECTED_PONG. From the sample:<br>
+  <br>
+  <span class="RakNetCode">if (p-&gt;data[0]==ID_UNCONNECTED_PONG)<br>
+      {<br>
+&nbsp;&nbsp;&nbsp; RakNet::TimeMS time;<br>
+&nbsp;&nbsp;&nbsp; RakNet::BitStream bsIn(packet-&gt;data,packet-&gt;length,false);<br>
+&nbsp;&nbsp;&nbsp; bsIn.IgnoreBytes(1);<br>
+&nbsp;&nbsp;&nbsp; bsIn.Read(time);<br>
+  &nbsp;&nbsp;&nbsp; printf("Got pong from %s with time
+  %i\n", p-&gt;systemAddress.ToString(), RakNet::GetTime() - time);</span><br>
+  }<br>
+  <span style="font-weight: bold;"></span><br>
+  In order to send custom user data, call
+  RakPeer::SetOfflinePingResponse(customUserData, lengthInBytes); RakNet
+  will copy the data passed to it and return this data appended to
+  ID_UNCONNECTED_PONG.<br>
+  <span style="font-style: italic;"><br>
+    <font size="-1">Note: there is a hardcoded define
+    MAX_OFFLINE_DATA_LENGTH in RakPeer.cpp limiting the length of your
+    custom user data. Change this value and recompile if your data is
+    larger than this define.<br>
+    </span><br>
+    <span style="font-style: italic;">Advantages:</span></p>
+<ul>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You can join games automatically on program startup,
+    no GUI or user interaction required</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Best way to find games on the LAN</li>
+</ul>
+<span style="font-style: italic;"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Disadvantages:</span><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><br>
+<ul>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Won't work for the general internet</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Not as flexible as the <a href="lightweightdatabase.html">lightweight database plugin</a></li>
+</ul>
+<p><span class="RakNetBlueHeader">Option 3: Using the CloudServer/CloudClient plugins</span><br>
+  <br>
+The <a href="cloudcomputing.html">CloudServer/CloudClient</a> plugin can act as a directory server without modification.</p>
+<p><span style="font-style: italic;">Advantages:</span></p>
+<ul>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Customizable</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You can subscribe to update notifications when memory has been updated from another system</li>
+</ul>
+<span style="font-style: italic;"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Disadvantages:</span><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><br>
+<ul>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Only scales to a few hundred users</li>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">You have to host your own server</li>
+</ul>
+<p><span class="RakNetBlueHeader">Option 4: Using the Lobby server or RoomsPlugin</span><br>
+  <br>
+  If you are not using a service that already provides a lobby, on the PC we provide database code that has similar functionality. The lobby server provides a database driven service for players to
+  interact and start games. It provides features such as friends,
+  matchmaking, emails, ranking, instant messenging, quick match, rooms,
+  and room moderation.<br>
+  <br>
+  See the samples <span style="font-weight: bold;">Lobby2Server_PGSQL</span>
+  and <span style="font-weight: bold;">Lobby2Client</span>
+  for a demonstration of how to use this feature.<br>
+  <br>
+  <span style="font-style: italic;">Advantages:    </span>
+</p>
+<ul>
+  <li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">The most flexible solution for players to join games</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Allows users to interact before starting games</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Builds community</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Supports multiple titles</li>
+</ul>
+<span style="font-style: italic;"><span style="font-style: italic;">Disadvantages:<br>
+</span></span>
+<ul>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Requires a separate, dedicated server to host the
+plugin, and the server must have database support</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Feature is relatively large and complex compared to a
+  simple game listing, requiring a good investment in time and programming</li>
+</ul>
+<p><span class="RakNetBlueHeader">Option 5: MasterServer2</span><br>
+  <br>
+We host a master server for our customers. See <A HREF="http://masterserver2.raknet.com/">this page</A> for more details.
+<br>
+<br>
+<span style="font-style: italic;">Advantages:
+</span>
+<ul>
+  <li>Fast</li>
+  <li>Easy to use</li>
+  <li>You do not have to host a server</li>
+</ul>
+<span style="font-style: italic;">Disadvantages:<br>
+</span>
+<ul>
+  <li>Special licensing if you need the server sources</li>
+</ul>
+<span class="RakNetBlueHeader">Initiate
+connection attempt<span style="font-weight: normal;"><br>
+<br>
+</span></span>Once you know the IP
+address of the remote system(s) to connect to, use
+RakPeerInterface::Connect() to initiate an <span style="font-style: italic;">asynchronous</span>
+connection attempt. The parameters to connect are:<br>
+<br>
+<span class="RakNetCode">ConnectionAttemptResult Connect( const char* host, unsigned short remotePort, const char *passwordData, int passwordDataLength, PublicKey *publicKey=0, unsigned connectionSocketIndex=0, unsigned sendConnectionAttemptCount=6, unsigned timeBetweenSendConnectionAttemptsMS=1000, RakNet::TimeMS timeoutTime=0 )</span><br>
+<ul>
+<li>host is an IP address, or domain name.</li>
+<li>remotePort is the port that the remote system is
+listening on, which you passed to the Startup() function</li>
+<li>passwordData is optional binary data to send with the
+connection request. If this data does not match what was passed to
+RakPeerInterface::SetPassword(), the remote system will reply with
+ID_INVALID_PASSWORD.</li>
+<li>passwordDataLength is the length, in bytes, of
+  passwordData</li>
+<li>publicKey is the public key parameter that was passed to InitializeSecurity() on the remote system. If you don't use security, pass 0.</li>
+<li>connectionSocketIndex is the index into the array of socket descriptors passed to socketDescriptors in RakPeer::Startup() to determine the one to send on.</li>
+<li>sendConnectionAttemptCount is how many datagrams to send before giving up as unable to connect. This is also used for MTU detection, with 3 different MTU sizes. So the default of 12 means send each MTU size 4 times, which should be sufficient to tolerate any reasonable packetloss. Lower values mean that ID_CONNECTION_ATTEMPT_FAILED would be returned to you faster.</li>
+<li>timeBetweenSendConnectionAttemptsMS is how many milliseconds to wait before sending another connection attempt. A good value is 4 times the expected ping.</li>
+<li>timeoutTime is how many milliseconds to wait, for this particular connection, before dropping the remote system if a message cannot be delivered. The default value of 0 means use the global value from SetTimeoutTime().</li>
+</ul>
+<p>Connect() will return CONNECTION_ATTEMPT_STARTED for a successful attempt, something else on failure.<br>
+  <br>
+  <span style="font-style: italic;">Note: Connect()
+    returning true does NOT mean you are connected. If successful the message ID_CONNECTION_REQUEST_ACCEPTED should be received. If not you will recieve one of the error messages.</span></p>
+<p class="RakNetBlueHeader">Connectivity messages returned as the first byte of the Packet::data structure</p>
+<p><strong>Connection closed</strong>: ID_DISCONNECTION_NOTIFICATION, ID_CONNECTION_LOST<br>
+  <strong>New connection</strong>: 
+ID_NEW_INCOMING_CONNECTION, ID_CONNECTION_REQUEST_ACCEPTED<br>
+<strong>Connection attempt failed</strong>: 
+ID_CONNECTION_ATTEMPT_FAILED, ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY, ID_OUR_SYSTEM_REQUIRES_SECURITY, ID_PUBLIC_KEY_MISMATCH, ID_ALREADY_CONNECTED, ID_NO_FREE_INCOMING_CONNECTIONS, ID_CONNECTION_BANNED, ID_INVALID_PASSWORD, ID_INCOMPATIBLE_PROTOCOL_VERSION, ID_IP_RECENTLY_CONNECTED</p>
+<p class="RakNetBlueHeader">Troubleshooting ID_CONNECTION_ATTEMPT_FAILED</p>
+<p> ID_CONNECTION_ATTEMPT_FAILED is
+  the generic message meaning no communication was established with the remote system. Possible
+  reasons include:</p>
+<ul>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">The IP address is wrong</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">That system is not running RakNet, or
+RakPeerInterface::Startup() was not called on that system</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">The remote system has started RakNet, but
+RakPeerInterface::SetMaximumIncomingConnections() was not called</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">A firewall on either system is blocking UDP packets
+on the port you have chosen</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">A router on the remote system is blocking incoming
+UDP packets on the port you have chosen. See the <a href="natpunchthrough.html">NAT Punchthrough</a>
+plugin to resolve this.</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">On Windows Vista,&nbsp;the network driver
+security service pack sometimes breaks UDP, not just for RakNet, but in
+general, even for DirectPlay. This service pack should be rolled back,
+and not installed.</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><a href="secureconnections.html">Secure
+connections</a> are enabled, and your system failed the security
+check.</li>
+<li><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2">Your IP address was banned with
+RakPeerInterface::AddToBanList(). Note that some plugins, such as the <a href="connectionFilter.html">connection filter</a>,
+have the option to ban IP addresses automatically.</li>
+</ul>
+<p>  Assuming you are able to connect, it
+  is time to go onto the section:
+    <a href="creatingpackets.html">Creating
+      Packets</a><br>
+</p>
+</td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader"><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="3"><strong>See
+Also</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><font class="G10" color="#111122" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1">
+<a href="index.html">Index</a><br>
+<a href="connectionFilter.html">Connection Filter</a><br>
+<a href="creatingpackets.html">Creating Packets</a><br>
+<a href="lightweightdatabase.html">Lightweight
+Database plugin</a><br>
+<a href="natpunchthrough.html"><span style="text-decoration: underline;">NAT Punchthrough plugin</span></a><br>
+<a href="secureconnections.html">Secure connections</a><br>
+<a href="faq.html">FAQ</a><br>
+
+</td>
+</tr>
+</tbody>
+</table>
+</body></html>

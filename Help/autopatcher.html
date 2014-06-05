@@ -1,0 +1,147 @@
+<HTML>
+<HEAD>
+
+<TITLE>Autopatcher</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Autopatcher</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<P><span class="RakNetBlueHeader">The autopatcher system</span><BR>
+<BR>
+
+The autopatcher is a class that manages the copying of missing or changed files between two or more systems.  It handles transferring files, compressing transferred files, security, and file operations.  It does not handle basic connectivity or provide a user interface. For basic connectivity, make sure you connect RakPeerInterface or PacketizedTCP before using it. For a UI, that is entirely up to you. Autopatchers are  used in all online only games and most AAA commercial games.<BR><BR>
+On the client, you need an instance of AutopatcherClient. The server needs an instance of AutopatcherServer. The code for those classes is not part of RakNet core. They are located at .\DependentExtensions\ , and you need to add them to your project.<br>
+<br>
+<strong>On the client side</strong> <br>
+<br>
+On the client side, most work is done with just a couple of methods of AutopatcherClient.<br>
+<br>
+
+<span class="RakNetCode">void SetFileListTransferPlugin(FileListTransfer *flt);</span><BR>
+	<br> 
+	This plugin has a dependency on the FileListTransfer plugin, which it uses to actually send the files.
+	So you need an instance of that plugin registered with RakPeerInterface, and a pointer to that interface should be passed in this function.<br>
+	<br>
+
+
+
+
+	<span class="RakNetCode">bool PatchApplication(const char *_applicationName, const char *_applicationDirectory, const char *lastUpdateDate, SystemAddress host, FileListTransferCBInterface *onFileCallback, const char *restartOutputFilename, const char *pathToRestartExe);	</span><BR>
+<br>
+
+Patches a certain directory associated with a named application to match the same named application on the patch server<br>
+<em>_applicationName</em> - The name of the application<br>
+<em>_applicationDirectory</em> - The directory to write the output to.<br>
+<em>lastUpdateDate</em> - A string representing the last time you updated from the patch server, so you only check newer files.  Should be 0 the first time, or if you want to do a full scan.  Returned in GetServerDate() after you call PatchApplication successfully.<br>
+<em>host</em> - The address of the remote system to send the message to.<br>
+<em>onFileCallback</em> - Callback to call per-file (optional).  When fileIndex+1==setCount in the callback then the download is done.<br>
+<em>_restartOutputFilename</em> - If it is necessary to restart this application, where to write the restart data to.  You can include a path in this filename.<br>
+<em>pathToRestartExe</em> - What exe to launch from the AutopatcherClientRestarter .  argv[0] will work to relaunch this application.<br>
+
+
+
+
+      <br>
+      There are other functions and classes involved in the client side, but you should study the sample at <em>\Samples\AutopatcherClient</em>.
+<P><strong>On the server side</strong> <br>
+    <br>
+      On the client side, you use an instance of AutopatcherServer.<br>
+        <br> 
+        <span class="RakNetCode"> void SetFileListTransferPlugin(FileListTransfer *flt);</span><BR>
+Like AutopatcherClient, this plugin also has a dependency on the FileListTransfer plugin, which it uses to actually send the files.
+So you need an instance of that plugin registered with RakPeerInterface, and a pointer to that interface should be passed here.
+<br><br>
+
+<span class="RakNetCode">void SetAutopatcherRepositoryInterface(AutopatcherRepositoryInterface *ari);</span><BR>
+With the function, you tell AutopatchServer how to take care of the network transfer of the patchs.
+This class only does the network transfers for the autopatcher.  All the data is stored in a repository.
+Pass the interface to your repository with this function.  RakNet comes with AutopatcherPostgreRepository if you wish to use that.
+
+
+
+		
+		
+    <BR>
+    <br>
+    Check the sample at <em>\Samples\AutoPatcherServer</em>. It uses an implementation of AutopatcherRepositoryInterface for PostgreSQL (AutopatcherPostgreRepository), to store all the files of an application in a PostgreSQL database.<br>
+    <br>
+    <strong>Directory structure</strong><br>
+    <br>
+    It's possible to use directory structures.
+    For example, suppose you have the following directory structure for your application: <br> 
+    <br>
+	
+    Readme.txt<BR>
+    Music/Song1.wav<BR>
+    Music/Song2.wav<BR>
+    <br>
+	
+    The Autopatcher will keep directories structures intact.  So if the sending system has that directory structure, the downloading system will mirror this directory structure.
+      <P><strong>Server required files (using <a href="http://www.postgresql.org/">PostgreSQL</a>):</strong>
+      <ul>
+        <li>All source files in DependentExtensions\bzip2-1.0.3</li>
+        <li>DependentExtensions\CreatePatch.h and .cpp</li>
+        <li>DependentExtensions\MemoryCompressor.h and .cpp</li>
+        <li>DependentExtensions\AutopatcherServer.h and .cpp</li>
+        <li>All source files in DependentExtensions\AutopatcherPostgreRepository</li>
+        <li>All source files in DependentExtensions\PostgreSQLInterface</li>
+        <li>All source files in Samples\AutopatcherServer, should you want to use the default console application to run the server.</li>
+      </ul>
+      <p><strong>Server Dependencies (using <a href="http://www.postgresql.org/">PostgreSQL</a>):</strong></p>
+      <p>PostgreSQL 8.2 or newer, installed at C:\Program Files\PostgreSQL\8.2. Change the project property paths should your installation directory be different. Do not forget to check development tools in the PostgreSQL installer or the headers and libs will not be installed.</p>
+      <p><strong>Client required files</strong></p>
+      <ul>
+        <li>All source files in DependentExtensions\bzip2-1.0.3</li>
+        <li>DependentExtensions\MemoryCompressor.h and .cpp</li>
+        <li>DependentExtensions\ApplyPatch.h and .cpp</li>
+        <li>DependentExtensions\AutopatcherClient.h and .cpp</li>
+        <li>All source files in Samples\AutopatcherClient, should you want to use the default console application as a design template.</li>
+        <li>All source files in Samples\AutopatcherClientRestarter, should you want to use the default console application to restart the autopatcher after it patches itself.      </li>
+      </ul>
+      <p><strong>Using TCP instead of UDP (recommended)</strong></p>
+      <p>RakPeerInterfaces uses UDP, which is a problem if RakNet's protocol changes - the autopatcher wouldn't be able to connect to the new protocol. It is recommended you use TCP instead of UDP. In the sample AutopatcherClientTest.cpp and AutopatcherServerTest_MySQL.cpp or AutopatcherServerTest.cpp you can enable this with the define USE_TCP found at the top of those files.</p>
+      <p>Changes:</p>
+      <ol>
+        <li>Use the PacketizedTCP class instead of RakPeerInterface</li>
+        <li>PacketizedTCP returns connection state changes with HasCompletedConnectionAttempt(), HasNewIncomingConnection(), and HasLostConnection(), rather than byte identifiers.</li>
+        <li>Attach the plugin to your instance of PacketizedTCP instead of RakPeerInterface</li>
+      </ol>
+      <p><strong>Optimizing for large games:</strong></p>
+      <p>AutopatcherClient::PatchApplication has a parameter lastUpdateDate. If 0 is passed for this parameter, the server does not know what version the client is using. This generates a full-scan, where the server has to access the database for the hash of every file for the application, and is very slow, so should be avoided whenever possible.</p>
+      <p>When distributing your application, you should get the timestamp on the patching server using the time() function and store this with the distribution. You can then pass that value to AutopatcherClient::PatchApplication. As long as this value is greater than or equal to the time when AutopatcherRepositoryInterface::UpdateApplicationFiles was called, the server can use it to do an optimized lookup for which files changed from the version the client is using.</p>
+      <p>AutopatcherServer has an additional optimization through the function CacheMostRecentPatch(). This will store the most recent patch in memory if using AutopatcherPostgreRepository. If the time passed to PatchApplication() is greater than the most recent patch, the patch is skipped entirely. If it is less than the most recent patch, but still greater than the patch prior to that, the patch is served from memory instead of disk. For this to work, every time you get ID_AUTOPATCHER_FINISHED call AutopatcherClient::GetServerDate(), save it to disk, and use that date for the next call to PatchApplication().</p>
+      <p>Summary of performance tips:</p>
+      <OL>
+      <LI>The autopatcher was not designed to serve the entire application, only to patch.
+ Your users should download from FTP or a webserver as much as possible before patching.     
+      <LI>Use AutopatcherServer::CacheMostRecentPatch()      if using AutopatcherPostgreRepository
+      <LI>AutopatcherPostgreRepository is about 10x faster than AutopatcherMySQLRepository even without CacheMostRecentPatch()     
+      <LI>If 0 is passed to lastUpdateDate for AutopatcherClient::PatchApplication, this generates a full-scan of every file accessing the database for each file. Do not do it except on user request to repair corrupted installations.<br>
+        <LI>To distribute your application, call time() on the server immediately after  UpdateApplicationFiles(). Store that value with the client distribution, and use as the default to  lastUpdateParameter for the first call to
+        AutopatcherClient::PatchApplication.<br>
+      <LI>Whenever you get ID_AUTOPATCHER_FINISHED, save the value returned by AutopatcherClient::GetServerDate() to use for the lastUpdateDate parameter of next call to AutopatcherClient::PatchApplication<br>
+      <LI>With CacheMostRecentPatch(), only the most recent patch is stored in memory, so do not call UpdateApplicationFiles pointlessly.      
+      </OL>
+      <p><strong>Notes on memory usage:</strong></p>
+<p>Patches are created with code from Colin Percival <a href="http://www.daemonology.net/bsdiff/">http://www.daemonology.net/bsdiff/</a> . The patching algorithm uses   <a href="http://www.cs.lth.se/Research/Algorithms/Papers/jesper5.ps"> Larsson and Sadakane's qsufsort</a> and is quite memory intensive, and not recommended for files over several hundred megabytes. If you use CacheMostRecentPatch() your most recent patch is also kept in memory. Additionally, file transfer takes about 8 megabytes of memory per user.</p></TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="cloudhosting.html">Cloud Hosting</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

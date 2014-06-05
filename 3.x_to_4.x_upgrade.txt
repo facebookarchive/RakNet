@@ -1,0 +1,15 @@
+Major changes from version 3:
+
+RakPeer::Startup() and RakPeer::Connect() now return enumeration results, rather than true or false.
+Security rewritten. InitializeSecurity now does not work unless LIBCAT_SECURITY is set to 1 in NativeFeatureIncludesOverrides.h. You pass the remote public key to RakPeer::Connect(), instead of RakPeer::InitializeSecurity()
+RakNetworkFactory has been deleted. Instead, most classes have a static function GetInstance() and DestroyInstance() defined by the macro STATIC_FACTORY_DECLARATIONS
+Deleted RakPeer::RPC, AutoRPC, ConnectionGraph, ReplicaManager, ReplicaManager2, Router, LightweightDatabase, and RakNetTransport. Use newer versions of these classes/function instead.
+BitStream now takes const references for all input parameters. If you want to cast, use SerializeCasted(), WriteCasted, and ReadCasted(), or else just copy the variable to the desired type first.
+RakNetTimeMS, RakNetTime, and RakNetTimeUS have been renamed and put in namespaces RakNet::TimeMS, RakNet::Time, and RakNet::TimeUS
+Most classes are now in the RakNet namespace.
+Added _FILE_AND_LINE_ to RakNetDefines.h so the user can strip out this information if desired.
+C# is now supported. See Help\swigtutorial.html
+NetworkIDObject and NetworkIDManager systems largely rewritten. IsNetworkIDAuthority() no longer is needed, so was removed.
+RakPeer::Startup() no longer takes a threadSleepTimer parameter.
+ID_UNCONNECTED_PONG now returns the pong always in 4 bytes (RakNet::TimeMS). Furthermore, the timestamp is in network order. Use BitStreams to read the timestamp out.
+IsConnected() was replaced with GetConnectionState()

@@ -1,0 +1,72 @@
+<HTML>
+<HEAD>
+
+<TITLE>Message Handler Interface</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">Message Handler</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+Message Handler Overview
+<BR><BR>
+
+The message handler interface <I>MessageHandlerInterface.h</I> is a class interface that works with RakNet to provide automatic functionality.  To use it, derive from the base class and implement the pure virtual functions.  Then register your class by calling RakPeer.<BR>
+<BR>
+OnUpdate is called everytime Receive is called through RakNet<BR>
+
+virtual void OnUpdate(RakPeerInterface *peer)=0;<BR>
+
+<BR>
+
+OnReceive is called everytime a packet goes through RakNet.  You can handle it or not as you want.  Return true to absorb the packet, false to allow the packet to propagate to another handler, or to the game.  Generally you will return false unless the packet type is specific to your handler.<BR>
+
+virtual bool OnReceive(RakPeerInterface *peer, Packet *packet)=0;<BR>
+
+<BR>
+
+Called when Disconnect is called for RakNet.<BR>
+
+virtual void OnDisconnect(RakPeerInterface *peer)=0;<BR>
+
+<BR>
+
+PropagateToGame tells RakPeer if a particular packet should be sent to the game or not. Return true unless the packet type is custom for your handler.<BR>
+
+virtual bool PropagateToGame(Packet *packet) const;<BR>
+
+<BR>
+
+
+</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">Message Handler Implementations</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+Fully Connected Mesh<BR><BR>
+
+The <A HREF="fullyconnectedmesh.html">fully connected mesh</A> intercepts connection notifications and automatically connects to other known peers.
+
+<BR><BR>
+Memory Synchronizer<BR><BR>
+
+The <A HREF="memorysynchronizer.html">memory synchronizer</A> updates in OnUpdate, checking against registered memory elements, and transmits changes to those memory elements.
+
+
+
+</TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">See Also</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="fullyconnectedmesh.html">Fully Connected Mesh</A><BR>
+<A HREF="memorysynchronizer.html">Memory Synchronizer</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

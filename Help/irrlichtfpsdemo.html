@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<TITLE>Irrlicht FPS Demo Manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Irrlicht FPS Demo</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Demonstrates peer to peer connectivity in a first person shooter</span><BR>
+        <BR>
+        <IMG SRC="IrrlichtRakNetDemo.jpg"><BR>
+			  
+	</p>
+      <p>The FPS demo uses the game engine Irrlicht to move actors and bullets around.</p>
+      <p>To run it, download <a href="http://irrlicht.sourceforge.net/">Irrlicht</a>, a free game engine. By default, it is assumed to be installed at C:\irrlicht-1.6<br>
+      </p>
+      <p>In the solution, open Samples / 3D Demos / Irrlicht Demo. Right click and build.</p>
+      <p>Most of the network code is found in RakNetStuff.cpp under DependentExtensions\IrrlichtDemo. For a technical description of how the code was implemented, see readme.txt in that same directory. As the sample is peer to peer, it requires the NAT punchthrough server to be running. The jenkinssoftware.com website provides a free server, pointed to by DEFAULT_NAT_PUNCHTHROUGH_FACILITATOR_IP. If you can't connect, it's likely that the server is down for testing. You can also run your own server, as the code that is running is the sample code found in the NAT punchthrough project.</p>
+      <p><em>The code is located at DependentExtensions\IrrlichtDemo</em></p>
+    </TR>
+</TABLE>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Dependencies</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+<TR>
+  <TD>Irrlicht must be installed. It assumes it was installed to c:\irrlicht-1.6. It also requires irrKlang for sound, provided by default.
+  	  
+  	    <BR>
+  </TR>
+</TABLE>
+	  <table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+    </table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <p><a href="replicamanager3.html">ReplicaManager3</a><br>
+          <A HREF="index.html">Index</A><BR>          
+            </p>
+        </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

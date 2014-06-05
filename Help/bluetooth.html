@@ -1,0 +1,162 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>RakNet bluetooth integration</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</head>
+<body leftmargin="0" topmargin="0" style="background-color: rgb(255, 255, 255);" alink="#003399" link="#003399" marginheight="0" marginwidth="0" vlink="#003399">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><br>
+<br>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">Windows bluetooth integration</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p><span class="RakNetBlueHeader">Can be supported in C using sockets and native libraries</span><br>
+  <br>
+Bluetooth support is relatively easy to add.  
+<OL>
+<LI>Include "Ws2bth.h"
+<LI>Modify socket calls in SocketLayer.cpp, refer to <A HREF="http://msdn.microsoft.com/en-us/library/aa362928%28v=vs.85%29.aspx">http://msdn.microsoft.com/en-us/library/aa362928%28v=vs.85%29.aspx</A>
+<LI><A HREF="http://www.winsocketdotnetworkprogramming.com/winsock2programming/winsock2advancedotherprotocol4j.html">Source example</A>
+<LI>There is also an <A HREF="http://www.broadcom.com/support/bluetooth/sdk.php">API from Broadcom</A> for Windows although I'm not sure what the difference is between that and the native Windows system calls.
+</OL>
+</p></td>
+</tr>
+</tbody>
+</table>
+
+
+
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">Linux bluetooth integration</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p><span class="RakNetBlueHeader">Can be supported in C using the BlueZ library</span><br>
+  <br>
+
+Linux uses the <A HREF="http://www.bluez.org">BlueZ</A> library to interface with Bluetooth devices. There is a great resource on BlueZ here: <A HREF="http://people.csail.mit.edu/albert/bluez-intro/">http://people.csail.mit.edu/albert/bluez-intro/</A>.
+
+</p></td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">Mac bluetooth integration</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p><span class="RakNetBlueHeader">Indirectly send through IOBluetoothL2CAPChannelRef?</span><br>
+  <br>
+
+<A HREF="http://developer.apple.com/library/mac/documentation/DeviceDrivers/Conceptual/Bluetooth/Bluetooth.pdf">Mac Bluetooth support</A> is supported through the IOBluetooth library, written in Objective-C. C equivalents are available by suffixing Ref to the name, for example IOBluetoothObjectRef contains the interface in C. You are expected to create instances of <A HREF="http://developer.apple.com/library/mac/#documentation/DeviceDrivers/Reference/IOBluetooth/IOBluetoothL2CAPChannel_h/Classes/IOBluetoothL2CAPChannel/">IOBluetoothL2CAPChannel</A> which represent a communication channel. L2CAP is an unreliable communications channel. The equivalent reliable communications channel uses <A HREF="http://developer.apple.com/library/mac/#documentation/DeviceDrivers/Reference/IOBluetooth/IOBluetoothRFCOMMChannel_h/Classes/IOBluetoothRFCOMMChannel/index.html">RFCOMM</A>
+
+<A HREF="http://developer.apple.com/library/mac/#documentation/DeviceDrivers/Reference/IOBluetooth/">The full framework of methods</A>
+
+It doesn't appear to be possible to get direct socket access to Bluetooth on the Mac. However, it may be possible to use RakNet and IOBluetoothL2CAPChannel together by using RakNet's SocketLayer::SetSocketLayerOverride(), and thereby changing RakNet's sendto and recvfrom calls to use IOBluetoothL2CAPChannel instead.
+
+</p></td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">iPhone bluetooth integration</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p><span class="RakNetBlueHeader">Bluetooth exposed through Gamekit</span><br>
+  <br>
+The only interface for Bluetooth communications is through the higher level framework <A HREF="http://developer.apple.com/library/ios/#documentation/NetworkingInternet/Conceptual/GameKit_Guide/Introduction/Introduction.html">GameKit</A>. Gamekit uses Objective-C.</p> Similar to the Mac, it may be possible to indirectly send through RakNet using SocketLayer::SetSocketLayerOverride() through the <A HREF="http://developer.apple.com/library/ios/#documentation/GameKit/Reference/GKSession_Class/Reference/Reference.html#//apple_ref/occ/instm/GKSession/sendData:toPeers:withDataMode:error:">sendData:toPeers</A> method exposed by GKSession, and sending that data unreliabily.
+</td>
+</tr>
+</tbody>
+</table>
+
+
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">Android bluetooth integration</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p><span class="RakNetBlueHeader">BlueZ used for underlying support, however not accessible to implementation</span><br>
+<UL>
+<LI>Android uses BlueZ (w/ l2cap, etc.) as the underlying Bluetooth API (at the Linux OS level, underneath the Android Dalvik VM).  All of the Android SDK (Java) Bluetooth classes end up using this API.
+    The Android NDK cross-compiler provides access to many of the Android system's underlying libraries.  However, Bluetooth does NOT appear to be exposed by the NDK.  I.e.: The NDK's headers do not include Bluetooth-specific headers, tokens, etc. (I performed a find-in-files on the NDK headers and other files for various Bluetooth related/specific tokens like: BTPROTO_RFCOMM, l2cap, etc.)
+<LI>For a list of supported native libraries, see: <A HREF="http://developer.android.com/sdk/ndk/overview.html">http://developer.android.com/sdk/ndk/overview.html</A>
+<LI>There is indication in the forums and stackoverflow that Bluetooth cannot be accessed directly via the NDK (see: <A HREF="http://groups.google.com/group/android-ndk/browse_thread/thread/bd0834426b4264b9">http://groups.google.com/group/android-ndk/browse_thread/thread/bd0834426b4264b9</A> and <A HREF="http://groups.google.com/group/android-ndk/browse_thread/thread/a2e3b5133f4a7a4b">http://groups.google.com/group/android-ndk/browse_thread/thread/a2e3b5133f4a7a4b</A> and <A HREF="http://groups.google.com/group/android-ndk/msg/fe9b846a7ee37ba5">http://groups.google.com/group/android-ndk/msg/fe9b846a7ee37ba5</A> and accepted answer at <A HREF="http://stackoverflow.com/questions/4205468/create-an-android-rfcomm-socket-without-any-input-from-the-user-how">http://stackoverflow.com/questions/4205468/create-an-android-rfcomm-socket-without-any-input-from-the-user-how</A>)
+<LI>It looks like Bluetooth support via the NDK was possible at one point via a hack involving the HTC released BlueZ sources: <A HREF="http://blog.blackwhale.at/2009/08/android-bluetooth-on-steroids-with-the-ndk-and-bluez/">http://blog.blackwhale.at/2009/08/android-bluetooth-on-steroids-with-the-ndk-and-bluez/</A>
+<LI>A possible work around is to use the Android SDK's Java Bluetooth libraries for discovery, establishing connections, etc. and delegating the actual communications streams to RakNet by passing the in/out streams to RakNet via a JNI bridge.
+</UL>
+
+</p></td>
+</tr>
+</tbody>
+</table>
+
+
+
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader"><strong>&nbsp;See Also</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><font class="G10" color="#111122" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1"><a href="index.html">Index</a><br>
+    <a href="autopatcher.html">Autopatcher</a><br>
+    <a href="cloudcomputing.html">CloudComputing</a><br>
+    <a href="connectiongraph.html">ConnectionGraph2</a><br>
+    <a href="crashreporter.html">CrashReporter</a><br>
+    <a href="replicamanager3.html">ReplicaManager3</a><br>
+    <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a>    <br>
+    <a href="natpunchthrough.html">NATPunchthrough</a>    <br>
+    <a href="packetlogger.html">PacketLogger</a>    <br>
+    <a href="readyevent.html">ReadyEvent</a>    <br>
+    <a href="RPC3Video.htm">RPC3</a>    <br>
+    <a href="teambalancer.html">TeamBalancer</a><br>
+    <a href="sqlite3loggerplugin.html">SQLite3LoggerPlugin</a></p>
+  <p><a href="packetlogger.html"></a><br>
+  </p></td>
+</tr>
+</tbody>
+</table>
+</body></html>

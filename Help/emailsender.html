@@ -1,0 +1,40 @@
+<HTML>
+<HEAD>
+<TITLE>EmailSender manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Email Sender Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Simple class to send emails via C++</span><BR>
+        <BR>
+			  
+	The EmailSender class, found at EmailSender.h, is a simple class with only one function, Send(...), to send an email using a provided mail server. It is used internally by the <a href="crashreporter.html">CrashReporter</a> class to send emails for unmonitored servers. See EmailSender.h for a full description of each parameter.</p>
+      <p>See the project Samples/SendEmail for a sample of this</p>
+    <p>The class has also been tested to work with Gmail POP servers, so if you have a Gmail account you can send emails without using your own mail server. The sample has the settings you need by default. You will also need to uncomment OPEN_SSL_CLIENT_SUPPORT in RakNetDefines.h, as Gmail requires the TCP connection to be made with SSL.</p></TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <p><A HREF="index.html">Index</A><br>
+          <a href="crashreporter.html">Crash Repoter</a><BR>          
+          </p>
+        </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

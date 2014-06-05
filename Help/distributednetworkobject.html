@@ -1,0 +1,295 @@
+<HTML>
+<HEAD>
+
+<TITLE>Distributed Objects</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">Distributed Objects</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+Overview of the distributed network object system
+<BR><BR>
+
+The distributed network object system is the highest level layer over RakNet.  The concept is simple: objects that are instantiated on one system are instantiated on all systems.  Objects that are destroyed on one system are destroyed on all systems.  Tagged memory is matched between systems.  When a new player connects, these objects are also created on his system.<BR>
+<BR>
+This is very useful conceptually because it has a direct analogy to game objects.  For example, a one tank in a multiplayer game with twenty players actually has been instantiated twenty times.  However, as far as the player is concerned there is only one tank.  The player expects that the position, orientation, number of shells left, and amount of armor is the same on all systems.<BR>
+<BR>
+Traditionally, to maintain a tank you would have to craft a series of custom packets for the tank.  One packet to describe position, another packet for the tank to shoot, and another to have the tank take damage.  Using the distributed network object system, you can synchronize the tank, those 3 member variables, and everything matches automatically.<BR>
+<BR>
+The distributed object system has both strengths and weaknesses.<BR>
+<BR>
+<B>Strengths</B>
+<UL>
+<LI>Implementation only takes a minute and once it works it is foolproof.
+<LI>You don't have to worry about sending game data to new players.
+<LI>You don't have to worry about game objects getting out of synch.
+<LI>You don't care about the complexity of interactions between objects because you always get the correct final result.
+<LI>It is easy to network existing single player games.
+<LI>Interpolation is built-in.
+</UL>
+<BR>
+<B>Weaknesses</B>
+<UL>
+<LI>Timestamping is not supported so you can't extrapolate position.
+<LI>Tracking the results of actions is less accurate than sending triggers that cause actions.
+<LI>Wasteful of bandwidth for predictable actions.  For example, if a rocket shoots 20 cans this system requires 20 objects to receive data over time as the cans fall.  With a packet you could describe only the rocket when it was launched and hence only one do one send.  The cans would also fall precisely assuming the physics is repeatable.
+<LI>Doesn't currently support arrays or pointers, although with arrays you can get around this by synchronizing each element or enclosing it in a structure.
+</UL>
+Despite these weaknesses, this is the primary system in use by many games.<BR>
+<BR>
+
+How to implement the distributed object system
+<BR><BR>
+
+Before you can use the distributed object system, you have to register your instance of RakClient and/or RakServer with the Distributed Network Object Manager.<BR>
+<BR>
+DistributedNetworkObjectManager::Instance()->RegisterRakClientInterface(rakClient);<BR>
+DistributedNetworkObjectManager::Instance()->RegisterRakServerInterface(rakServer);<BR>
+<BR>
+The multiplayer class will automatically handle distributed object network messages.  If you don't use the multiplayer class, you must handle these packet types yourself:<BR>
+<BR>
+
+ID_UPDATE_DISTRIBUTED_NETWORK_OBJECT<BR>
+ID_DISTRIBUTED_NETWORK_OBJECT_CREATION_ACCEPTED<BR>
+ID_DISTRIBUTED_NETWORK_OBJECT_CREATION_REJECTED<BR>
+<BR>
+You would pass them to the DistributedNetworkObjectManager in exactly the same fashion as is done in Multiplayer.h.<BR>
+<BR>
+Once that is done, then you have several steps per class.
+<OL>
+<LI>Add <I>#include "DistributedNetworkObjectHeader.h"</I> to the header file for your class.
+
+<LI>The basemost class should derive from <I>DistributedNetworkObject</I>
+
+<LI>If you plan to instantiate this class, then add <I>REGISTER_DISTRIBUTED_CLASS(ClassName)</I> in main() or Winmain(), with the name of your class or a unique identifier replacing ClassName.
+
+<LI>Once per game cycle call <I>objectInstance->UpdateDistributedObject(ClassName)</I> where objectInstance is the instance of your class and ClassName is the name of the class or a unique identifier replacing ClassName that matches the unique identifier passed to REGISTER_DISTRIBUTED_CLASS.
+</OL>
+For example, if you want every instance of Tank to match among all systems then you would do the following:<BR>
+<BR>
+
+#include "DistributedNetworkObjectHeader.h"<BR>
+<BR>
+class Tank : public DistributedNetworkObject<BR>
+{<BR>
+	// Your data and functions here<BR>
+	// ...<BR>
+	<BR>
+	// The update function for the class is a good place to put UpdateDistributedObject<BR>
+	void Update(void) {UpdateDistributedObject("Tank");}<BR>
+};<BR>
+<BR>
+REGISTER_DISTRIBUTED_CLASS(Tank);<BR>
+<BR>
+<BR>
+How to implement synchronized member variables within the distributed object system
+<BR><BR>
+
+That tank is nice but would be a lot more useful if we had the data members synchronized automatically as well.  There are two ways to do that:
+<OL>
+<LI>REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS preprocessor macro.
+<LI>SynchronizeMemory function
+</OL>
+The advantage of the REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS macro is that you can perform automatic interpolation on data elements and it requires only one line of code in your header file for all members.  The disadvantages are that the declaration must match on all systems, variables cannot be added at runtime, and it doesn't support pointers or arrays.<BR>
+<BR>
+The advantage of the SynchronizeMemory function is that you can add elements at runtime, members do not have to match, and it can support anything.  The disadvantages are that it cannot perform interpolation, is more susceptible to user error, and requires one line of code in your cpp file per variable.<BR>
+<BR>
+The REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS macro
+<BR><BR>
+To use REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS, in the public section of the class definition add a macro that takes the following form:<BR>
+<BR>
+REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS(BaseClass,<BR>
+ SynchronizationMethod, AuthoritativeNetwork, VariableType, VariableName,<BR>
+ ...<BR>
+ )<BR>
+<BR>
+The first parameter is in <I>REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS</I>.  Replace that X with however many member variables you are synchronizing.<BR>  For example, if you want to synch 3 member variables then you would instead write <I>REGISTER_3_DISTRIBUTED_OBJECT_MEMBERS</I>.<BR>
+<BR>
+The second parameter, <I>BaseClass</I> is the name of the class your class derives from.  As we specified earlier, you must derive from DistributedNetworkObject in the basemost class so this always has a value.  If you had Apple derive from Fruit derive from DistributedNetworkObject then the first parameter for REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS for Apple would be Fruit, and for Fruit it would be DistributedNetworkObject.<BR>
+<BR>
+The third parameter is a set of parameters - SynchronizationMethod, AuthoritativeNetwork, VariableType, and VariableName.<BR><BR>
+<I>SynchronizationMethod</I> takes one of the following values:
+<UL>
+<LI><I>DOM_COPY_UNCOMPRESSED</I><BR>This means send the data without <A HREF="bitstreams.html">bitstream compression</A> and when a new value arrives on a system, just copy over the old value.  This is useful for data such as player health, stored in a unsigned char and going from 0 to 200.
+<LI><I>DOM_COPY_COMPRESSED</I><BR>Same as DOM_COPY_UNCOMPRESSED except use <A HREF="bitstreams.html">bitstream compression</A>.  Useful for values that stay near 0, such as sending the score in a soccer game.  As per the restrictions with bitstream compression, this can only be used with native types (char, int, short, long, float, bool).
+<LI><I>DOM_INTERPOLATE_UNCOMPRESSED</I><BR>No compression and when the data arrives on the new system, interpolate from the old value to the new value.  Interpolation is linear and and lasts for whatever value was passed to DistributedNetworkObject::SetMaximumUpdateFrequency (default is 50 ms).  If you overwrite the value while it is interpolating, the interpolation will stop.  Interpolation requires the +, -, *, and = operators to be defined.
+<LI><I>DOM_INTERPOLATE_COMPRESSED</I><BR>Same as DOM_INTERPOLATE_UNCOMPRESSED except that data is sent using <A HREF="bitstreams.html">bitstream compression</A>.  As per the restrictions with bitstream compression, this can only be used with native types (char, int, short, long, float, bool).  Interpolation requires the +, -, *, and = operators to be defined.
+</UL>
+
+The rules on type bear repeating, because if you make a mistake you will get a seemingly unrelated compile error:<BR>
+<B>My type is a</B>
+<UL>
+<LI><I>Mathematical native data type - bool, float, double, char, int, long, short.</I>
+You can use DOM_COPY_UNCOMPRESSED, DOM_COPY_COMPRESSED, DOM_INTERPOLATE_UNCOMPRESSED, or DOM_INTERPOLATE_COMPRESSED.
+<LI><I>Nonnative data type but is mathematical, i.e. has +, -, *, and = overloaded, such as many vector classes.</I>
+You can use DOM_COPY_UNCOMPRESSED or DOM_INTERPOLATE_UNCOMPRESSED.
+<LI><I>Any regular data block (i.e. struct) as long as the data block does not contain pointers.</I>
+You can use DOM_COPY_UNCOMPRESSED.
+<LI><I>Array.</I>
+You can either synchronize each element normally or can enclose the array in a struct and send the struct.  We'll try to find a better solution for this in a later release.
+<LI><I>Pointer.</I>
+Unsupported.
+</UL>
+
+<I>AuthoritativeNetwork</I> takes one of the following values:
+<UL>
+<LI><I>DOM_SERVER_AUTHORITATIVE</I><BR>The server is in charge of the variable.  While a client can change it, any changes will be overwritten the next time the server changes it.  This is what you would normally use for data such as health.
+<LI><I>DOM_CLIENT_AUTHORITATIVE</I><BR>The client(s) are in charge of the variable.  While the server can change it, any changes will be overwritten the next time an authorized client changes it.  By default, the client that created the object is the only system authorized to change the client authoritative members of that object.  You can change the owner to another client, or remove the owner by calling SetClientOwnerID.  You will also want to call that function when the server creates an object with client authoritative members and you want to assign an owner to your new object.  When there is no owner, multiple clients can fight over the same data if you wish - although it doesn't make much sense to do so.
+</UL>
+
+<I>VariableType</I> is the type of the variable being synchronized.  This must match the type of the variable declaration and cannot be an array or a 
+pointer.<BR>
+<BR>
+<I>VariableName</I> must match the name of the variable being synchronized.<BR>
+<BR>
+These four parameters that compose the third set of parameters can be repeated as many times as you wish, up to the number of types the define pattern was cut and paste in DistributedObjectNetworkHeader.h<BR>
+<BR>
+Here is our tank with two member variables synchronized:<BR><BR>
+
+#include "DistributedNetworkObjectHeader.h"<BR>
+<BR>
+class Tank : public DistributedNetworkObject<BR>
+{<BR>
+	// Your data and functions here<BR>
+	// ...<BR>
+	<BR>
+	// The update function for the class is a good place to put UpdateDistributedObject<BR>
+	void Update(void) {UpdateDistributedObject("Tank");}<BR>
+	public:<BR>
+	float turrentAngle;<BR>
+	Vector position;<BR>
+	<BR>
+	REGISTER_2_DISTRIBUTED_OBJECT_MEMBERS(DistributedNetworkObject,<BR>
+	DOM_INTERPOLATE_COMPRESSED, DOM_CLIENT_AUTHORITATIVE, float, turrentAngle,<BR>
+	DOM_COPY_UNCOMPRESSED, DOM_SERVER_AUTHORITATIVE, Vector, position)<BR>
+};<BR>
+<BR>
+REGISTER_DISTRIBUTED_CLASS(Tank);<BR>
+<BR>
+
+<B>Additional notes</B><BR>
+
+<OL>
+<LI>This is all done by the preprocessor so if you make a mistake you will get a compile error rather than a run-time error.
+<LI>REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS may not be written out as many times as you have data members.  If you have more members than I wrote out, you can add elements yourself.  It follows a very obvious pattern.  Refer to the bottom of DistributedNetworkObjectHeader.h.  If anyone knows of a way to automate this please let me know.
+<LI>If a data member is client authoritative, then you will get a different value on creation depending on whether the client created the object or the server did.  If the client created the object, then the value propigated over the network will be whatever the client set before the first call to UpdateDistributedObject.  If the server created the object, then the value propigated over the network will be whatever the server set before the first call to UpdateDistributedObject.  In this way, the server can force the client to start with particular values, or the client can specify which values to start with.
+</OL>
+The SynchronizeMemory function
+<BR><BR>
+Synchronizing memory at runtime is possible with the SynchronizeMemory and related functions.  The outcome is the same as with REGISTER_X_DISTRIBUTED_OBJECT_MEMBERS.  Here is how to use it with our tank example:<BR>
+<BR>
+
+#include "DistributedNetworkObjectHeader.h"<BR>
+<BR>
+class Tank : public DistributedNetworkObject<BR>
+{<BR>
+ Tank() {SynchronizeMemory(0, &turrentAngle, sizeof(turrentAngle), false); SynchronizeMemory(1, &position, sizeof(position), true); }<BR>
+ <BR>
+	// Your data and functions here<BR>
+	// ...<BR>
+	<BR>
+	// The update function for the class is a good place to put UpdateDistributedObject<BR>
+	void Update(void) {UpdateDistributedObject("Tank");}<BR>
+	public:<BR>
+	float turrentAngle;<BR>
+	Vector position;<BR>
+	<BR>
+};<BR>
+<BR>
+REGISTER_DISTRIBUTED_CLASS(Tank);<BR>
+<BR>
+
+This does the same as the code above.  The first parameter is a unique unsigned char to identify the variable.  The system will then expect all objects with synchronized memory that use that same value to match in size and type.  The second parameter is the memory address of the variable.  The third parameter is the size of the block to synchronize.  The last parameter is true if you want the server to be the authority on the object, false for the client to be the authority.<BR>
+<BR>
+<B>Refer to Samples\CodeSamples\DistributedNetworkObject\DistributedNetworkObjectSample.cpp for an implementation example.</B><BR>
+<BR>
+
+User functions of the DistributedNetworkObject
+<BR><BR>
+
+
+Call this every update cycle for every distributed object that you want updated over the network and to interpolate.<BR>
+classID should be a unique identifier for the class that matches the parameter to REGISTER_DISTRIBUTED_CLASS. The obvious choice is the name of the class - however you can use something shorter if you wish to save a bit of bandwidth<BR>
+<B>
+virtual void UpdateDistributedObject(char *classID, bool isClassIDEncoded=false);<BR>
+</B>
+<BR>
+Sets the maximum frequency with which memory synchronization packets can be sent.<BR>
+Lower values increase granularity but require more bandwidth<BR>
+<B>virtual void SetMaximumUpdateFrequency(unsigned long frequency);</B><BR>
+<BR>
+Broadcasts a request to destroy an object on the network.  OnDistrubtedObjectDestruction will be called.<BR>
+If you wish to block deletion, override OnDistributedObjectDestruction to not delete itself<BR>
+<B>virtual void DestroyObjectOnNetwork(void);</B><BR>
+<BR>
+Server only function -<BR>
+By default, when a client creates an object only it can update the client authoritative members of the class it creates.  You can also set this manually with SetClientOwnerID<BR>
+This function is called when a client that does not own an object tries to change any fields in that object<BR>
+Return true to allow the update.<BR>
+Return false (default) to not allow the update.<BR>
+<B>virtual bool AllowSpectatorUpdate(PlayerID sender);</B>
+<BR>
+<BR>
+Tags memory to be synchronized.  You can set the server or the client as the authority for this block.<BR>
+Only the authority will write this memory to the network when it is changed.<BR>
+<B>void SynchronizeMemory(unsigned char memoryBlockIndex, void* memoryBlock, int memoryBlockSize, bool serverAuthority);</B><BR>
+<BR>
+Untags memory that was formerly synchronized.<BR>
+<B>void DesynchronizeMemory(unsigned char memoryBlockIndex);</B><BR>
+<BR>
+Changes the authority for memory.  You probably will never need this.<BR>
+<B>void SetAuthority(unsigned char memoryBlockIndex, bool serverAuthority);</B><BR>
+<BR>
+Tells you if a block of memory was formerly used.  You probably will never need this.<BR>
+<B>bool IsMemoryBlockIndexUsed(unsigned char memoryBlockIndex);</B><BR>
+<BR>
+Use this to set a maximum update frequency higher than what was specified to SetMaximumUpdateFrequency<BR>
+Lower values have no effect.<BR>
+<B>void SetMaxMemoryBlockUpdateFrequency(unsigned char memoryBlockIndex, int max);</B><BR>
+<BR>
+When object creation data is needed, WriteCreationData is called.<BR>
+This function is for you to write any data that is needed to create or initialize the object on remote systems<BR>
+<B>virtual void WriteCreationData(BitStream *initialData);</B><BR>
+<BR>
+When an object is created, ReadCreationData is called immediately after a successful call to OnDistributedObjectCreation<BR>
+This function is for you to read any data written from WriteCreationData on remote systems.  If the object is created by the client, this function is also called by the creator of the object when sent back from the server in case the server overrode any settings<BR>
+<B>virtual void ReadCreationData(BitStream *initialData);</B><BR>
+<BR>
+When distributed data changes for an object, this function gets called.  Default behavior is to do nothing. Override it if you want to perform updates when data is changed.<BR>
+On the server it is also important to override this to make sure the data the client just sent you is reasonable.<BR>
+<B>virtual void OnNetworkUpdate(PlayerID sender);</B><BR>
+<BR>
+This is called when the object is created by the network.  Return true to accept the new object, false to reject it.<BR>
+The return value is primarily useful for the server to reject objects created by the client.  On the client you would normally return true<BR>
+senderID is the playerID of the player that created the object (or the server, which you can get from RakClientInterface::GetServerID)<BR>
+<I>You must call the base class version of this function when overriding!</I>.<BR>
+<B>virtual bool OnDistributedObjectCreation(PlayerID senderID);</B><BR>
+<BR>
+This is called when the object is destroyed by the network.<BR>
+Default behavior is to delete itself.  You can override this if you want to delete it elsewhere, or at a later time.<BR>
+If you don't delete the object, you should call DestroyObjectOnNetwork manually to remove it from the network.<BR>
+Note it is important to override this on the server for objects you don't want clients to delete.<BR>
+senderID is the playerID of the player that created the object (or the server, which you can get from RakClientInterface::GetServerID)<BR>
+<B>virtual void OnDistributedObjectDestruction(PlayerID senderID);</B><BR>
+<BR>
+This is called when the server rejects an object the client created.  Default behavior is to destroy the object.<BR>
+You can override this to destroy the object yourself.<BR>
+<B>virtual void OnDistributedObjectRejection(void);</B><BR>
+
+</TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">See Also</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="bitstreams.html">Bitstreams</A><BR>
+<A HREF="timestamping.html">Timestamping</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

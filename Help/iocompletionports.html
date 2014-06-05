@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+
+<TITLE>IO Completion ports</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">IO Completion ports [Currently Disabled - Do not use]</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+IO completion ports overview
+<BR><BR>
+
+<B>IO Completion ports require Windows NT 3.5, 2000, or XP!</B><BR>
+<BR>
+IO Completion ports is a method Windows uses to notify and awaken a thread when asynchronous IO is complete.  This is more efficient than creating one thread per IO operation and having that thread wait for the operation to complete.  Instead, a pool of threads is created (in this case two threads per processor).  These pool of threads block on the IO completion port and when an IO operation is complete one thread wakes up and performs another operation.  This will benefit servers with hundreds to thousands of players.  It does not benefit games with only a few players and in fact may be slower due to Windows overhead.<BR>
+<BR>
+RakNet pools the IO completion port worker threads.  Therefore, multiple instances of servers and clients on one computer will all share the worker threads.  This improves efficiency in cases such as running multiple servers on one machine, or a client and a server on the same machine.
+<P>Enabling IO completion ports
+<BR><BR>
+
+To enable IO completion ports, declare the preprocessor define <B>__USE_IO_COMPLETION_PORTS</B> and rebuild all.  To not enable IO completion ports, simply do not define this.  Note that the included pre-build DLLs do not use IO completion ports to ensure Windows compatibility.  You can however easily build your own by loading the sample project found at \Samples\Project Samples\CreateDLLSampleProject , defining __USE_IO_COMPLETION_PORTS, and building.<BR>
+<BR>
+<TABLE><TR><TD>
+<A HREF="useiocompletionports.jpg"><IMG SRC="useiocompletionportssmall.jpg"></A><BR>
+</TD>
+<TR ALIGN="CENTER"><TD>
+<B>Defining __USE_IO_COMPLETION_PORTS in .net 2003</B></TD></TR></TABLE>
+
+</TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">See Also</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

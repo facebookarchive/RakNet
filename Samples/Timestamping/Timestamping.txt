@@ -1,0 +1,4 @@
+Illustrates how to use timestamps.
+
+Connect to the server and hit c or s respectively.
+The time that shows up on the remote system should be about half your ping.

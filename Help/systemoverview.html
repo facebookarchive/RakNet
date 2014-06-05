@@ -1,0 +1,111 @@
+<HTML>
+<HEAD>
+
+<TITLE>System Overview</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92">
+<img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">System Overview</span></td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD><strong class="RakNetBlueHeader">System Architecture</strong>
+    <p>RakNet has code that falls into three categories: network communication, plugins that use network communication, and general game functionality.</p>
+    <p> Network communication is provided by two user classes. RakPeerInterface, and TCPInterface. RakPeerInterface is the primary class that games will use and is based on UDP. It provides functionality such as connections, connection management, congestion control, remote server detection, out of band messaging, connection statistics, latency and packetloss simulation, ban lists, and secure connectivity.</p>
+    <p>TCPInterface is a wrapper for TCP, and is used to communicate with external systems that are based on TCP. For example, the <a href="emailsender.html">EmailSender</a> class, used to report crashes from remote servers, interfaces with TCP. It is also supported by most plugin modules, and is suggested for file transfers such as with the autopatcher.</p>
+    <p>Plugins in RakNet are classes that you 'attach' to an instance of RakPeer or PacketizedTCP. This uses <a href="http://en.wikipedia.org/wiki/Chain-of-responsibility_pattern">chain of responsibility</a> design pattern. Attached plugins update automatically when Receive() is called on the attachee, and filter or inject messages into the network stream. Functionality includes host determination in a peer to peer enviroment, file transfers, NAT traversal, voice communication, remote procedure calls, and game object replication.</p>
+    <p>General game functionality includes the <a href="http://masterserver2.raknet.com/">master server</a>, crash reporting, email sending through Gmail pop servers, and an SQL logging server.</p>
+    <p class="RakNetBlueHeader">RakPeer internal architecture</p>
+    <p><b>RakPeer.h</b> provides the base 
+  functionality for UDP communication, and it is expected that most applications will use RakPeer as opposed to TCP.&nbsp; On start, RakPeer starts two threads - one thread to wait for incoming datagrams, and another to perform periodic updates, such as determing lost connections, or pings. The user specifies the maximum number of connections and an array of RemoteSystem structures is internally allocated to this size. Each connection or connection attempt is assigned to a Remote System structure, which contains a class to manage congestion control between the two systems. Connections are identified by SystemAddress or RakNetGuid, the latter of which is randomly generated and unique per instance of RakPeer.</p>
+    <p>Connections are established through UDP messages that contain a connection request payload, and an 'offline message' identifier. The 'offline message' identifier is used to differentiate between actual offline messages, and connected messages that happen to match the profile of an offline message. Connection requests are sent repeatedly over a short timeframe to account for packetloss, and if supported uses a decreasing MTU for path MTU detection.</p>
+    <p>When a connection requests arrives, RakPeer transmits internal state data, such as the RakNetGUID, and checks this connection against the ban list, repeat connection list, and other security measures. If the connection was flagged as secure, the secure connection protocol activates and additional data is sent. On success, the user is informed about this, either with ID_CONNECTION_REQUEST_ACCEPTED, or ID_NEW_INCOMING_CONNECTION. Failure conditions are also returned in a similar fashion.</p>
+    <p>Outgoing messages from the user to connected systems are copied and internally buffered. If the outgoing message plus the header is larger than the MTU, the message is fragmented internally. On a periodic interval, outgong messages are aggreggated into a single datagram and sent according to the transmission contraints of congestion control and the MTU size. Datagrams that do not get an ACK are resent. NAKs are sent for missing datagram sequence numbers. Messages sent unreliably and cannot be sent within a user-defined threshold are deleted. Messages are sent in order of priority. Acks are not congestion controlled. However, resends and new sends are, with resends taking priority over new sends.</p>
+    <p>As stated, incoming datagrams arrive on a blocking recvfrom thread. When a datagram arrives, the timestamp is immediately recorded, and the datagram is pushed into a thread-safe queue for the processing thread to manage. The processing thread is signaled, such that it will either immediately process the message (if sleeping) or process the message at the next available time.</p>
+    <p>Incoming datagrams are checked for the byte sequence that indicates if the sender thought it was connected or not. In addition, the source IP address is checked. If a message is flagged as unconnected, and the sender is not connected to us, the message is checked against a narrow range of accepted types, such as connection requests, or out of band messaging capabilities. If a message is flagged as connected, and the sender is connected to us, then it is processed through the ReliabilityLayer class, for congestion control and other communication related information (ACKS, NAKS, resends, encryption, reassembly of large messages).</p>
+<p>Connected messages are first processed by RakPeer. This is currently only used for periodic pings and to detect lost connections should the user not send data within a given threshhold. All other messages are processed by plugins, or returned to the user. Calling RakPeer::Receive()  ticks all plugins' update functions one time, and returns one message. Message returned to the user are returned from RakPeer::Receive(), one message per call. It is necessary to call Receive() in a loop to get all messages, until no further messages are returned.</p>
+<p class="RakNetBlueHeader">Other systems</p>
+<p>The <b>NetworkIDObject</b> 
+  class provides the ability for systems to refer to common objects and is used by 
+  object member remote function calls.&nbsp; Each object has a 64 bit random number assigned and can be used to lookup pointers through a hash.</p>
+<p>The <b>
+  <a href="systemaddresses.html">SystemAddress</a></b> structure is what RakNet uses to 
+  represent remote systems.&nbsp; It is the binary encoding of the IP address 
+  along with the port of that system, supporting both IPV4 and IPV6.</p>
+<p>The <b>
+<a href="bitstreams.html">BitStream</a></b> class, located in BitStream.h, is 
+natively supported by RakNet.&nbsp; This is both a user class and an internal 
+class.&nbsp; It is primarily used to write single bits to a stream and for 
+automatic endian swapping, which can be enabled by commenting out&nbsp; __BITSTREAM_NATIVE_END 
+in RakNetDefines.h.</p>
+<p>
+
+For a visual representation of the architecture, refer to the <A HREF="RakNetUML.jpg">UML Diagram</A><BR>
+
+<BR>
+
+Next page: <A HREF="detailedimplementation.html">Detailed Implementation</A>
+</TD></TR></TABLE>
+
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Bandwidth overhead</td>
+</tr></table>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+  
+  
+  <p class="RakNetBlueHeader">Post 3.6201, using new congestion control</p>
+    <p><strong>Per datagram:</strong><br>
+      1 byte for bitflags<br>
+      4 bytes for timestamp, used to calculate RTT for congestion control. RakNet version 4 does not transmit this field.<br>
+      3 bytes for sequence number, used to lookup datagrams for ACKs</p>
+    <p><strong>Per message:</strong><br>
+      1 byte for bitflags<br>
+      2 bytes for message length<BR>
+      if (RELIABLE,RELIABLE_SEQUENCED,RELIABLE_ORDERED)<br>
+      A. 3 bytes for sequence number, used to prevent returning to the user duplicated messages<br>
+      if (UNRELIABLE_SEQUENCED,RELIABLE_SEQUENCED,RELIABLE_ORDERED)<br>
+      A. 3 bytes for sequence number, used to reorganize messages on the same channel in order<br>
+      B. 1 byte for ordering channel<br>
+      if (message over MTU)<br>
+      A. 4 bytes for number of splits, not compressed to improve performance<br>
+      B. 2 bytes for identifier for which split this is<br>
+      C. 4 bytes for index into number of splits, not compressed to improve performance</p>
+<p class="RakNetBlueHeader">3.6201 and earlier in the 3.x series</p>
+    <p><strong>Per datagram:</strong><br>
+      1 bit for bitflags<br>
+      8 bytes for timestamp, used to calculate RTT for congestion control</p>
+    <p><strong>Per message:</strong><br>
+      4 bytes for message length<br>
+      4 bytes for sequence number, used to prevent returning to the user duplicated messages<br>
+      4 bits for bitflags<br>
+      if (UNRELIABLE_SEQUENCED,RELIABLE_SEQUENCED,RELIABLE_ORDERED)<br>
+      A. 4 bytes for sequence number, used to reorganize messages in order<br>
+      B. 5 bits for ordering channel<br>
+      if (message over MTU)<br>
+      A. 4 bytes for number of splits, but compressed, so used 1-2 bytes on average<br>
+      B. 4 bytes for identifier for which split this is<br>
+      C. 4 bytes for index into number of splits, but compressed, so used 1-2 bytes on average</p>    <BR>
+    A message is the data you send from the game. All messages you send to RakNet between RakNet update ticks are grouped together in one datagram. So if you send 1 message only, then the overhead is 1 datagram + 1 message. If you send 5 messages, then it's 1 datagram + 5 messages. If you send 1 message, but it's 10 times bigger than the MTU, then it sends 10 datagrams, each containing 1 message (the message gets split up)</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="compilersetup.html">Compiler Setup</A><BR>
+<A HREF="detailedimplementation.html">Detailed Implementation</A><BR>
+<A HREF="tutorial.html">Tutorial</A><BR>
+<A HREF="RakNetUML.jpg">UML Diagram</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

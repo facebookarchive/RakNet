@@ -1,0 +1,114 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="Phil Burk">
+   <meta name="Description" content="Tutorial for PortAudio, a cross platform, open-source, audio I/O library.It provides a very simple API for recording and/or playing sound using a simple callback function.">
+   <meta name="KeyWords" content="audio, tutorial, library, portable, open-source, DirectSound,sound, music, JSyn, synthesis,">
+   <title>PortAudio Tutorial</title>
+</head>
+<body>
+&nbsp;
+<center><table COLS=1 WIDTH="100%" BGCOLOR="#FADA7A" >
+<tr>
+<td>
+<center>
+<h1>
+PortAudio Tutorial</h1></center>
+</td>
+</tr>
+</table></center>
+
+<h2>
+Compiling for Windows (WMME or DirectSound)</h2>
+
+<blockquote>To compile PortAudio for Windows, you can choose between three
+options:
+<ul>
+<li>
+DirectSound API.</li>
+
+<li>
+Windows MultiMedia Extensions API (aka WMME or WAVE).</li>
+
+<li>
+<a href="pa_tut_asio.html">Steinberg's ASIO API</a></li>
+</ul>
+Some advantages of using DirectSound are that DirectSound may have lower
+latency than WMME, and supports effects processing plugins. But one disadvantage
+is that DirectSound is not installed on all PCs, and is not well supported
+under Windows NT. <b>So WMME is the best choice for most projects.</b><b></b>
+<p><b>Note: </b>If you are compiling one of the PortAudio test programs
+with Visual C++, then create a new Project of type "Win32 Console Application".
+<h3>
+All</h3>
+For any Windows implementation, add the following source files to your
+project:
+<blockquote>
+<pre><b>pa_common\pa_lib.c
+pa_common\portaudio.h
+pa_common\pa_host.h</b></pre>
+</blockquote>
+Link with the system library "<b>winmm.lib</b>". For Visual C++:
+<ol>
+<li>
+select "Settings..." from the "Project" menu,</li>
+
+<li>
+select the project name in the tree on the left,</li>
+
+<li>
+choose "All Configurations" in the popup menu above the tree,</li>
+
+<li>
+select the "Link" tab,</li>
+
+<li>
+enter "winmm.lib", without quotes, as the first item in the "Object/library
+modules:" field.</li>
+</ol>
+
+<h3>
+WMME</h3>
+To use the WMME implementation, add the following source files to your
+project:
+<blockquote><b><tt>pa_win_wmme/pa_win_wmme.c</tt></b></blockquote>
+
+<h3>
+DirectSound</h3>
+If you want to use the DirectSound implementation of PortAudio then you
+must have a recent copy of the free
+<a href="http://www.microsoft.com/directx/download.asp">DirectX</a>
+SDK for Developers from Microsoft installed on your computer. To compile
+an application add the following source files to your project:
+<blockquote>
+<pre><b>pa_win_ds\dsound_wrapper.c
+pa_win_ds\pa_dsound.c</b></pre>
+</blockquote>
+Link with both system libraries "<b>dsound.lib</b>" and "<b>winmm.lib</b>"
+using the procedure described above for "winmm.lib".
+<br>&nbsp;
+<table BORDER >
+<tr>
+<td><b>Borland</b> users cannot link with the "dsound.lib" from Microsoft
+directly. Emmanuel offered this advice:
+<p>One can use implib from Borland to generate a new .lib file which is
+compatible with Borland C++.
+<p>Use: "implib dsound.dll dsound.lib" and include dsound.lib into your
+project.
+<p>I still had a problem executing the patest_record example. The thread
+ended with an error like 'Floating point overflow at...'. This problem
+was caused due to a fault in the compiler. Now I'm using Borland 5.02 (instead
+of 5.01). Everything seems to be working fine at the moment.</td>
+</tr>
+</table>
+</blockquote>
+
+<blockquote>You might try compiling the "pa_tests\patest_saw.c" file first
+because it is the simplest.</blockquote>
+<font size=+2><a href="http://www.portaudio.com/">home</a> |
+<a href="pa_tutorial.html">contents</a>
+| <a href="pa_tut_over.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font>
+</body>
+</html>

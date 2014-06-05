@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+
+<TITLE>Plugin Interface</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Plugin Interface 2</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p><span class="RakNetBlueHeader">Plugin Interface 2 Overview</span>      <BR>
+      <BR>
+      <I>PluginInterface2.h</I> is a class interface that works with RakNet to provide automatic functionality.  It can intercept, modify, and create messages before they get to the user. Plugins can be attached to either RakPeerInterface or PacketizedTCP. Plugins update every time Receive() is called. To use it, derive from the base class and implement the virtual functions you want to handle.  Then register your class by calling RakPeerInterface::AttachPlugin()</p>
+    <p> These are the virtual functions you'll probably need to handle in most cases:</p>
+    <p class="RakNetCode">/// Update is called every time a packet is checked for .<br>
+virtual void Update(void);<BR>
+                
+        <BR>
+    /// OnReceive is called for every packet.<br>
+/// \param[in] packet the packet that is being returned to the user<br>
+/// \return True to allow the game and other plugins to get this message, false to absorb it<br>
+virtual PluginReceiveResult OnReceive(Packet *packet);</p>
+    <p class="RakNetCode"> /// Called when a connection is dropped because the user called RakPeer::CloseConnection() for a particular system<br>
+/// \param[in] systemAddress The system whose connection was closed<br>
+/// \param[in] rakNetGuid The guid of the specified system<br>
+/// \param[in] lostConnectionReason How the connection was closed: manually, connection lost, or notification of disconnection<br>
+virtual void OnClosedConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );</p>
+    <p class="RakNetCode"> /// Called when we got a new connection<br>
+      /// \param[in] systemAddress Address of the new connection<br>
+      /// \param[in] rakNetGuid The guid of the specified system<br>
+      /// \param[in] isIncoming If true, this is ID_NEW_INCOMING_CONNECTION, or the equivalent<br>
+      virtual void OnNewConnection(SystemAddress systemAddress, RakNetGUID rakNetGUID, bool isIncoming);</p>
+    <p><br>
+    </p></TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

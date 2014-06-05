@@ -1,0 +1,85 @@
+Interface with DatagramSocket
+http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets.datagramsocket
+
+Set the event handler
+http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets.datagramsocket.messagereceived
+
+Then bind (asynch):
+http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets.datagramsocket.bindendpointasync
+
+Close socket:
+http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets.datagramsocket.close
+
+SystemAddress to / from IPV4, IPV6
+
+Domain name to IP lookup
+
+Lots of info here:
+Do not use ConnectAsynch, because you cannot get datagrams from any remote address, only those you have connected to.
+http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets.datagramsocket
+
+Send:
+When sending to a new system, use GetOuputStreamAsynch http://msdn.microsoft.com/en-us/library/windows/apps/hh701265. When it completes, send the data using 
+DataWriter http://msdn.microsoft.com/en-us/library/windows/apps/windows.storage.streams.datawriter.aspx
+Use WriteBuffer, then StoreAsynch.
+
+http://msdn.microsoft.com/en-us/library/windows/apps/hh701265
+For each connection, need GetOutputStreamAsync, which specifies a hostname (IP address) and port.
+
+Set TTL:
+Use control:
+http://msdn.microsoft.com/en-us/library/windows/apps/windows.networking.sockets.datagramsocketcontrol#properties
+
+Receive:
+http://msdn.microsoft.com/en-us/library/windows/apps/BR241344
+DatagramSocket^ listener = ref new DatagramSocket();
+ListenerContext^ listenerContext = ref new ListenerContext(rootPage, listener);
+listener->MessageReceived += ref new TypedEventHandler<DatagramSocket^, DatagramSocketMessageReceivedEventArgs^>(listenerContext, &ListenerContext::OnMessage);
+
+Sample:
+http://code.msdn.microsoft.com/windowsapps/DatagramSocket-sample-76a7d82b
+http://blogs.msdn.com/b/trycatchfinally/archive/2012/09/06/welcome.aspx
+
+Closed forum questions:
+Datagram Socket receive from any sender
+http://social.msdn.microsoft.com/Forums/en-US/winappswithnativecode/thread/2d732e1b-a9a1-4195-bfe5-216a75fb4319/
+DatagramSocket: When I get MessageReceived, how do I actually read the data and who it was from?
+http://social.msdn.microsoft.com/Forums/en-US/winappswithnativecode/thread/ae568041-a080-4194-a783-94b6bc48852d/
+DatagramSocket; GetOutputStreamAsync asynch?
+http://social.msdn.microsoft.com/Forums/en-US/winappswithnativecode/thread/cbbf610a-bcff-47f1-b930-e79c36a5f53e/
+
+Open forum question:
+http://social.msdn.microsoft.com/Forums/en-US/winappswithnativecode/thread/ce47bbae-80a0-460c-b738-3a752b0d4d3a
+
+Programming language is C++/CX
+http://msdn.microsoft.com/en-us/library/windows/apps/hh699871.aspx
+
+Concurrency task
+http://msdn.microsoft.com/EN-US/library/hh750113(VS.110).aspx
+http://blogs.microsoft.co.il/blogs/pavely/archive/2012/06/25/windows-8-metro-c-cx-vs-c.aspx
+
+http://social.msdn.microsoft.com/Forums/en-US/winappswithnativecode/thread/8a72dda7-dd25-4356-b830-f33b35784af0
+How to callback to existing C++ from C++/CX?
+
+I have a large body of C++ code that I am trying to integrate with Windows 8 Store. In the existing code, I use a pure virtual interface for when a network message arrives
+class RNS2EventHandler {
+	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct)=0;
+};
+class RakPeer : public RakPeerInterface, public RNS2EventHandler {
+	virtual void OnRNS2Recv(RNS2RecvStruct *recvStruct) {DoStuff();}
+};
+
+In Windows Store 8, I get this callback when a network message arrives
+public ref class ListenerContext sealed
+{
+public:
+void OnMessage(Windows::Networking::Sockets::DatagramSocket^ socket, Windows::Networking::Sockets::DatagramSocketMessageReceivedEventArgs^ eventArguments) {
+// Need to call the C++ callback
+}
+}
+
+If I try putting a RNS2EventHandler* inside ListenerContext the compiler complains that I can't put C++ types inside a C++/CX class.
+
+So how do I implement a callback to notify C++ when ListenerContext::OnMessage occurs? As a last resort I can poll ListenerContext in a thread from the C++ code, but that ruins performance and the whole point of a callback. But I'll do it if there is no straightforward alternative.
+
+Thanks in advance.

@@ -1,0 +1,34 @@
+
+# Makefile for PortAudio on cygwin
+# Contributed by Bill Eldridge on 6/13/2001
+
+ARCH= pa_win_wmme
+
+TESTS:= $(wildcard pa_tests/pa*.c pa_tests/debug*.c)
+
+.c.o:
+	-gcc -c -I./pa_common $< -o $*.o
+	-gcc $*.o -o $*.exe -L/usr/local/lib -L$(ARCH) -lportaudio.dll -lwinmm
+
+all:	sharedlib tests
+
+sharedlib: ./pa_common/pa_lib.c 
+	gcc -c -I./pa_common pa_common/pa_lib.c -o pa_common/pa_lib.o
+	gcc -c -I./pa_common pa_win_wmme/pa_win_wmme.c -o pa_win_wmme/pa_win_wmme.o
+	dlltool --export-all --output-def pa_win_wmme/pa_lib.def pa_common/pa_lib.o pa_win_wmme/pa_win_wmme.o
+	gcc -shared -Wl,--enable-auto-image-base -o pa_win_wmme/portaudio.dll -Wl,--out-implib=pa_win_wmme/libportaudio.dll.a pa_win_wmme/pa_lib.def pa_common/pa_lib.o pa_win_wmme/pa_win_wmme.o -L/usr/lib/w32api -lwinmm
+	cp pa_win_wmme/portaudio.dll /usr/local/bin
+
+tests:	$(TESTS:.c=.o)
+
+sine:
+	gcc -c -I./pa_common pa_tests/patest_sine.c -o pa_tests/patest_sine.o
+	gcc pa_tests/patest_sine.o -o pa_tests/patest_sine.exe -L/usr/local/lib -lportaudio.dll -lwinmm
+
+clean:
+	-rm ./pa_tests/*.exe
+	
+nothing:
+	gcc pa_tests/patest_sine.o -L/usr/lib/w32api -L./pa_win_wmme -lportaudio.dll -lwinmm
+
+	

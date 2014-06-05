@@ -1,0 +1,108 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>3rd party dependencies</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API"></head>
+
+<body leftmargin="0" topmargin="0" style="background-color: rgb(255, 255, 255);" alink="#003399" link="#003399" marginheight="0" marginwidth="0" vlink="#003399">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><br>
+<br>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">Optional 3rd party dependencies</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p>What follows is a list of projects that will not build without 3rd party dependencies, and where to get these dependencies. These projects are optional: you can use RakNet without them. Unpack to is where the project, library, and/or post build step paths are set to by default for the Visual Studio project, and can be changed manually.</p>
+  <h3><a href="irrlichtfpsdemo.html">IrrlichtDemo</a></h3>
+  <p><img src="IrrlichtRakNetDemo.jpg" width="403" height="312">
+    </p>
+  <p>Peer to peer first person shooter demo showing off PHPDirectoryServer, ReplicaManager3, and NAT punchthrough. </p>
+  <p><em>Download from</em>: <a href="http://irrlicht.sourceforge.net/downloads.html">http://irrlicht.sourceforge.net/downloads.html</a></p>
+  <p><em>Unpack to</em>: C:\irrlicht-1.7.2\include</p>
+  <p>&nbsp;</p>
+  <h3><a href="ogre3dinterpdemo.html">Ogre3DInterpDemo</a></h3>
+Client/Server ReplicaManager3 and interpolation demo
+  <p><em>Download from</em>: http://www.ogre3d.org/download</p>
+  <p><em>Unpack to</em>: Doesn't matter, Uses enviroment variable $(OGRE_HOME)</p>
+  <p><em>Last checked against</em>: Prebuilt binary 1.7.4. OGRE_HOME set to C:\OgreSDK_vc9_v1-7-4.</p>
+  <p>&nbsp;</p>
+  <h3><a href="autopatcher.html">AutopatcherMySQLRepository</a></h3>
+One of two supported database backends for the AutopatcherServer project, which is required to use AutopatcherClient. You only need one of the two.
+<p><em>Download from</em>: http://dev.mysql.com/downloads/</p>
+  <p><em>Unpack to</em>: C:\Program Files (x86)\MySQL\MySQL Server 5.1</p>
+  <p>Note: MySQL is an order of magnitude slower than PostgreSQL with AutopatcherServer.</p>
+<p>&nbsp;</p>
+  <h3><a href="autopatcher.html">AutopatcherPostgreSQLRepository</a></h3>
+  One of two supported database backends for the AutopatcherServer project, which is required to use AutopatcherClient. You only need one of the two.
+During installation be sure to check developer tools, or the header files will not be installed.
+<p><em>Download from</em>: http://www.postgresql.org/download/</p>
+  <p><em>Unpack to</em>: C:\Program Files (x86)\PostgreSQL\9.1</p>
+  <p>&nbsp;</p>
+  <p><strong>SQLite\Logger\D3D9Samples\Matrices</strong></p>
+  <p>This is a demo that assumes the DirectX SDK is installed. Get it from <a href="http://www.microsoft.com">http://www.microsoft.com</a> . You will also need to setup the Visual Studio global library and include paths.</p>
+  <p>&nbsp;</p>
+  <h3><a href="lobby.html">Lobby2Server_PGSQL</a></h3>
+Database backend for the Lobby2 system, supporting users, clans, friends, and other persistent information.
+  <p><em>Download from</em>: http://www.postgresql.org/download/</p>
+  <p><em>Unpack to</em>: C:\Program Files (x86)\PostgreSQL\8.3</p>
+  <p>&nbsp;</p>
+  <p><strong>RoomsAndLobbyGFx3
+   </strong></p>
+  <p> Visual front-end for the RoomsPlugin and Lobby2 systems, with the ability to login and display a list of rooms. Note: Scaleform requires registration and is not-free. </p>
+  <p><em>Download from</em>: http://www.scaleform.com/</p>
+  <p><em>Unpack to</em>: Doesn't matter, uses enviroment variable $(GFXSDK)</p>
+  <p>&nbsp;</p>
+  <h3><a href="autopatcher.html">AutopatcherClientGFx3</a></h3>
+Visual front-end for the AutopatcherClient system. Note: Scaleform requires registration and is non-free.
+  <p><em>Download from</em>: http://www.scaleform.com/</p>
+  <p><em>Unpack to</em>: Doesn't matter, uses enviroment variable $(GFXSDK)</p>
+  <p>&nbsp;</p>
+<h3><a href="rakvoice.html">RakVoiceDSound</a></h3>
+One of three sound implementations of RakVoice, supporting DirectSound, FMOD, and PortAudio. PortAudio is already included in the RakVoice project. Unless you intend to use DirectSound, you do not need this project.
+  <p><em>Download from</em>: http://msdn.microsoft.com/en-us/directx/aa937788.aspx</p>
+  <p><em>Unpack to</em>: Doesn't matter, uses enviroment variable $(DXSDK_DIR)</p>
+  <p>&nbsp;</p>
+  <h3><a href="rakvoice.html">RakVoiceFMOD</a></h3>
+  One of three sound implementations of RakVoice, supporting DirectSound, FMOD, and PortAudio. PortAudio is already included in the RakVoice project. Unless you intend to use FMOD, you do not need this project.
+Note: FMOD is not necessarily free.
+<p><em>Download from</em>: http://www.fmod.org/index.php/download</p>
+  <p><em>Unpack to</em>: C:\Program Files\FMOD SoundSystem</p>
+  <p><em>Last checked against</em>: Fmod 4.38.07</p>
+  <p>&nbsp;</p>
+  <h3><a href="RPC3Video.htm">RPC3</a></h3>
+Remote procedure calls using C++ and semi-automatic serialization. Includes support for networked <a href="http://en.wikipedia.org/wiki/Signals_and_slots">signals and slots</a>. Note: The majority of boost is not required, only those files actually used by RPC3. If you don't want to use Boost, you can use the RPC4 plugin instead which has similar functionality to the RPC found in RakNet version 3.
+<p><em>Download from</em>: http://www.boost.org/users/download/</p>
+  <p><em>Unpack to</em>: c:/boost_1_48_0</p>
+  <p>Note: You can use RPC4 if you do not want to install Boost, it however cannot call directly into C++ member functions or automatically serialize method parameters.</p>
+  <p>&nbsp;</p>
+<p>&nbsp;</p>
+  <p>&nbsp;</p>
+<p>&nbsp;</p></td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader"><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="3"><strong>See
+Also</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><font class="G10" color="#111122" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1"><a href="index.html">Index</a><br>
+<a href="faq.html">FAQ</a><br>
+
+</td>
+</tr>
+</tbody>
+</table>
+</body></html>

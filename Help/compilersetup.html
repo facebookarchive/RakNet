@@ -1,0 +1,139 @@
+<HTML>
+<HEAD>
+<TITLE>Compiler Setup</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Before you begin</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+Use the source, static lib ,or a DLL?
+<BR>
+<BR>
+
+RakNet includes the source, along with the projects to make the DLL and static lib, and samples.  It no longer includes pre-built DLLs or libraries - this is due to incompatibilities across compilers. We recommend using the source directly, however you can also use the DLL or static lib projects to build your own.
+
+<P><font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif" class="G10">Projects to build the DLL/Static Lib, and the samples, are provided for Microsoft Visual Studio .Net 2003 and 2005. 
+
+  Users of other compilers will have to make their own projects.<BR>
+
+
+
+</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">DLL Users</td>
+</tr></table>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+  <p class="RakNetBlueHeader">Creating a DLL</p>
+  <ol>
+    <li>Create a DLL project.  I'll assume you know how to do this.  In MSVC 7 you would create an empty project, then under Application Settings you check DLL and empty project.</li>
+    <li>Add the source files under the /Source directory to the project.</li>
+    <li>Add to "Additional Include Directories" your directory with the source files.<font color="#666666" size="2" face="Geneva, Verdana, Arial, Helvetica, sans-serif" class="G10"></li>
+    <li>Import ws2_32.lib, or wsock32.lib if you don't have Winsock 2 installed.  In MSVC 7 you can right click on the project, select configuration properties / linker / input / additional dependencies and type "ws2_32.lib" in there.</li>
+    <li>Set your project to use multi-threaded runtime libraries.  In MSVC 7 you can right click on the project, select configuration properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (/MT).</li>
+    <li>Add _RAKNET_DLL to the Preprocessor Definitions. In VS Project Properties -> Configuration Properties -> C/C++ -> PreProcessor -> Preprocessor Definitions</li>
+    <li>Set the character set to "not set".In VS Project Properties -> Configuration Properties -> General-> Character Set </li>
+    <li>Optionally set your <A HREF="preprocessordirectives.html">preprocessor directives.</A></li>
+    <li>Then hit F7 or the equivalent to build your DLL and Lib.</li>
+  </ol>
+  <TABLE><TR><TD>
+<A HREF="makedll.jpg"><IMG SRC="makedllsmall.jpg"></A><BR>
+</TD>
+<TR ALIGN="CENTER"><TD>
+<B>Creating an empty DLL project in .net 2003</B></TD></TR></TABLE>
+<TABLE><TR><TD>
+<A HREF="multithreadeddebug.jpg"><IMG SRC="multithreadeddebugsmall.jpg"></A><BR>
+</TD>
+<TR ALIGN="CENTER"><TD>
+<B>Setting Multithreaded debug in .net 2003</B></TD></TR></TABLE>
+<TABLE><TR><TD>
+<A HREF="ws2_32include.jpg"><IMG SRC="ws2_32includesmall.jpg"></A><BR>
+<TR ALIGN="CENTER"><TD>
+<B>Including ws2_32.lib in .net 2003</B>
+</TD></TR></TABLE>
+
+
+<p class="RakNetBlueHeader">Game Setup    </p>
+<OL>
+  <LI>Copy the DLL you just created to your game in the same directory as the exe.  The lib can be in any directory you want.
+  <LI>Add the .lib to your project
+  <LI>Add all header files from /Source to your project</OL>
+<BR>
+
+If you want to jump right in, refer to the <A HREF="tutorial.html">Basic code tutorial</A><BR>
+For more detail, refer to <A HREF="detailedimplementation.html">Detailed Implementation</A>
+
+</TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Source users</td>
+</tr></table>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<span class="RakNetBlueHeader">Game Setup</span><BR>
+<BR>
+
+<OL>
+<LI>Add the files under the /Source directory to the project.  While not all of these are strictly necessary, the ones you don't use won't hurt you.
+<LI>Import ws2_32.lib, or wsock32.lib if you don't have Winsock 2 installed.  In MSVC 7 you can right click on the project, select configuration properties / linker / input / additional dependencies and type "ws2_32.lib" in there.
+<LI>Set your project to use multi-threaded runtime libraries.  In MSVC 7 you can right click on the project, select configuration properties / C/C++ / Code Generation / Runtime Library and change it to Multi-threaded (/MT).
+<LI>Set an additional include path to include the RakNet source (if you copied the source files to a different directory).
+<LI>Optionally set your <A HREF="preprocessordirectives.html">preprocessor directives.</A>
+</OL>
+
+
+<TABLE><TR><TD>
+<A HREF="multithreadeddebug.jpg"><IMG SRC="multithreadeddebugsmall.jpg"></A><BR>
+</TD>
+<TR ALIGN="CENTER"><TD>
+<B>Setting Multithreaded debug in .net 2003</B></TD></TR></TABLE>
+<TABLE><TR><TD>
+<A HREF="ws2_32include.jpg"><IMG SRC="ws2_32includesmall.jpg"></A><BR>
+<TR ALIGN="CENTER"><TD>
+<B>Including ws2_32.lib in .net 2003</B>
+</TD></TR></TABLE>
+<BR>
+
+</TD>
+</TR></TABLE>
+<table width="100%" border="0">
+  <tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+  <img src="spacer.gif" width="8" height="1">3rd party dependencies</td>
+</tr></table>
+<BR>
+<span class="RakNetBlueHeader">Projects that won't compile by default</span><BR>
+<BR>
+Not all projects will build without installing 3rd party dependencies. These are not required to use the majority of RakNet, however you will be missing specific features or demos without them.<BR>
+<BR>
+<A HREF="dependencies.html">3rd party dependencies page</A><BR>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<BR>
+</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A><BR>
+     <A HREF="dependencies.html">3rd party dependencies</A><BR>
+    <A HREF="introduction.html">Introduction</A><BR>
+    <A HREF="systemoverview.html">System Overview</A><BR>
+    <A HREF="detailedimplementation.html">Detailed Implementation</A><BR>
+    <A HREF="tutorial.html">Tutorial</A><BR>
+    <A HREF="preprocessordirectives.html">Preprocessor directives</A><BR>
+  </p></TD></TR></TABLE>
+
+</BODY>
+</HTML>

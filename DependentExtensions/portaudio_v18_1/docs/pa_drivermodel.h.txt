@@ -1,0 +1,143 @@
+#ifndef PA_MULTIDRIVERMODEL_H
+#define PA_MULTIDRIVERMODEL_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif /* __cplusplus */
+
+
+/*
+	This file contains the host-neutral code for implementing multiple driver model 
+	support in PortAudio.
+
+	It has not been compiled, but it is supplied only for example purposes at this stage.
+*/
+
+
+#include "portaudio.h"
+
+
+#define PA_MULTIDRIVER // for multidriver support 
+
+
+
+TODO: declare function pointer types for the following function pointers
+
+/*
+	Each driver model implementation needs to implement an initialize function
+	which is added to the driverModelInitializers array in pa_multidrivermodel.c
+
+	the initializer function needs to return a pointer to a 
+	PaDriverModelImplementation structure, or NULL if initiliazation failed. TODO: need error code instead
+
+	the function pointer members of this structure point to funtions
+	which operate in exactly the same way as the corresponding functions
+	in the PortAudio API. 
+*/
+
+struct{
+    fptr terminate; /* takes the PaDriverModelImplementation* returned by initialize */
+	fptr getDriverModelInfo;
+    fptr getHostError;
+    fptr getHostErrorText;
+    fptr countDevices;
+    fptr getDefaultInputDeviceID;
+    fptr getDefaultOutputDeviceID;
+    fptr getDeviceInfo;
+    fptr openStream;
+    fptr getMinNumBuffers;
+} PaDriverModelImplementation;
+
+/*
+	whenever an implementaion's openstream method is called it should return a
+	PortAudioStream* whose first segment is actually the following structure.
+
+	the functions pointer members of this structure point to funcitons
+	which operate in exactly the same way as the corresponding functions
+	in the PortAudio API.
+*/
+struct{
+    unsigned long magic;
+    fptr close;
+    fptr start;
+    fptr stop;
+    fptr abort;
+    fptr active;
+    fptr time;
+    fptr cpuLoad;
+} PaStreamImplementation;
+
+/*
+	Implementations should set magic to PA_STREAM_MAGIC when opening 
+	a stream _and_ clear it to zero when closing a stream.
+	All functions which operate on streams should check the validity
+    of magic. 
+*/
+
+#define PA_STREAM_MAGIC	         0x12345678
+
+#define PA_CHECK_STREAM( stream )\
+	if( ((PaStreamImplementation*)stream)->magic != PA_STREAM_MAGIC )\
+		return paBadStreamPtr;
+
+
+/*
+	PA_API allows the same implementation to be used for single
+    driver model and multi-driver model operation. If
+	PA_MULTIDRIVER not defined, PA_API will declare api 
+	functions as global, otherwise they will be static, and include
+	the drivermodel code.
+
+	Usage would be something like:
+	
+	int PA_API(CountDevices)();
+
+	The PA_MULTIDRIVER_SUPPORT macro declares the initialization and 
+	termination functions required by the multidriver support. it also
+	allocates and deallocates the PaDriverModelImplementation structure.
+
+	TODO: add macros for initializing PaStreamImplementation PortAudioStream
+			these would be PA_INITIALIZE_STREAM and PA_TERMINATE_STREAM
+			they would assign and clear the magic number and assign the 
+			interface functions if neceassary.			
+*/
+
+#ifdef PA_MULTIDRIVER
+
+#define PA_API( model, name ) static Pa ## model ## _ ## name
+
+#define PA_MULTIDRIVER_SUPPORT( model )\
+PaError Pa_ ## model ## _MultiDriverTerminate( PaStreamImplementation *impl )\
+{\
+	free( impl );\
+	return Pa ## model ## _Terminate();\
+}\
+PaError Pa ## model ## _MultiDriverInitialize( PaStreamImplementation** impl )\
+{\
+	PaError result = Pa ## model ## _Initialize();\
+\
+	if( result == paNoError ){\
+		*impl = malloc( sizeof( PaDriverModelImplementation ) );\
+		if( impl == NULL ){\
+			// TODO: call terminate, return an error
+		}else{\
+			(*impl)->terminate = Pa ## model ## _MultiDriverTerminate();\
+			(*impl)->getDriverModelInfo = Pa ## model ## _GetDriverModelInfo();\
+    		(*impl)->getHostError = Pa ## model ## _GetHostError();\
+			// TODO: assign the rest of the interface functions
+		}\
+	}\
+	return result;\
+}
+
+#else /* !PA_MULTIDRIVER */
+
+#define PA_API( model, name ) Pa_ ## name
+
+#define PA_MULTIDRIVER_SUPPORT
+
+#endif /* PA_MULTIDRIVER */
+
+
+
+#endif /* PA_MULTIDRIVERMODEL_H */

@@ -1,0 +1,298 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Swig Extras Tutorial</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+<meta http-equiv="content-type" content="text/html; charset=utf-8"></head>
+<body leftmargin="0" topmargin="0" style="background-color: rgb(255, 255, 255);" alink="#003399" link="#003399" marginheight="0" marginwidth="0" vlink="#003399">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." height="150" width="150"><br>
+<br>
+<br>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td class="RakNetWhiteHeader" bgcolor="#2c5d92"><img src="spacer.gif" height="1" width="8">Overview</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td> <span class="RakNetBlueHeader"></span>This
+file contains additional instructions for using Swig with the optional
+dependent extension options.<br>
+<br>
+The base instructions are available in the <a href="swigtutorial.html">Swig Tutorial</a><br>
+<span class="RakNetBlueHeader"></span><span class="RakNetBlueHeader"></span><span class="RakNetBlueHeader"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span style="font-weight: bold;"></span><span class="RakNetBlueHeader"></span></td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td class="RakNetWhiteHeader" bgcolor="#2c5d92"><img src="spacer.gif" height="1" width="8">Autopatcher
+MySql Version</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td> <span class="RakNetBlueHeader"><font size="+2">Windows</font><br>
+<br>
+<span class="RakNetManualTextBody">The below
+instructions detail the extra configuration needed on the Visual Studio
+Project.</span><br>
+<br>
+Extra Project Options<br>
+<br>
+</span><span class="RakNetManualTextBody">Under
+General-&gt;Common Language Runtime support the option needs to be
+set to No Common Language Runtime support</span><span class="RakNetBlueHeader"><br class="RakNetManualTextBody">
+<br>
+Additional Include Directories<br>
+<br>
+</span><span class="RakNetManualTextBody">Under
+Dependent Extensions the following additional directories need to be in
+the include configuration.<br>
+<br>
+-Autopatcher/AutopatcherMySQLRepository<br>
+-Autopatcher<br>
+-bzip2-1.0.3<br>
+-MySQLInterface<br>
+<br>
+MySql header directory needs to be included.<br>
+<br>
+For 5.1 on Vista the directory looks like: C:\Program Files
+(x86)\MySQL\MySQL Server 5.1\include</span><span class="RakNetBlueHeader"><br class="RakNetManualTextBody">
+<br>
+Additional sources<br>
+<br>
+</span><span class="RakNetManualTextBody">Under
+Dependent Extensions the following additional source files need to be
+included in the project.<br>
+<br>
+</span><span class="RakNetManualTextBody">-bzip2-1.0.3/blocksort.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">bzip2.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">bzlib.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">compress.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">crctable.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">decompress.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">dlltest.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">huffman.c<br>
+-</span><span class="RakNetManualTextBody">bzip2-1.0.3/</span><span class="RakNetManualTextBody">randtable.c<br>
+<br>
+-Autopatcher/ApplyPatch.cpp<br>
+-</span><span class="RakNetManualTextBody">Autopatcher/</span><span class="RakNetManualTextBody">AutopatcherClient.cpp<br>
+-</span><span class="RakNetManualTextBody">Autopatcher/</span><span class="RakNetManualTextBody">AutopatcherMySQLRepository/</span><span class="RakNetManualTextBody">AutopatcherMySQLRepository.cpp<br>
+-</span><span class="RakNetManualTextBody">Autopatcher/</span><span class="RakNetManualTextBody">AutopatcherServer.cpp<br>
+-</span><span class="RakNetManualTextBody">Autopatcher/</span><span class="RakNetManualTextBody">CreatePatch.cpp<br>
+-</span><span class="RakNetManualTextBody">Autopatcher/</span><span class="RakNetManualTextBody">MemoryCompressor.cpp<br>
+-</span><span class="RakNetManualTextBody">MySQLInterface/</span><span class="RakNetManualTextBody">MySQLInterface.cpp<br>
+<br>
+Additional Libraries<br>
+<br>
+</span><span class="RakNetManualTextBody">The
+MySql library needs to be included.</span><br>
+<span class="RakNetManualTextBody"><br>
+</span><span class="RakNetManualTextBody">For
+5.1 on Vista the location looks like:<br>
+<br>
+</span><span class="RakNetManualTextBody">For
+debug:<br>
+C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\debug\libmysql.lib<br>
+<br>
+</span><span class="RakNetManualTextBody">For
+release:<br>
+C:\Program Files (x86)\MySQL\MySQL Server 5.1\lib\opt\libmysql.lib</span><br>
+<ol>
+</ol>
+<span class="RakNetBlueHeader">Replacement Swig File Generation Tool Steps<br>
+<br>
+<span class="RakNetManualTextBody">These are
+replacement steps. If the dll project is used the PreBuild.bat needs to
+be modified, the last steps are instructions on how to do that.</span><br>
+</span>
+<ol>
+<li>Click the start menu and click on run. In Vista click
+start-&gt;search&nbsp;type "run" hit enter.</li>
+<li>Type cmd and hit enter.</li>
+<li>In the next command PATH_TO_RAKNET_SWIG_FILES is the
+path to
+the swig directory. For example C:\RakNet\DependentExtensions\Swig</li>
+<li>Type cd&nbsp;PATH_TO_RAKNET_SWIG_FILES hit enter</li>
+<li>In the next command PATH_TO_RAKNETSOURCE is the path
+to the swig source directory. For example: C:\RakNet\Source.
+PATH_TO_SWIG is an unquoted path with a trailing slash to
+the&nbsp;Swig directory Example: C:\Swig\. If you added swig to
+your path variable then&nbsp;PATH_TO_SWIG is not needed and can be
+ignored or set to "".&nbsp;PATH_TO_DEPENDENTEXTENSIONS is the path
+to the Dependent Extensions directory Example:
+C:\RakNet\DependentExtensions. OPTION1 in this case will be
+MYSQL_AUTOPATCHER.</li>
+<li>Type MakeSwigWithExtras.bat
+PATH_TO_RAKNETSOURCE&nbsp;PATH_TO_SWIG PATH_TO_DEPENDENTEXTENSIONS
+OPTION1
+hit enter<br>
+</li>
+<div id="ExtraInstructions1" name="ExtraInstructions1" style="display: none;"><li>If you want to use
+SQLiteClientLoggerPlugin skip #6, the next steps will be used instead.</li>
+<li>If you have added swig to your path variable, just
+use "" for PATH_TO_SWIG</li>
+<li>PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin
+directory. EX: C:\RakNet\DependentExtensions\SQLite3Plugin</li>
+<li>Type MakeSwig.bat
+PATH_TO_RAKNETSOURCE&nbsp;PATH_TO_SWIG
+&nbsp;PATH_TO_SQLITEPLUGIN hit enter</li>
+</div>
+<li>If you are not using the DLL_Swig project goto
+"Creating the Swig Wrapped DLL Project"&nbsp;in the <a href="swigtutorial.html">Swig Tutorial</a></li>
+<li>If you are using the DLL_Swig project, in the project
+directory there is a file called Prebuild.bat, open it for editing.</li>
+<li>Replace the line "MakeSwig.bat "../../Source"" with
+the command created in these steps.</li>
+<li>Now goto "Creating the Swig Wrapped DLL
+Project"&nbsp;in the <a href="swigtutorial.html">Swig
+Tutorial</a>. Make sure the extra configuration in this help file is followed.</li>
+</ol>
+<span class="RakNetBlueHeader"></span><span class="RakNetBlueHeader">
+<br>
+Replacement Swig File Generation Manual Steps<br>
+</span>
+<ol>
+<li>Click the start menu and click on run. In Vista click
+start-&gt;search&nbsp;type "run" hit enter.</li>
+<li>Type cmd and hit enter.</li>
+<li>In the next command PATH_TO_RAKNET_SWIG_FILES is the
+path to
+the swig directory. For example C:\RakNet\DependentExtensions\Swig</li>
+<li>Type cd&nbsp;PATH_TO_RAKNET_SWIG_FILES hit enter</li>
+<li>In the next command PATH_TO_RAKNETSOURCE is the path
+to the swig source directory. For example:
+C:\RakNet\Source.&nbsp;PATH_TO_DEPENDENTEXTENSIONS
+is the path to the Dependent Extensions directory Example:
+C:\RakNet\DependentExtensions. </li>
+<li>Type&nbsp;C:\Swig\swig -c++ -csharp -namespace
+RakNet -I"PATH_TO_RAKNETSOURCE" -I"SwigInterfaceFiles"
+-I"PATH_TO_DEPENDENTEXTENSIONS"
+-DSWIG_ADDITIONAL_AUTOPATCHER_MYSQL -outdir SwigOutput\SwigCSharpOutput
+-o SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx
+SwigInterfaceFiles\RakNet.i
+hit enter</li><li>Goto "Creating the Swig DLL" in&nbsp;the <a href="swigtutorial.html">Swig Tutorial</a>. Make sure the extra configuration in this help file is followed.<a href="swigtutorial.html"></a></li>
+</ol>
+<span class="RakNetBlueHeader"></span><span class="RakNetBlueHeader"><font size="+2">Linux</font></span><br><br><span class="RakNetBlueHeader">Replacement Swig File Tool Steps<br><br></span><span class="RakNetBlueHeader">
+<span class="RakNetManualTextBody">Note: The Linux
+batch <span class="RakNetBlueHeader"></span><span class="RakNetBlueHeader"></span>requires Wget,Tar,Make
+and GCC&nbsp; to be installed, unless swig is already installed.
+Most of the time </span></span><span class="RakNetBlueHeader"><span class="RakNetManualTextBody">Wget,Tar,Make and GCC are</span></span><span class="RakNetBlueHeader"><span class="RakNetManualTextBody"> already installed.</span><br>
+</span>
+<ol><li>Open a terminal if you are not already at one.<br>
+</li><li>In the next command PATH_TO_RAKNET_SWIG_FILES is the
+path to
+the swig directory. For example
+/home/usr/RakNet/DependentExtensions/Swig</li><li>Type cd&nbsp;PATH_TO_RAKNET_SWIG_FILES hit enter</li><li>Type chmod u+x MakeSwig.sh<br>
+</li><li>In the next command PATH_TO_RAKNETSOURCE is the path
+to the swig source directory. For
+example:&nbsp;/home/usr/RakNet/Source.&nbsp;PATH_TO_DEPENDENTEXTENSIONS is the path
+to the Dependent Extensions directory Example:&nbsp;/home/usr/RakNet/DependentExtensions. OPTION1 in this case will be
+MYSQL_AUTOPATCHER.</li><li>Type MakeSwigWithExtras.sh
+PATH_TO_RAKNETSOURCE &nbsp;PATH_TO_DEPENDENTEXTENSIONS
+OPTION1
+hit enter</li><div id="ExtraInstructions2" name="ExtraInstructions2" style="display: none;"><li>If you want to use
+SQLiteClientLoggerPlugin skip #6, the next steps will be used instead.<br>
+</li>
+<li>PATH_TO_SQLITEPLUGIN is the path to the SQLite plugin
+directory.
+EX:&nbsp;/home/usr/RakNet/DependentExtensions/SQLite3Plugin<br>
+</li>
+<li>Type MakeSwig.sh
+PATH_TO_RAKNETSOURCE&nbsp;PATH_TO_SQLITEPLUGIN hit enter<br>
+</li>
+</div><li>Skip to "Creating the C# project" in the <a href="swigtutorial.html">Swig Tutorial</a>.&nbsp;
+&nbsp;</li></ol><br><span class="RakNetBlueHeader">Replacement Manual Swig File Generation Steps</span><br><br>
+<ol><li>Open a terminal<br>
+</li><li>In the next command PATH_TO_RAKNET_SWIG_FILES is the
+path to
+the swig directory. For example
+/home/usr/RakNet/DependentExtensions/Swig</li><li>Type cd&nbsp;PATH_TO_RAKNET_SWIG_FILES hit enter</li><li>In the next command PATH_TO_RAKNETSOURCE is the path
+to the swig source directory. For example: /home/usr/RakNet/Source</li><li>Type swig -c++ -csharp -namespace RakNet
+-I"PATH_TO_RAKNETSOURCE"
+-I"SwigInterfaceFiles" -outdir SwigOutput/SwigCSharpOutput -o
+SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx SwigInterfaceFiles/RakNet.i
+and hit enter</li><li>Goto the next section below.</li></ol><p class="RakNetBlueHeader">Replacement Creating the
+Swig&nbsp; Dynamic Link Steps</p>
+<p class="RakNetBlueHeader"><span class="RakNetManualTextBody">Note:
+If you ran the linux batch tool it will have made the dynamic link and
+attempted to install it, so you may skip these steps if it ran
+successfully.</span><br>
+</p>
+<ol><li>In the next command PATH_TO_RAKNET_SWIG_FILES is the
+path to
+the swig directory.&nbsp;<span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;">
+EX:: </span>../DependentExtensions/Swig<span style="font-size: 12pt; font-family: &quot;Times New Roman&quot;;"></span></li><li>In
+the next command PATH_TO_DEPENDENTEXTENSIONS is the path to the
+Dependent Extensions directory. EX: /home/usr/RakNet/DependentExtensions</li><li>First
+we need to compile the C files seperatly with GCC in C mode type the
+following command and hit enter: gcc
+-c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/blocksort.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/bzip2.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/bzlib.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/compress.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/crctable.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/decompress.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/dlltest.c&nbsp;PATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3/huffman.c
+$2/bzip2-1.0.3/randtable.c<br></li><li>Now we use those object files
+and compile the C++ files with C++ mode type the following command and
+hit enter: g++
+*.cpp&nbsp;PATH_TO_RAKNET_SWIG_FILE/SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx
+blocksort.o bzip2.o bzlib.o compress.o crctable.o decompress.o
+dlltest.o huffman.o
+randtable.o&nbsp;PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/ApplyPatch.cpp&nbsp;PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherClient.cpp&nbsp;PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherMySQLRepository/AutopatcherMySQLRepository.cpp&nbsp;PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherServer.cpp&nbsp;PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/CreatePatch.cpp&nbsp;PATH_TO_DEPENDENTEXTENSIONS/Autopatcher/MemoryCompressor.cpp&nbsp;PATH_TO_DEPENDENTEXTENSIONS/MySQLInterface/MySQLInterface.cpp&nbsp;
+-l pthread -lmysqlclient -I/usr/include/mysql/ -I./
+-IPATH_TO_DEPENDENTEXTENSIONS/Autopatcher/AutopatcherMySQLRepository
+-IPATH_TO_DEPENDENTEXTENSIONS/Autopatcher
+-IPATH_TO_DEPENDENTEXTENSIONS/bzip2-1.0.3
+-IPATH_TO_DEPENDENTEXTENSIONS/MySQLInterface -shared -o RakNet&nbsp;
+&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;</li><li>Note: In the previous command -l pthread is lower
+case L while -I./ is uppercase i.</li><div id="ExtraInstructions6" name="ExtraInstructions6" style="display: none;"><li>If you wish to use
+SQLiteClientLoggerPlugin in the place of #2 use the below instructions</li>
+<li>&nbsp;PATH_TO_SQLITEPLUGIN is the path to the
+SQLite plugin directory. EX:
+/home/usr/RakNet/DependentExtensions/SQLite3Plugin</li>
+<li>g++
+*.cpp&nbsp;PATH_TO_RAKNET_SWIG_FILES/SwigOutput/CplusDLLIncludes/RakNet_wrap.cxx
+PATH_TO_SQLITEPLUGIN\SQLite3ClientPlugin.cpp&nbsp;
+PATH_TO_SQLITEPLUGIN \SQLite3PLuginCommon.cpp&nbsp;
+PATH_TO_SQLITEPLUGIN
+\Logger\ClientOnly\SQLiteClientLoggerPlugin.cpp&nbsp;
+PATH_TO_SQLITEPLUGIN \Logger\SQLliteLoggerCommon.cpp&nbsp; -l
+pthread
+-I./&nbsp;-IPATH_TO_SQLITEPLUGIN\Logger\ClientOnly&nbsp;-IPATH_TO_SQLITEPLUGIN\Logger&nbsp;-IPATH_TO_SQLITEPLUGIN
+-shared -o RakNet</li>
+</div><li>A file called RakNet should be created that will be
+copied in the next section</li><li>Go to "Creating the C# project" in the <a href="swigtutorial.html">Swig Tutorial</a>.<a href="swigtutorial.html"></a></li></ol><br><span class="RakNetBlueHeader">
+<br>
+</span></td>
+</tr>
+</tbody>
+</table>
+<br>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td class="RakNetWhiteHeader" bgcolor="#2c5d92"><img src="spacer.gif" height="1" width="8">See Also</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>
+<p><a href="index.html">Swig Tutorial<br>
+Index</a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<script type="text/javascript">
+function toggleDisplay(divId) {
+var div = document.getElementById(divId);
+div.style.display = (div.style.display=="block" ? "none" : "block");
+}
+</script>
+</body></html>

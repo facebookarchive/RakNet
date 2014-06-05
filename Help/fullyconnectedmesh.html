@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+
+<TITLE>Fully Connected Mesh</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Fully Connected Mesh Plugin Interface Implementation</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD><p><span class="RakNetBlueHeader">Automatically connect all peers in a peer to peer game</span><BR>
+        <BR>
+    
+    
+    The fully connected mesh implementation reads connection messages from RakNet and tries to connect to all systems on the network.  On a new connection, it will tell the remote system of all systems it knows about.  When that packet arrives, that system will then try to connect to all those systems in turn.  You can optionally specify a password which you can use to allow certain systems to join the mesh and other systems to not do so.</p>
+    <p>      NOTE : The implementation requires that a ConnectionGraph plugin is also attached to the RakPeer.<BR></p>
+    <p class="RakNetCode">/// Set the password to use to connect to the other systems<br>
+void Startup(const char *password, int _passwordLength);</p>
+    <p class="RakNetCode"> /// Use the NAT punchthrough system to connect rather than calling directly<br>
+      void ConnectWithNatPunchthrough(NatPunchthrough *np, SystemAddress _facilitator);    </p>
+    <p>See <em>Samples/FullyConnectedMesh</em> for a demonstration of this plugin</p></TD>
+</TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A><BR>
+      <A HREF="plugininterface.html">PluginInterface</A><br>
+      <a href="natpunchthrough.html">NAT-Punchthrough</a><br>
+      <a href="readyevent.html">Ready Event</a><BR>
+  </p>
+  </TD></TR></TABLE>
+</BODY>
+</HTML>

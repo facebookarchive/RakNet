@@ -1,0 +1,58 @@
+<HTML>
+<HEAD>
+<TITLE>TwoWayAuthentication manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Two Way Authentication Plugin Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Securely verify a password known in advance by a pair of systems</span> <BR></p>
+      
+      <p>Normally with RakNet you can transmit data securely using <a href="secureconnections.html">secure connections</a>. However, sometimes a pair of systems may not have secure connections active. For example, on mobiles the security code may take too much memory, be too slow, or not compile. In this case you can still verify a remote system using a password known to two systems in advance. RakNet implements this using <a href="http://en.wikipedia.org/wiki/Mutual_authentication">two way authentication</a>. Instead of sending the password itself, a <a href="http://en.wikipedia.org/wiki/Cryptographic_hash_function">one way hash</a> of the password is sent. The hash is verified as correct or not, and the results returned to the user.
+</p>
+      <p>Usage:</p>
+      <p class="RakNetCode">// Attach the plugin to an instance of RakPeerInterface<br>
+        rakPeer-&gt;AttachPlugin(&amp;twoWayAuthenticationPlugin);<br>
+        // Add a password. The actual password (Password0) is associated with a  identifier (PWD0) for faster hash lookup.<br>
+      twoWayAuthenticationPlugin.AddPassword(&quot;PWD0&quot;, &quot;Password0&quot;);<br>
+      // Challenge another system we are connected to.
+      <br>
+      twoWayAuthenticationPlugin.Challenge(&quot;PWD0&quot;, remoteSystemAddressOrGuid);</p>
+      <p>If the other system is also running the two way authentication plugin, and had also set the same password, you will get <span class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS</span> and the other system will get <span class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS</span>. If the other system is running the plugin but has a different password, they will get <span class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_FAILURE</span> and you will get <span class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE</span>. If the other system is not running the plugin you will get <span class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT</span>.</p>
+      <p>In the case of
+      <UL>
+      <LI class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_INCOMING_CHALLENGE_SUCCESS</LI>
+      <LI class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_SUCCESS</LI>
+      <LI class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_TIMEOUT</LI>
+<LI class="RakNetCode">ID_TWO_WAY_AUTHENTICATION_OUTGOING_CHALLENGE_FAILURE</LI>
+</UL>
+you can read which password challenge the message was associated with using the following code:</p>
+      <p class="RakNetCode">RakNet::BitStream bs(packet-&gt;data, packet-&gt;length, false);<br>
+bs.IgnoreBytes(sizeof(RakNet::MessageID));<br>
+RakNet::RakString password;<br>
+bs.Read(password);</p>
+      <p>All this system does is verify a password between two parties. It does not enable or disable any RakNet features, or prevent any other message from being sent during the challenge phase. However, you can pair this plugin with the <a href="messagefilter.html">MessageFilter</a> plugin so that a new connection cannot send any other messages until validated. To do so, attach the <a href="messagefilter.html">MessageFilter</a> plugin to RakPeerInterface before this one (actually it should be first). Call MessageFilter::SetAutoAddNewConnectionsToFilter() so that new connections are filtered. Make sure that the two way authentication messages are allowed on that same filter channel by calling MessageFilter::SetAllowMessageID(). When a connection has been validated, change the channel for that system using MessageFilter::SetSystemFilterSet().</p>
+      <p>See <em>Samples/TwoWayAuthentication</em> for a complete sample. See TwoWayAuthentication.h for a complete list of all documented functions and parameters.</p>
+      
+  </TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<BR><A HREF="index.html">Index</A><br>
+    <a href="messagefilter.html">Message Filter plugin</a><BR>
+</BODY>
+</HTML>

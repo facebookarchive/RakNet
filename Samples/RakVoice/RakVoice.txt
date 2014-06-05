@@ -1,0 +1,3 @@
+This sample demonstrates the RakVoice class.  The RakVoice class is a wrapper encodes input data using speex (http://www.speex.org/), sends it as a packet using Raknet, and decodes it using Speex.
+
+See PortAudioLicense.txt and SpeexLicense.txt for the license agreements for those APIs.

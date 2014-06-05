@@ -1,0 +1,81 @@
+dnl
+dnl PortAudio configure.in script
+dnl
+dnl Dominic Mazzoni
+dnl
+
+dnl Require autoconf >= 2.13
+AC_PREREQ(2.13)
+
+dnl Init autoconf and make sure configure is being called
+dnl from the right directory
+AC_INIT([pa_common/portaudio.h])
+
+dnl Checks for programs
+AC_PROG_CC
+AC_PROG_RANLIB
+AC_PROG_INSTALL
+AC_PATH_PROG(AR, ar, no)
+if [[ $AR = "no" ]] ; then
+   AC_MSG_ERROR("Could not find ar - needed to create a library");
+fi
+
+dnl Extra variables we want to substitute
+AC_SUBST(OTHER_OBJS)
+AC_SUBST(PADLL)
+AC_SUBST(SHARED_FLAGS)
+AC_SUBST(DLL_LIBS)
+
+dnl Determine the host operating system / platform
+AC_CANONICAL_HOST
+
+case "${host_os}" in
+  darwin* )
+	dnl Mac OS X configuration
+
+	OTHER_OBJS="pa_mac_core/pa_mac_core.o";
+	LIBS="-framework CoreAudio -lm";
+	PADLL="libportaudio.dylib";
+	SHARED_FLAGS="-framework CoreAudio -dynamiclib";
+	;;
+
+  mingw* )
+	dnl MingW configuration
+
+	OTHER_OBJS="pa_win_wmme/pa_win_wmme.o";
+	LIBS="-lwinmm -lm";
+	PADLL="portaudio.dll";
+	SHARED_FLAGS="-shared -mthreads";
+	DLL_LIBS="-lwinmm";
+	;;
+
+  cygwin* )
+	dnl Cygwin configuration
+
+	OTHER_OBJS="pa_win_wmme/pa_win_wmme.o";
+	LIBS="-lwinmm -lm";
+	PADLL="portaudio.dll";
+	SHARED_FLAGS="-shared -mthreads";
+	DLL_LIBS="-lwinmm";
+	;;
+
+  *)
+	dnl Unix OSS configuration
+
+   AC_CHECK_LIB(pthread, pthread_create,
+                ,
+                AC_MSG_ERROR([libpthread not found!]))
+
+	OTHER_OBJS="pa_unix_oss/pa_unix_oss.o pa_unix_oss/pa_unix.o";
+	LIBS="-lm -lpthread";
+	PADLL="libportaudio.so";
+	SHARED_FLAGS="-shared";
+esac
+
+AC_OUTPUT([Makefile])
+
+echo ""
+echo "Finished configure."
+
+echo ""
+echo "Type 'make' to build PortAudio and examples."

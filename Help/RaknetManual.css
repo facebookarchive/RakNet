@@ -1,0 +1,50 @@
+.RakNetManualTextBody {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: small;
+	font-style: normal;
+	line-height: normal;
+	font-weight: normal;
+	font-variant: normal;
+	color: 666666;
+	height: auto;
+	width: auto;
+}
+
+.RakNetBlueHeader {
+	font-family: Geneva, Verdana, Arial, Helvetica, sans-serif;
+	font-size: small;
+	font-style: normal;
+	line-height: normal;
+	font-weight: bold;
+	font-variant: normal;
+	color: 3366CC;
+	height: auto;
+	width: auto;
+}
+.RakNetCode {
+	font-family: Geneva, Arial, Helvetica, sans-serif;
+	font-size: x-small;
+	color: 333333;
+}
+
+a:link {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	color: 003399;
+	font-size: small;
+}
+a:visited {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: small;
+	color: 003399;
+}
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: small;
+	color: 666666;
+}
+.RakNetWhiteHeader {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: large;
+	color: FFFFFF;
+	font-weight: bold;
+}

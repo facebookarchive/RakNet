@@ -1,0 +1,78 @@
+<HTML>
+<HEAD>
+
+<TITLE>Preprocessor directives</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Preprocessor directives</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p>Define any of these values in RakNetDefinesOverrides.h to override. These are the defaults as set in RakNetDefines.h. Also see NativeFeatureIncludes.h to not compile in features you do not use.</p>
+    <p class="RakNetCode">/// Define __GET_TIME_64BIT to have RakNet::TimeMS use a 64, rather than 32 bit value.  A 32 bit value will overflow after about 5 weeks.<br>
+      /// However, this doubles the bandwidth use for sending times, so don't do it unless you have a reason to.<br>
+      /// Comment out if you are using the iPod Touch TG. See http://www.jenkinssoftware.com/forum/index.php?topic=2717.0<br>
+      /// This must be the same on all systems, or they won't connect<br>
+      #define __GET_TIME_64BIT 1</p>
+    <p class="RakNetCode">// Define _FILE_AND_LINE_ to &quot;&quot;,0 if you want to strip out file and line info for memory tracking from the EXE<br>
+      #define _FILE_AND_LINE_ __FILE__,__LINE__</p>
+    <p class="RakNetCode">/// Define __BITSTREAM_NATIVE_END to NOT support endian swapping in the BitStream class.  This is faster and is what you should use<br>
+      /// unless you actually plan to have different endianness systems connect to each other<br>
+      /// Enabled by default.<br>
+      // #define __BITSTREAM_NATIVE_END</p>
+    <p class="RakNetCode">/// Maximum (stack) size to use with _alloca before using new and delete instead.<br>
+      #define MAX_ALLOCA_STACK_ALLOCATION 1048576</p>
+    <p class="RakNetCode">// Use WaitForSingleObject instead of sleep.<br>
+      // Defining it plays nicer with other systems, and uses less CPU, but gives worse RakNet performance<br>
+      // Undefining it uses more CPU time, but is more responsive and faster.<br>
+      #define USE_WAIT_FOR_MULTIPLE_EVENTS</p>
+    <p class="RakNetCode">/// Uncomment to use RakMemoryOverride for custom memory tracking<br>
+      /// See RakMemoryOverride.h. <br>
+      #define _USE_RAK_MEMORY_OVERRIDE 0</p>
+    <p class="RakNetCode">/// If defined, OpenSSL is enabled for the class TCPInterface<br>
+      /// This is necessary to use the SendEmail class with Google POP servers<br>
+      /// Note that OpenSSL carries its own license restrictions that you should be aware of. If you don't agree, don't enable this define<br>
+      /// This also requires that you enable header search paths to DependentExtensions\openssl-0.9.8g<br>
+      #define OPEN_SSL_CLIENT_SUPPORT 0</p>
+    <p class="RakNetCode">/// Threshold at which to do a malloc / free rather than pushing data onto a fixed stack for the bitstream class<br>
+      /// Arbitrary size, just picking something likely to be larger than most packets<br>
+      #define BITSTREAM_STACK_ALLOCATION_SIZE 256</p>
+    <p class="RakNetCode">// Redefine if you want to disable or change the target for debug RAKNET_DEBUG_PRINTF<br>
+      #define RAKNET_DEBUG_PRINTF printf</p>
+    <p class="RakNetCode">// Maximum number of local IP addresses supported<br>
+      #define MAXIMUM_NUMBER_OF_INTERNAL_IDS 10</p>
+    <p class="RakNetCode">/// This controls the amount of memory used per connection. If more than this many datagrams are sent without an ack, then the ack has no effect<br>
+      #define DATAGRAM_MESSAGE_ID_ARRAY_LENGTH 512</p>
+    <p class="RakNetCode">/// This is the maximum number of reliable user messages that can be on the wire at a time<br>
+      #define RESEND_BUFFER_ARRAY_LENGTH 512<br>
+      #define RESEND_BUFFER_ARRAY_MASK 511</p>
+    <p class="RakNetCode">/// Uncomment if you want to link in the DLMalloc library to use with RakMemoryOverride<br>
+      // #define _LINK_DL_MALLOC</p>
+    <p class="RakNetCode">/// Workaround for http://support.microsoft.com/kb/274323<br>
+      /// If two calls between RakNet::GetTime() happen farther apart than this time in microseconds, this delta will be returned instead<br>
+      /// Note: This will cause ID_TIMESTAMP to be temporarily inaccurate if you set a breakpoint that pauses the UpdateNetworkLoop() thread in RakPeer<br>
+      /// Define in RakNetDefinesOverrides.h to enable (non-zero) or disable (0)<br>
+      #define GET_TIME_SPIKE_LIMIT 0</p>
+    <p class="RakNetCode">// Use sliding window congestion control instead of ping based congestion control<br>
+      #define USE_SLIDING_WINDOW_CONGESTION_CONTROL 1</p>
+    <p><span class="RakNetCode">// When a large message is arriving, preallocate the memory for the entire block<br>
+      // This results in large messages not taking up time to reassembly with memcpy, but is vulnerable to attackers causing the host to run out of memory<br>
+      #define PREALLOCATE_LARGE_MESSAGES 0<br>
+    </span> </p></TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

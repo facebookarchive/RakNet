@@ -1,0 +1,64 @@
+<HTML>
+<HEAD>
+<TITLE>Network Simulator</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">Network Simulator Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><span class="RakNetBlueHeader">Description</span> <BR>
+      <BR>
+			  
+	If you are using RakNet locally, chances are you will not have real-world problems like packet loss and ping fluctuations.<BR>
+  RakNet provides some functions to simulate those problems.  </TR>
+</TABLE>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">Network Simulator Functions</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+<TR>
+  <TD>
+
+  <span class="RakNetCode">ApplyNetworkSimulator( double maxSendBPS, unsigned short minExtraPing, unsigned short extraPingVariance)</span><BR>
+      <BR>
+  	  
+  	  Enables simulated ping and packet loss to the outgoing data flow.
+  	  To simulate bi-directional ping and packet loss, you should call this on both the sender and the recipient, with half the total ping and maxSendBPS value on each.
+  	  <p><em>maxSendBPS</em> - Maximum bits per second to send.  Packetloss grows linearly.  0 to disable.<BR>
+  	  <em>minExtraPing</em> - The minimum time to delay sends.<BR>
+  	  <em>extraPingVariance</em> The additional random time to delay sends.<BR>
+  	  
+  	  
+  	    <BR>
+  	    <span class="RakNetCode">bool IsNetworkSimulatorActive( void )</span><BR>
+  	    <BR>
+  	  Returns if you previously called ApplyNetworkSimulator<BR>
+  	    <BR>
+  	  
+  	    <BR>
+	  For a better solution, see</p>
+  	  <p><a href="http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0">http://www.jenkinssoftware.com/raknet/forum/index.php?topic=1671.0</a></p>
+  	<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+    </table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <A HREF="index.html">Index</A><BR>          </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

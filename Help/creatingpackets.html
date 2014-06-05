@@ -1,0 +1,363 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>Creating Packets</title>
+
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</head>
+<body leftmargin="0" topmargin="0" style="background-color: rgb(255, 255, 255);" alink="#003399" link="#003399" marginheight="0" marginwidth="0" vlink="#003399">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><br>
+<br>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">Creating
+Packets</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><span class="RakNetBlueHeader">How
+to encode your game data into packets</span><br>
+<br>
+Systems
+that run RakNet, and in fact all systems on the internet, communicate
+through what is commonly known as packets. Or more accurately in the
+case of UDP, datagrams. Each datagram is created by RakNet and contains
+one or more messages. Messages could be created by you, such as
+position or health, or sometimes are created by RakNet internally, such
+as pings. By convention, the first byte of messages contain a numerical
+identifier from 0 to 255 which is used to indicate what type of message
+it is. RakNet already has a large set of messages it uses internally,
+or for plugins. These can be viewed in the file MessageIdentifiers.h.<br>
+<br>
+For this example, lets set the position of a timed mine in the gameworld.
+We'll need the following data:<br>
+<ul>
+  <li>The position of the mine, which is 3 floats. float x,
+    float y,
+    float z. You may have your own vector type which you can use intead.  </li>
+  <li>Some way to refer to the mine that all systems agree
+    on. The <a href="networkidobject.html">NetworkIDObject</a>
+    class is perfect for that. Lets assume class Mine inherits from
+    NetworkIDObject. Then all we have to store is get the NetworkID of the
+    mine (for more information see <a href="receivingpackets.html">Receiving
+      Packets</a>, <a href="sendingpackets.html">Sending
+        Packets</a>.  </li>
+  <li>Who owns the mine. That way if someone steps on it we
+    know who
+    to give credit to. The built in reference to players, SystemAddress, is
+    perfect.. You can use GetExternalID() to get the SystemAddress.  </li>
+  <li>When the mine was placed. Lets say after 10 seconds
+    the mine
+    is automatically disintegrated, so it's important that we get the time
+    correct so the mine doesn't disintegrate at different times on
+    different computers. Fortunately the RakNet has the built-in ability to
+    handle this using <a href="timestamping.html">Timestamping</a>.</li>
+</ul>
+<span class="RakNetBlueHeader">Use
+a structure or a bitstream?</span><br>
+<br>
+Ultimately, anytime you send data you will send a stream of characters.
+There are two easy ways to encode your data into this. One is to create
+a structure and cast it to a (char*) the other is to use the built-in <a href="bitstreams.html">BitStream</a> class.<br>
+<br>
+The advantage of creating a structure and casting is that it is very
+easy to change the structure and to see what data you are actually
+sending. Since both the sender and the recipient can share the same
+source file defining the structure, you avoid casting mistakes. There
+is also no risk of getting the data out of order, or using the wrong
+types. The disadvantage of creating a structure is that you often have
+to change and recompile many files to do so. You lose the
+compression you can automatically perform with the bitstream class. And RakNet cannot automatically endian-swap the structure members.<br>
+<br>
+The advantage of using a bitstream is that you don't have to change any
+external files to use it. Simply create the bitstream, write the data
+you want in whatever order you want, and send it. You can use the
+'compressed' version of the read and write methods to write using fewer
+bits and it will write bools using only one bit. You can write
+data out dynamically, writing certain values if certain conditions are
+true or false. BitStream will automatically endian-swap members written with Serialize(), Write(), or Read(). The disadvantage of a bitstream is you are now
+susceptible to make mistakes. You can read data in a way that does not
+complement how you wrote it - the wrong order, a wrong data type, or
+other mistakes.<br>
+<br>
+We will cover both ways of creating packets here.<br></td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" height="1" width="8">Creating
+Packets with structs</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td>
+<p><br>
+  As I&#8217;ve probably mentioned earlier, RakNet uses a convention on how
+  packets (Packet) types are identified.
+  The first byte of the data field is a single byte enumeration that
+  specifies type, followed by the transmitted data.
+  In packets that include a time stamp, the first byte contains
+  ID_TIMESTAMP, the following 4 bytes the actual time stamp value, then
+  the byte that identifies the packet, and only then the actual data
+  transmitted. <br>
+  <br>
+  <span class="RakNetBlueHeader">Without
+    Timestamping</span>
+  <span class="RakNetCode"><br>
+    </span></p>
+<p class="RakNetCode">#pragma pack(push, 1)<br>
+  struct structName<br>
+  {<br>
+  unsigned char typeId; // Your type here<br>
+  // Your data here<br>
+  };<br>
+  #pragma pack(pop)</p>
+<p>Noticed
+    the #pragma pack(push,1) and #pragma pack(pop) ? These force your
+    compiler (in this case VC++), to pack the structure as byte-aligned.
+    Check your compiler documentation to learn more.</p>
+<p class="RakNetBlueHeader">With Timestamping</p>
+<p class="RakNetCode"> #pragma pack(push, 1)<br>
+  struct structName<br>
+  {<br>
+  unsigned char useTimeStamp; // Assign ID_TIMESTAMP to this<br>
+  RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime() or some other method that returns a similar value<br>
+  unsigned char typeId; // Your type here<br>
+  // Your data here<br>
+  };<br>
+  #pragma pack(pop)</p>
+<p>Note that when sending structures, RakNet assumes the timeStamp is in network order. You would have to use the function BitStream::EndianSwapBytes() on the timeStamp field to make this happen. To then read the timestamp on the receiving system, use if (bitStream-&gt;DoEndianSwap()) bitStream-&gt;ReverseBytes(timeStamp, sizeof(timeStamp). This step is not necessary if using BitStreams.</p>
+<p> Fill out your packet. For our timed mine, we want the form that uses
+  timestamping. So the end result should look like the following...</p>
+<span class="RakNetCode">  #pragma pack(push, 1)<br>
+  struct structName<br>
+  {<br>
+  unsigned char useTimeStamp; // Assign ID_TIMESTAMP to this<br>
+  RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
+  unsigned char typeId; // You should put here an enum you defined after the last one defined in MessageIdentifiers.h, lets say ID_SET_TIMED_MINE<br>
+  float x,y,z; // Mine position<br>
+  NetworkID networkId; // NetworkID of the mine, used as a common method to refer to the mine on different computers<br>
+  SystemAddress systemAddress; // The SystenAddress of the player that owns the mine<br>
+  };<br>
+  #pragma pack(pop)</span>
+  <p>
+    As I wrote in the comment above, we have to define enums for our own
+    packets types, so when the data stream arrives in a Receive call we
+    know what we are looking at. You should define your enums as starting
+    at ID_USER_PACKET_ENUM, like this:</p>
+  <p><span class="RakNetCode"><br>
+    // Define our custom packet ID's<br>
+    enum {<br>
+    ID_SET_TIMED_MINE = ID_USER_PACKET_ENUM,<br>
+    // More enums....<br>
+    };<br>
+    </span><br>
+    NOTE THAT YOU CANNOT INCLUDE POINTERS DIRECTLY OR
+    INDIRECTLY IN THE STRUCTS.<br>
+    <br>
+    It seems to be a fairly common mistake that people include a pointer or
+    a class with a pointer in the struct and think that the data pointed to
+    by the pointer will be sent over the network. This is not the case -
+    all it would send is the pointer address<br>
+    <br>
+    Nested Structures<br>
+    <br>
+    There is no problem with nesting structures. Just keep in mind that the
+    first byte is always what determines the packet type.<br>
+    
+      <span class="RakNetCode"><br>
+        #pragma pack(push, 1)<br>
+        struct A<br>
+        {<br>
+        unsigned char typeId; // ID_A<br>
+        };<br>
+        struct B<br>
+        {<br>
+        unsigned char typeId; // ID_A<br>
+        };<br>
+        struct C // Struct C is of type ID_A<br>
+        {<br>
+        A a;<br>
+        B b;<br>
+        }<br>
+        struct D // Struct D is of type ID_B<br>
+        {<br>
+        B b;<br>
+        A a;<br>
+        }<br>
+        #pragma pack(pop)</span><font class="G10" color="#111122" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1"><br>
+        </p>
+  <p></p></td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92"><font color="#ffffff" face="Arial, Helvetica, sans-serif" size="3"><strong><span class="RakNetWhiteHeader">&nbsp;Creating
+Packets with Bitstreams</span></td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><p><span class="RakNetBlueHeader">Write
+  less data with bitstreams
+  </span><br>
+  <br>
+  Lets take our mine example above and use a bitstream to write it out
+  instead. We have all the same data as before.<br>
+  <br>
+  <span class="RakNetCode">    MessageID useTimeStamp; // Assign this to ID_TIMESTAMP<br>
+    RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
+    MessageID typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE<br>
+    useTimeStamp = ID_TIMESTAMP;<br>
+    timeStamp = RakNet::GetTime();<br>
+    typeId=ID_SET_TIMED_MINE;<br>
+    Bitstream myBitStream;<br>
+    myBitStream.Write(useTimeStamp);<br>
+    myBitStream.Write(timeStamp);<br>
+    myBitStream.Write(typeId);<br>
+    // Assume we have a Mine* mine object<br>
+    myBitStream.Write(mine-&gt;GetPosition().x);<br>
+    myBitStream.Write(mine-&gt;GetPosition().y);<br>
+    myBitStream.Write(mine-&gt;GetPosition().z);<br>
+    myBitStream.Write(mine-&gt;GetNetworkID()); // In the struct this is NetworkID networkId<br>
+    myBitStream.Write(mine-&gt;GetOwner()); // In the struct this is SystemAddress systemAddress<br>
+  </span><br>
+  If we were to send myBitStream to RakPeerInterface::Send it would be
+  identical internally to a casted struct at this point. Now lets try
+  some improvements. Lets assume that a good deal of the time mines are
+  at 0,0,0 for some reason. We can then do this instead:<br>
+  <span class="RakNetCode"><br>
+    unsigned char useTimeStamp; // Assign this to ID_TIMESTAMP<br>
+    RakNet::Time timeStamp; // Put the system time in here returned by RakNet::GetTime()<br>
+    unsigned char typeId; // This will be assigned to a type I've added after ID_USER_PACKET_ENUM, lets say ID_SET_TIMED_MINE<br>
+    useTimeStamp = ID_TIMESTAMP;<br>
+    timeStamp = RakNet::GetTime();<br>
+    typeId=ID_SET_TIMED_MINE;<br>
+    Bitstream myBitStream;<br>
+    myBitStream.Write(useTimeStamp);<br>
+    myBitStream.Write(timeStamp);<br>
+    myBitStream.Write(typeId);<br>
+    // Assume we have a Mine* mine object<br>
+    // If the mine is at 0,0,0, use 1 bit to represent this<br>
+    if (mine-&gt;GetPosition().x==0.0f &amp;&amp; mine-&gt;GetPosition().y==0.0f &amp;&amp; mine-&gt;GetPosition().z==0.0f)<br>
+    {<br>
+    myBitStream.Write(true);<br>
+    }<br>
+    else<br>
+    {<br>
+    myBitStream.Write(false);<br>
+    myBitStream.Write(mine-&gt;GetPosition().x);<br>
+    myBitStream.Write(mine-&gt;GetPosition().y);<br>
+    myBitStream.Write(mine-&gt;GetPosition().z);<br>
+    }<br>
+    myBitStream.Write(mine-&gt;GetNetworkID()); // In the struct this is NetworkID networkId<br>
+    myBitStream.Write(mine-&gt;GetOwner()); // In the struct this is SystemAddress systemAddress<br>
+  </span><br>
+  This can potentially save us sending 3 floats over the network, at the
+  cost of 1 bit.<br>
+  <br>
+  <span class="RakNetBlueHeader">Common
+    mistake!</span><br>
+  <br style="font-weight: bold;">
+  When
+  writing the first byte to a bitstream, be sure to cast it to
+  (MessageID) or (unsigned char). If you just write the enumeration
+  directly you will be writing a full integer (4 bytes).<span style="font-style: italic;"><br>
+  </span><br>
+  Right:<br>
+  <span class="RakNetCode">bitStream-&gt;Write((MessageID)ID_SET_TIMED_MINE); </span></p>
+  <p>    Wrong:      <br>
+    <span class="RakNetCode">bitStream-&gt;Write(ID_SET_TIMED_MINE);</span></p>
+  <p>    In the second case, RakNet will see the first byte is 0, which is
+    reserved internally to ID_INTERNAL_PING, and you will never get it.</p>
+  <p><font class="G10" color="#666666" size="2"><br>
+    <strong class="RakNetBlueHeader">Writing
+      strings</strong>
+    <br>
+    <br>
+    It is possible to write strings using the array overload of the
+    BitStream. One way to do it would be to write the length, then the data
+    such as:</p>
+  <p><span class="RakNetCode">void WriteStringToBitStream(char *myString, BitStream *output)<br>
+      {<br>
+      output-&gt;Write((unsigned short) strlen(myString));<br>
+      output-&gt;Write(myString, strlen(myString);<br>
+      }</span></p>
+  <p>Decoding
+    is similar. However, that is not very efficient. RakNet comes with a
+    built in StringCompressor called... stringCompressor. It is a global
+    instance. With it, WriteStringToBitStream becomes:</p>
+  <p><span class="RakNetCode">void WriteStringToBitStream(char *myString, BitStream *output)<br>
+      {<br>
+      stringCompressor-&gt;EncodeString(myString, 256, output);<br>
+      }</span></p>
+  <p>Not
+    only does it encode the string, so the string can not easily be read by
+    packet sniffers, but it compresses it as well. To decode the string you
+    would use:</p>
+  <p><span class="RakNetCode">void WriteBitStreamToString(char *myString, BitStream *input)<br>
+      {<br>
+      stringCompressor-&gt;DecodeString(myString, 256, input);<br>
+      }</span></p>
+  <p>The
+    256 in this case is the maximum number of bytes to write and read. In
+    EncodeString, if your string is less than 256 it will write the entire
+    string. If it is greater than 256 characters it will truncate it such
+    that it would decode to an array with 256 characters, including the
+    null terminator.     </p>
+  <p>RakNet also has a string class, RakNet::RakString, found in RakString.h</p>
+  <p class="RakNetCode">RakNet::RakString rakString(&quot;The value is %i&quot;, myInt);</p>
+  <p><span class="RakNetCode">bitStream-&gt;write(rakString);</span><br>
+    <br>
+    RakString is approximately 3X faster than std::string.</p>
+  <p>Use RakWString for Unicode support.</p>
+  <p><i>Programmer's notes:</i><br>
+    <br>
+    1. You can also write structs
+    directly into a Bitstream simply by casting it to a (char*). It will
+    copy your structs using memcpy. As with structs, it will not
+    dereference pointers so you should not write pointers into the
+    bitstream.<br>
+    2.
+    If you use a string very commonly, you can use the StringTable class
+    instead. It works the same way as StringCompressor, but can send two
+    bytes to represent a known string.<font class="G10" color="#666666" size="2"><font class="G10" color="#666666" size="2"><font class="G10" color="#666666" size="2"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><font class="G10" color="#666666" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2"><br>
+  </p></td>
+</tr>
+</tbody>
+</table>
+<table border="0" width="100%">
+<tbody>
+<tr>
+<td bgcolor="#2c5d92" class="RakNetWhiteHeader"><strong>&nbsp;See Also</td>
+</tr>
+</tbody>
+</table>
+<table border="0" cellpadding="10" cellspacing="0" width="100%">
+<tbody>
+<tr>
+<td><font class="G10" color="#111122" face="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1"><a href="index.html">Index</a><br>
+<a href="sendingpackets.html">Sending Packets</a><br>
+<a href="receivingpackets.html">Receiving Packets</a><br>
+<a href="timestamping.html">Timestamping</a><br>
+
+</td>
+</tr>
+</tbody>
+</table>
+</body></html>

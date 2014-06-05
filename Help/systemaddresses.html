@@ -1,0 +1,53 @@
+<HTML>
+<HEAD>
+
+<TITLE>System Addresses</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">SystemAddresses</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+<span class="RakNetBlueHeader">What are SystemAddresses?</span><BR>
+<BR>
+
+SystemAddresses are structs containing the binary IP address and port of a system on the network.  The structure is defined in the file RakNetTypes.h Here's some cases where you'll need SystemAddress:<BR>
+<UL>
+<LI>The server got a message from a particular client and wants to relay to all other clients.  You would specify the sender SystemAddress (given in the Packet::systemAddress field) in the Send function with broadcast as true.
+Some item in the gameworld, such as a mine, belongs to a particular player and you want to give the appropriate person points for the kill.
+<LI>You want to send a message to any peer on a peer to peer network.
+</UL>
+
+<p><strong>Utility functions:</strong></p>
+<p>ToString() - Given a system address structure, return a dotted IP address.</p>
+<p>FromString() - Given a dotted IP address, fill out the binaryAddress part of the structure.</p>
+<p><BR>
+  <B>Important Considerations:</B><BR><BR>
+  1.  The recipient of a packet automatically knows the SystemAddress of any system that sends a packet to it because it determines this from the sender's IP/Port combination.  The sender does not need to encode its own SystemAddress in the data structure if all you need is for the server to know what the SystemAddress is.  The SystemAdddress of the originating sender is automatically passed to the programmer in the Packet structure that is returned by Receive.<BR>
+  <BR>
+  2.  When using the client server model, clients DO NOT know the SystemAddress of who originally sent the packet.  As far as a client is concerned all packets originate with the server.  Therefore if it is necessary that a client know the SystemAddress of another client you must add a SystemAddress field into the data struct.  You can either have the sending client fill this field in, or you can have the server fill it out when it gets the packet from the original sender.</p>
+<p>3. The system address for a particular instance of RakPeer won't change over the course of the connection, with the exception of the <a href="router.html">Router2</a> plugin. However, is not necessarily the same to all other systems (such as if that system were behind a symmetric NAT). For a unique identifier, use rakNetGUID, found in the Packet structure. RakPeerInterface has functions to operate on RakNetGUID.</p>
+<p>4. It is preferred that you refer to remote systems by RakNetGUID, instead of SystemAddress. RakNetGUID is a unique identifier for an instance of RakPeer, while SystemAddress is not. And it is necessary to exclusively use RakNetGUID if you plan to use the <a href="router.html">Router2</a> plugin.<BR>
+  <BR>
+  <BR>
+</p></TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><br>
+<a href="router.html">Router2</a><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

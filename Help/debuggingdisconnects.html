@@ -1,0 +1,118 @@
+<HTML>
+<HEAD>
+<TITLE>Debugging Disconnections</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">Debugging disconnections or missing packets</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">How to trace and debug received datagrams in RakNet</span><BR>
+        </p>
+    <p>If your systems seem to get disconnected, or get no data, and all the usual debugging attempts have failed, here is an overview of how the RakNet handles incoming messages.</p>
+    <p><strong>1. SocketLayer::RecvFromBlocking() in SocketLayer.cpp</strong></p>
+    <p>RecvFromBlocking() is called from a thread RecvFromLoop that is created in RakPeer.cpp. Every datagram that arrives goes through this function - therefore, if you get no data, this is the first place to put a breakpoint. </p>
+<p class="RakNetCode">*bytesReadOut = recvfrom( s, dataOutModified, dataOutSize, flag, sockAddrPtr, socketlenPtr );</p>    
+<p>That function should return, and bytesReadOut should be greater than 0. If you put a breakpoint after that function, and the breakpoint does not hit, then no datagrams arrived. At the bottom of the function the following code reads the address and port of the sender.</p>
+<p class="RakNetCode">systemAddressOut-&gt;port=ntohs( sa.sin_port );<br>
+systemAddressOut-&gt;binaryAddress=sa.sin_addr.s_addr;    </p>
+<p>The datagram ends up in the rakPeer-&gt;bufferedPackets queue. The function SetEvent() is called on the rakPeer-&gt;quitAndDataEvents SignaledEvent class, which tells the UpdateNetworkLoop() thread to stop waiting and process the message.</p>
+<p><em>If you do not even hit this breakpoint, then there is a bug in your network.</em></p>
+<p><strong>2. RakPeer::RunUpdateCycle()</strong><strong> in RakPeer.cpp</strong></p>
+<p>RunUpdateCycle() is an update function that the UpdateNetworkLoop calls, many times per second. It's triggered by either time or by the rakPeer-&gt;quitAndDataEvents SignaledEvent class. For debugging message flows, you want a breakpoint towards the top of the function here:</p>
+<p class="RakNetCode">if (socketListIndex!=socketList.Size())<br>
+ProcessNetworkPacket(recvFromStruct-&gt;systemAddress, recvFromStruct-&gt;data, recvFromStruct-&gt;bytesRead, this, socketList[socketListIndex], recvFromStruct-&gt;timeRead);</p>
+<p>When a datagram is put in the rakPeer-&gt;bufferedPackets queue from step 1, it is processed here.</p>
+<p><em>If you do not hit this breakpoint, then either the thread is not running (unlikely) or there is a bug with the SignaledEvent class, or else the thread has locked up somewhere.</em></p>
+<p><strong>3. void ProcessNetworkPacket(...) in RakPeer.cpp</strong></p>
+<p>ProcessNetworkPacket is called for each incoming datagram. At the very top of the function a call is made to ProcessOfflineNetworkPacket(). ProcessOfflineNetworkPacket() checks if the sender is banned and if the message is prefixed with an array of bytes corresponding to OFFLINE_MESSAGE_DATA_ID. If the user is banned, the function returns and no further processing occurs. If the message is prefixed with OFFLINE_MESSAGE_DATA_ID, then this is generally a handshaking message, and the caller ProcessNetworkPacket() does not process further. For systems that are already connected, ProcessOfflineNetworkPacket() should return false. For debugging loss of messages for systems I already know are connected, I would step over the call to ProcessOfflineNetworkPacket, and only trace into it if it returns true.</p>
+<p>The next operation in ProcessNetworkPacket() is to look up the structure representing the remote system from the systemAddress (the IP address) by calling rakPeer-&gt;GetRemoteSystemFromSystemAddress( systemAddress, true, true );. A remoteSystem structure should be returned. If not, then the sender's IP address is unknown, and the message is not tagged as an offline message, so the datagram is ignored.</p>
+<p>Generally, you should expect ProcessNetworkPacket() to proceed to </p>
+<p>remoteSystem-&gt;reliabilityLayer.HandleSocketReceiveFromConnectedPlayer(<br>
+data, length, systemAddress, rakPeer-&gt;messageHandlerList, remoteSystem-&gt;MTUSize,<br>
+rakNetSocket-&gt;s, &amp;rnr, rakNetSocket-&gt;remotePortRakNetWasStartedOn_PS3, timeRead);</p>
+<p><em>If HandleSocketReceiveFromConnectedPlayer() does not get called, then either the sender is not connected, the sender is banned, the sender was recently disconnected, there is a bug with GetRemoteSystemFromSystemAddress(), or the connected datagram encoding happened to match OFFLINE_MESSAGE_DATA_ID which shouldn't happen except due to bugs.</em></p>
+<p><strong>4. ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(...)</strong></p>
+<p>This function handles processing a datagram from a connected player. Each datagram roughly follows the DatagramHeaderFormat structure at the top of the file. A datagram is either an acknowledgement of datagrams this system had previously sent, a negative acknowledgement of datagrams that didn't arrive, or one or more messages that the user had generated from the RakPeer::Send() call.</p>
+<p>This function is large and complex, but you generally do not need to deal with ACKs or NAKs, and can skip to the part that reads:</p>
+<p class="RakNetCode">InternalPacket* internalPacket = CreateInternalPacketFromBitStream( &amp;socketData, timeRead );</p>
+<p>ReliabilityLayer::CreateInternalPacketFromBitStream(...) reads the header for each user message. The header contains data such as how long the message is, if the message had to be fragmented, and if it needs to be ordered. If the format of the message is invalid, the function will return 0. Otherwise, the InternalPacket structure is allocated and return with the user data filled in.</p>
+<p>If the very first call to the function fails, that is a bug. However, a datagram can contain more than one message, so the function is called in a loop until failure.</p>
+<p class="RakNetCode">while ( internalPacket )<br>
+{<br>
+...<br>
+// Parse the bitstream to create an internal packet<br>
+internalPacket = CreateInternalPacketFromBitStream( &amp;socketData, timeRead );<br>
+}</p>
+<p>Immediately inside that loop is this block of code:</p>
+<p class="RakNetCode">for (unsigned int messageHandlerIndex=0; messageHandlerIndex &lt; messageHandlerList.Size(); messageHandlerIndex++)<br>
+{<br>
+#if CC_TIME_TYPE_BYTES==4<br>
+messageHandlerList[messageHandlerIndex]-&gt;OnInternalPacket(internalPacket, receivePacketCount, systemAddress, timeRead, false);<br>
+#else<br>
+messageHandlerList[messageHandlerIndex]-&gt;OnInternalPacket(internalPacket, receivePacketCount, systemAddress, (RakNet::TimeMS)(timeRead/(CCTimeType)1000), false);<br>
+#endif<br>
+}</p>
+<p>OnInternalPacket() is used for the PacketLogger plugin. If you think messages are being sent, but they are not listed by the PacketLogger, then it didn't get this far.</p>
+<p>The next block of code checks if this is a duplicate message. </p>
+<p class="RakNetCode">holeCount = (DatagramSequenceNumberType)(internalPacket-&gt;reliableMessageNumber-receivedPacketsBaseIndex);<br>
+const DatagramSequenceNumberType typeRange = (DatagramSequenceNumberType)(const uint32_t)-1;</p>
+<p>That is the start of a major chunk of code. <span class="RakNetCode">receivedPacketsBaseIndex</span> is a number that is incremented by one for each message that arrives from the remote system. As long as messages arrive in order, holeCount would be 0. If a message skipped one index, holeCount would be one. If a message was an immediate duplicate, holeCount would be negative 1 and be ignored. hasReceivedPacketQueue is a queue of booleans that indicates if we got a message for a given index. One potential failure point is this code:</p>
+<p class="RakNetCode">if (holeCount &gt; (DatagramSequenceNumberType) 1000000)<br>
+{<br>
+RakAssert(&quot;Hole count too high. See ReliabilityLayer.h&quot; &amp;&amp; 0);<br>
+...<br>
+}</p>
+<p>To avoid memory attacks, the queue size is limited to that number. In practice a message should never be out of order by that much, even on a LAN.</p>
+<p>If the message was split by the sender, ReliabiltyLayer::InsertIntoSplitPacketList(...) is called. When all parts of a message has arrived, then ReliabiltyLayer::BuildPacketFromSplitPacketList() will return the reassembled message.</p>
+<p>From HandleSocketReceiveFromConnectedPlayer zero or more messages may be returned to the user. They are pushed to the outputQueue queue, for example:</p>
+<p class="RakNetCode">outputQueue.Push( internalPacket, _FILE_AND_LINE_  );</p>
+<p><em>The most likely failure point here should you not get data is a bug with the packet format in CreateInternalPacketFromBitStream().</em></p>
+<p><strong>5. ReliabilityLayer::Receive( unsigned char **data )</strong></p>
+<p>This function returns messages pushed to the outputQueue queue. It is called from RakPeer::RunUpdateCycle() and should be called on a regular interval, once for each connected system.</p>
+<p><strong>6. bool RakPeer::RunUpdateCycle( RakNet::TimeUS timeNS, RakNet::Time timeMS )</strong></p>
+<p class="RakNetCode">// Does the reliability layer have any packets waiting for us?<br>
+// To be thread safe, this has to be called in the same thread as HandleSocketReceiveFromConnectedPlayer<br>
+bitSize = remoteSystem-&gt;reliabilityLayer.Receive( &amp;data );</p>
+<p>As described in step 5, the above code is called on a regular interval, once for each connected system. If bitSize is greater than 0, then we have a message from a connected system. This is probably a user message, although as you can see from the code in RakPeer it also checks for messages the user should not send, such as ID_CONNECTION_REQUEST. This is because part of the handshaking process is done reliably.</p>
+<p>Assuming that this is indeed a user message, the message is pushed to a queue here:<span class="RakNetCode"></span></p>
+<p class="RakNetCode">if (data[0]&gt;=(MessageID)ID_TIMESTAMP &amp;&amp;<br>
+remoteSystem-&gt;isActive<br>
+)<br>
+{<br>
+packet=AllocPacket(byteSize, data, _FILE_AND_LINE_);<br>
+packet-&gt;bitSize = bitSize;<br>
+packet-&gt;systemAddress = systemAddress;<br>
+packet-&gt;systemAddress.systemIndex = ( SystemIndex ) remoteSystemIndex;<br>
+packet-&gt;guid = remoteSystem-&gt;guid;<br>
+packet-&gt;guid.systemIndex=packet-&gt;systemAddress.systemIndex;<br>
+AddPacketToProducer(packet);<br>
+}</p>
+<p>This adds the message to the packetReturnQueue queue found in RakPeer.</p>
+<p><strong>7. Packet* RakPeer::Receive( void )</strong></p>
+<p>Receive() is called by the user. The Update() function is called for all plugins. Then the packetReturnQueue is checked to see if a message should be returned to the user.</p>
+<p>&nbsp;</p>    
+    </TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <A HREF="index.html">Index</A><BR> 
+        <a href="RakNetUML.jpg">UML Diagram</a><a href="swigtutorial.html"></a></TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

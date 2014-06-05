@@ -1,0 +1,17 @@
+Speex has been ported to the Blackfin DSP, for the STAMP development board.
+
+This port has been tested on the STAMP development board and requires the 
+toolchain available at http://blackfin.uclinux.org/
+
+In order to cross-compile for uclinux:
+export CC=bfin-uclinux-gcc
+./configure --enable-blackfin-asm --enable-fixed-point --host=bfin-uclinux
+make
+make install
+
+The --enable-blackfin-asm option is not required, but it speeds up Speex by
+approximately a factor of two.
+
+If you're getting a crash when enabling --enable-blackfin-asm then your
+toolchain (assembler in fact) is probably too old (a bug was fixed in the
+June 3rd build)

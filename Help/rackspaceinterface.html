@@ -1,0 +1,104 @@
+<HTML>
+<HEAD>
+
+<TITLE>C++ interface to Rackspace Cloud Servers API</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="C++ interface to Rackspace Cloud Servers API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">C++ Interface to the Rackspace Cloud Servers API</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<P><span class="RakNetBlueHeader">Programatically manage application servers</span><BR>
+  <br>
+  Rackspace provides an HTTPS based API described at <a href="http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf">http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf</a>. RakNet supports HTTPS when using the class <a href="tcpinterface.html">TCPInterface</a> and compiled with OPEN_SSL_CLIENT_SUPPORT 1, defined in RakNetDefines.h.
+<P><strong>Setup:</strong>
+<P><span class="RakNetCode">#include &quot;Rackspace.h&quot;<br>
+  #include &quot;TCPInterface.h&quot;
+</span>
+<P class="RakNetCode">RakNet::Rackspace rackspaceApi;<br>
+RakNet::TCPInterface tcpInterface;
+  <br>
+  RakNet::RackspaceEventCallback_Default callback;
+  <br>
+  tcpInterface.Start(0, 0, 1);<br>
+  rackspaceAPI.Authenticate(&amp;tcpInterface, &quot;myAuthURL&quot;, &quot;myRackspaceUsername&quot;, &quot;myRackspaceAPIKey&quot;);
+  <br>
+  while (1) {
+  <br>
+  for (RakNet::Packet *packet=tcpInterface.Receive(); packet; tcpInterface.DeallocatePacket(packet), packet=tcpInterface.Receive()) 
+  rackspaceApi.OnReceive(packet);<br>
+  
+  rackspaceApi.OnClosedConnection(tcpInterface.HasLostConnection());<br>
+  }
+<P>The first three lines create an instance of TCPInterface, Rackspace, and the event handler for Rackspace respectively. The fourth line starts the TCPInterface class so outgoing connections can be initiated. The call to Authenticate logs into Rackspace and internally stores a key that can be used for subsequent operations. See the comments in Rackspace.h with the Authenticate() function for more details on these parameters. The two lines in the inner loop pass connection events to the Rackspace class.
+<P>Provided that authentication succeeds, Authenticate will return something other than UNASSIGNED_SYSTEM_ADDRESS to show that the connection completed. You will shortly thereafter get the callback OnAuthenticationResult with eventType set to RET_Success_204. After that you can call the other various functions exposed by the Rackspace class.
+<P>If the connection is immediately closed with no response from the server, you probably forgot to compile with OPEN_SSL_CLIENT_SUPPORT set to 1 in RakNetDefines.h or RakNetDefinesOverrides.h.
+<P><strong>Example of listing images:</strong>
+<P class="RakNetCode">  rackspaceApi.ListImages();
+<P>Wait for callback OnListImagesResult(RackspaceEventType eventType, const char *htmlAdditionalInfo)
+<P>As described in the <a href="http://docs.rackspacecloud.com/servers/api/v1.0/cs-devguide-20110112.pdf">devguide</a>, the callback will return HTML event codes 200, 203, 400, 500, 503, 401, 400, or 413. 200 and 203 indicate success.The event code will be returned in the eventType parameter. The actual HTML will be returned in htmlAdditionalInfo. Example output:
+<P><span class="RakNetCode">HTTP/1.1 200 OK<br>
+  Server: Apache-Coyote/1.1<br>
+  vary:  Accept, Accept-Encoding, X-Auth-Token<br>
+  Last-Modified: Tue, 29 Mar 2011 22:41:36 GMT<br>
+  X-PURGE-KEY: /570016/images<br>
+  Cache-Control: s-maxage=1800<br>
+  Content-Type: application/xml<br>
+  Content-Length: 1334<br>
+  Date: Sat, 02 Apr 2011 15:15:19 GMT<br>
+  X-Varnish: 601046147<br>
+  Age: 0<br>
+  Via: 1.1 varnish<br>
+  Connection: keep-alive
+</span>
+<p class="RakNetCode">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; standalone=&quot;yes&quot;?&gt;&lt;images xmlns=&quot;http://doc<br>
+  s.rackspacecloud.com/servers/api/v1.0&quot;&gt;&lt;image name=&quot;Windows Server 2008 R2 x64 -<br>
+  MSSQL2K8R2&quot; id=&quot;58&quot;/&gt;&lt;image name=&quot;Fedora 14&quot; id=&quot;71&quot;/&gt;&lt;image name=&quot;Red Hat Ente<br>
+  rprise Linux 5.5&quot; id=&quot;62&quot;/&gt;&lt;image name=&quot;Windows Server 2003 R2 SP2 x86&quot; id=&quot;29&quot;/<br>
+  &gt;&lt;image name=&quot;Oracle EL Server Release 5 Update 4&quot; id=&quot;40&quot;/&gt;&lt;image name=&quot;Windows<br>
+  Server 2003 R2 SP2 x64&quot; id=&quot;23&quot;/&gt;&lt;image name=&quot;Gentoo 10.1&quot; id=&quot;19&quot;/&gt;&lt;image name<br>
+  =&quot;Windows Server 2008 SP2 x86&quot; id=&quot;31&quot;/&gt;&lt;image name=&quot;Windows Server 2008 SP2 x64<br>
+  - MSSQL2K8R2&quot; id=&quot;57&quot;/&gt;&lt;image name=&quot;Ubuntu 9.10 (karmic)&quot; id=&quot;14362&quot;/&gt;&lt;image na<br>
+  me=&quot;Ubuntu 10.04 LTS (lucid)&quot; id=&quot;49&quot;/&gt;&lt;image name=&quot;Arch 2010.05&quot; id=&quot;55&quot;/&gt;&lt;imag<br>
+  e name=&quot;Oracle EL JeOS Release 5 Update 3&quot; id=&quot;41&quot;/&gt;&lt;image name=&quot;Ubuntu 8.04.2 L<br>
+  TS (hardy)&quot; id=&quot;10&quot;/&gt;&lt;image name=&quot;CentOS 5.4&quot; id=&quot;187811&quot;/&gt;&lt;image name=&quot;Fedora 1<br>
+  3&quot; id=&quot;53&quot;/&gt;&lt;image name=&quot;Windows Server 2008 SP2 x64&quot; id=&quot;24&quot;/&gt;&lt;image name=&quot;Cent<br>
+  OS 5.5&quot; id=&quot;51&quot;/&gt;&lt;image name=&quot;Ubuntu 10.10 (maverick)&quot; id=&quot;69&quot;/&gt;&lt;image name=&quot;Win<br>
+  dows Server 2008 R2 x64&quot; id=&quot;28&quot;/&gt;&lt;image name=&quot;Windows Server 2008 SP2 x86 - MSS<br>
+  QL2K8R2&quot; id=&quot;56&quot;/&gt;&lt;image name=&quot;Red Hat Enterprise Linux 5.4&quot; id=&quot;14&quot;/&gt;&lt;image nam<br>
+  e=&quot;Debian 5.0 (lenny)&quot; id=&quot;4&quot;/&gt;&lt;image name=&quot;Ubuntu256MBBigPacketTest&quot; id=&quot;943818<br>
+  4&quot;/&gt;&lt;image name=&quot;RakNet-setup&quot; id=&quot;9019637&quot;/&gt;&lt;/images&gt;</p>
+<p>RakNet does not currently parse the XML for you. There is an XML parser found at DependentExtensions\XML if you do not have your own.</p>
+<P><strong>Executing custom commands:</strong>
+<P>Rackspace provides an <a href="http://docs.rackspacecloud.com/servers/api/v1.0/">XML Schema</a> with the list of operations and parameters for the API. Some commands are more complicated than what the Rackspace class provides. For these commands, you can call Rackspace::AddOperation() directly. For example, here is the command to create a server:
+<P class="RakNetCode">RakNet::RakString xml(<br>
+&quot;&lt;?xml version=\&quot;1.0\&quot; encoding=\&quot;UTF-8\&quot;?&gt;&quot;<br>
+&quot;&lt;server xmlns=\&quot;http://docs.rackspacecloud.com/servers/api/v1.0\&quot; name=\&quot;%s\&quot; imageId=\&quot;%s\&quot; flavorId=\&quot;%s\&quot;&gt;&quot;<br>
+&quot;&lt;/server&gt;&quot;<br>
+,name.C_String() ,imageId.C_String(), flavorId.C_String());<br>
+AddOperation(RO_CREATE_SERVER, &quot;POST&quot;, &quot;servers&quot;, xml);
+<P>You could extend the XML to support loading an image with files, for example.
+<P><strong>Examples of server management with RakNet:</strong>
+<P>Reboot crashed servers - Run one master server that monitors the other servers. The master server can be at a fixed IP address, or you can use <a href="http://www.dyndns.com/">DynDNS</a> (There is also a C++ DynDNS class under /Source). When you start a Rackspace server, have the Rackspace server connect to the master server. If the master server at some point gets ID_CONNECTION_LOST, have the master server call Rackspace::RebootServer.
+<P>Matching capacity - Again run a master server. Using <a href="cloudcomputing.html">CloudServer and CloudClient</a>, inform the master server of the current connection load of each Rackspace server. If all servers are full or nearly so, use Rackspace::CreateServer to create a new server instance based on an image of your application. Similarly, if a server is completely empty, you can use Rackspace::DeleteServer to not incur the extra cost. Note that for game usage, we offer a hosted service <A HREF="http://masterserver2.raknet.com/">MasterServer2</A>. </TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<a href="cloudcomputing.html">Cloud Computing</a><BR>
+<a href="cloudhosting.html">Cloud Hosting</A><BR>
+<a href="tcpinterface.html">TCP Interface</A>
+</TD></TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,60 @@
+<HTML>
+<HEAD>
+
+<TITLE>Tutorial code sample 1</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC"><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif"><strong> 
+<img src="spacer.gif" width="8" height="1">Tutorial code sample 1</strong></font></td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2" CLASS="G10" COLOR="#3366CC"><strong>Instantiation and destruction.
+</strong></FONT>
+<FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2" CLASS="G10" COLOR="#666666">
+<BR><BR>
+This is the base code to instantiate and destroy a peer as client or a server, along with some simple user input.</FONT>
+
+<pre><FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1" CLASS="G10" COLOR="#111122">
+#include &lt;stdio.h&gt;
+#include "RakPeerInterface.h"
+
+#define MAX_CLIENTS 10
+#define SERVER_PORT 60000
+
+int main(void)
+{
+	char str[512];
+	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
+	bool isServer;
+
+	printf("(C) or (S)erver?\n");
+	gets(str);
+	if ((str[0]=='c')||(str[0]=='C'))
+	{
+		RakNet::SocketDescriptor sd;
+		peer->Startup(1,&sd, 1);
+		isServer = false;
+	} else {
+		RakNet::SocketDescriptor sd(SERVER_PORT,0);
+		peer->Startup(MAX_CLIENTS, &sd, 1);
+		isServer = true;
+	}
+
+
+	// TODO - Add code body here
+
+	RakNet::RakPeerInterface::DestroyInstance(peer);
+
+	return 0;
+}
+
+</FONT></pre>
+
+
+</TD>
+</TR></TABLE>
+</BODY>
+</HTML>

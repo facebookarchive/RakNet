@@ -1,0 +1,11 @@
+This sample demonstrate the usage of RakVoice with FMOD. The RakVoice class is a wrapper encodes input data using speex (http://www.speex.org/), sends it as a packet using Raknet, and decodes it using Speex.
+A reusable class (FMODVoiceAdapter) is provided in this example, to connect RakVoice with FMOD.
+
+NOTES:
+ - FMOD version 4.04.XX was used to create this sample.
+ - This project expects to find FMOD headers and lib in the default direcory, which is "C:\Program Files\FMOD SoundSystem\FMOD Programmers API".
+If you have FMOD installed in a different directory, you'll need to edit the project's properties.
+ - FMOD's DLL (fmodex.dll), is expected to be found in the executable directory, if running outside the IDE, or in the directory you accessed this file, if running from inside the IDE.
+
+See SpeexLicense.txt for the license agreement of Speex.
+You should also read FMOD's license.

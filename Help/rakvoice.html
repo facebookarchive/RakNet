@@ -1,0 +1,78 @@
+<HTML>
+<HEAD>
+<TITLE>RakVoice</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">RakVoice</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Real time voice communication </span><BR>
+        <BR>
+         RakVoice is a  feature of RakNet that allows real time voice communication at a cost of only ~2200 bytes per second at 8000 16 bit samples per second.  It uses Speex (<A HREF="http://www.speex.org/">http://www.speex.org/</A>) to do the encoding.  RakVoice is plugin class that makes it easier to encode, send, decode, and relay raw sound data.<BR>
+        Note that RakVoice is not part of the RakNet core, so you'll need to add it to your project. <br>
+        <br>
+        To get an instance of RakVoice just allocate one with new, or have global object handy.<BR>
+        <BR>
+        RakVoice rakVoice;<BR>
+        <BR>
+        Since RakVoice is a plugin, you need to attach it to a peer.<br>
+        <BR>
+        rakPeer->AttachPlugin(&rakVoice);<br>
+        <br>
+        initialize the class with the sample rate and the size of the buffer to process. A buffer size of 512 bytes is a reasonable value when using frequencies of 8000hz. <br>
+        The buffer size is the number of bytes to encode at a time, and the number of bytes returned by the decoder.  This is normally the same size you want to lock the sound buffer by.  Encoding will reduce the packet size by about 75%.<BR>
+        <BR>
+        rakVoice.Init(8000, 512);<BR>
+        <BR>
+        When data comes in on the sound buffer from the microphone, you should call SendFrame, passing the SystemAddress of the recipient system, and a pointer to the buffer to encode.  Unlike normal API send calls, you cannot broadcast voice packets because each encoder and decoder is a matched pair.  Therefore, you must always specify the SystemAddress so the sender knows which encoder to use.  To broadcast, send it to everyone individually.  Note that the size of the input buffer must match the buffer size we set earlier.  For example:<BR>
+        <BR>
+        rakVoice.SendFrame(recipientSystemAddress, (char*)inputBuffer);<BR>
+        <BR>
+        In the other system, where data arrives, depending on the sound engine you are using, you'll probably have circular sound buffer, which you'll need to feed with the decoded data you receive from RakVoice. Every time your sound engine needs data to play, you should call ReceiveFrame. It will write a buffer of sound at the passed pointer,  or just just silence if no new data was available. Once again, remember that the data returned has the same size you specified in Init (see above). <BR>
+        <BR>
+        rakVoice.ReceiveFrame((char*)outbufffer);<BR>
+        
+        
+    </p>
+    
+	  The last point of note is that RakVoice requires all clients in a chat session to be aware of all other clients' connection states.  The reasons for this are:
+      <UL>
+        <LI>1. You need to call SendFrame with a specific recipient for broadcasting.</li>
+        <LI>2. You may want to call CloseVoiceChannel, to stop communications with a particular system. </li>
+      </UL>
+	  <BR>
+	 RakVoice only provides a means to encode and decode raw sound data, and means to communicate with the network.  It does not include a mechanism to play or record sound.
+	 However, two samples are provived as an example on how to integrate with sound engines:<br>
+	 <BR>
+	 <i>\Samples\RakVoiceFMOD</i> - Provides an easy to use class to integrate RakVoice with the well known <a href="http://www.fmod.org/">FMOD</a> sound engine.<BR>
+	 <i>\Samples\RakVoice</i> - An example on how to integrate RakVoice with the free and open-source PortAudio sound engine.<br>
+	 <BR>
+	  
+		<BR>
+      <B>The source to PortAudio (<A HREF="http://www.portaudio.com/">http://www.portaudio.com/</A>) and Speex (<A HREF="http://www.speex.org/">http://www.speex.org/</A>) are included in RakNet and can be found in the root directory for rebuilding on other platforms.  These are independent open-source APIs and are not owned by me nor do I provide support for them.  Please refer to the respective webpages for more information on these APIs and the included license agreements for them.</B> 	  
+    </TD>
+  </TR>
+</TABLE>
+
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD> <A HREF="index.html">Index</A><BR>
+    </TD>
+  </TR>
+</TABLE>
+</BODY>
+</HTML>

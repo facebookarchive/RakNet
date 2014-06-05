@@ -1,0 +1,36 @@
+1. Download the native client SDK and Python if you need it.
+https://developers.google.com/native-client/sdk/download
+Get pepper_canary, not the recommended versions.
+D:\nacl_sdk>naclsdk update pepper_canary
+
+2. Download chromium
+2A. First, get the source tarball as described in "Bootstrap using the tarball"
+http://dev.chromium.org/developers/how-tos/get-the-code
+2B. Download the depot_tools
+http://dev.chromium.org/developers/how-tos/install-depot-tools
+2C. After downloading the gclient / depot tools, be sure to start a new command prompt so the addition to your PATH takes effect.
+Exectute the section on "Check out the sources"
+
+3. Copy the private headers from the chromium repo into the SDK repo
+mkdir D:\nacl_sdk\pepper_canary\include\ppapi\c\private
+mkdir D:\nacl_sdk\pepper_canary\include\ppapi\cpp\private
+copy D:\chromiumtrunk\src\ppapi\c\private\*.h D:\nacl_sdk\pepper_canary\include\ppapi\c\private
+copy D:\chromiumtrunk\src\ppapi\cpp\private\*.h D:\nacl_sdk\pepper_canary\include\ppapi\cpp\private
+
+4) Enable the experimental UDP apis in Chrome
+go to about:flags and enable "NaCl Socket API"
+
+5. Install the visual studio update
+http://mainroach.blogspot.com/2012/10/official-nacl-vs2010-add-in-available.html
+D:\nacl_sdk>naclsdk install vs_addin
+D:\nacl_sdk>cd vs_addin
+D:\nacl_sdk\vs_addin>install.bat
+
+Set the enviroment variable NACL_SDK_ROOT to D:\nacl_sdk\pepper_canary
+Then see https://developers.google.com/native-client/dev/devguide/devcycle/vs-addin#add-platforms
+
+6. Build as in make.bat
+
+7. Run httpd.py
+
+8. Press F5 to debug. There are these instructions, but I don't believe they are relevant:http://www.chromium.org/nativeclient/how-tos/debugging-documentation/debugging-with-debug-stub-recommended/debugging-nacl-apps-in-visual-studio-with-wingdb-using-debug-stub-experimental

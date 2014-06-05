@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+<TITLE>Router Manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Router2 Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Send messages through intermediate systems</span><BR>
+        </p>
+      <p>Router2 routes datagrams between two systems that are not directly connected by using the bandwidth of a third system, to which the other two systems were connected. It is of benefit when a fully connected mesh topology is desired, but could not be completely established due to routers and/or firewalls. As the system address of a remote system will be the system address of the intermediary, it is necessary to use the RakNetGUID object to refer to systems, including with other plugins</p>
+      <p>To use</p>
+<p>Attach one instance of the Router2 plugin to each system..</p>
+      <p>Call EstablishRouting with the RakNetGUID of the destination system.</p>
+      <p>A message will be broadcast to all connected instances of RakPeer. For each of those that are running the Router2 plugin, the connection list will be queried to see who, if anyone is connected to the target system.</p>
+      <p>After all systems are queried, the system with the lowest total ping, that is also already forwarding the fewest connections, will start the UDPForwarder system and return ID_ROUTER_2_FORWARDING_ESTABLISHED. If no path is available, ID_ROUTER_2_FORWARDING_NO_PATH will be returned instead.</p>
+      <p>Once a path is established, you should attempt to connect to the target system as usual. The following code should be used:</p>
+    <p class="RakNetCode"> RakNet::BitStream bs(packet-&gt;data, packet-&gt;length, false);<br>
+  bs.IgnoreBytes(sizeof(MessageID));<br>
+RakNetGUID endpointGuid;<br>
+bs.Read(endpointGuid);<br>
+unsigned short sourceToDestPort;<br>
+bs.Read(sourceToDestPort);<br>
+char ipAddressString[32];<br>
+packet-&gt;systemAddress.ToString(false, ipAddressString);<br>
+rakPeerInterface-&gt;EstablishRouting(ipAddressString, sourceToDestPort, 0,0);</p>
+    <p>Note that rerouting happens automatically. When a connection is rerouted, you will get ID_ROUTER_2_REROUTED. While the SystemAddress will have changed, the RakNetGUID will not. Therefore, you must only refer to the target system using RakNetGUID when using this plugin.</p></TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <A HREF="index.html">Index</A><BR>
+        <a href="nattraversalarchitecture.html">NAT Traversal architecture</a><BR>
+                  </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

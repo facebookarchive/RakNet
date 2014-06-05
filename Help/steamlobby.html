@@ -1,0 +1,51 @@
+<HTML>
+<HEAD>
+
+<TITLE>Lobby2Client_Steam</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Lobby2Client_Steam Overview</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p><span class="RakNetBlueHeader">Use Steamworks to join Lobbies, Rooms, and do NAT traversal</span></p>
+    <p>The Lobby2Client_Steam plugin provides an interface to Steamworks services that cooperate with RakNet. This avoids the need to host your owns sever, which is otherwise required by RakNet's <a href="natpunchthrough.html">NATPunchthrough</a> and <a href="lobby.html">Lobby</a> systems.</p>
+    <p>Dependencies:</p>
+    <OL>
+<LI>Assumes the Steam SDK is located at C:\Steamworks . If not, modify the post-build step paths and linker paths accordingly.
+<LI>You can get the Steamworks API from https://partner.steamgames.com/ , which requires a signup and legal agreement.
+<LI>You need your own steam_appid.txt file. This sample just copies the one that comes with steam.
+</OL>
+<p>Operations include:</p>
+    <UL>
+<LI><strong>Get the list of rooms </strong>- L2MID_Console_SearchRooms
+<LI><strong>Leave a room</strong> - L2MID_Console_LeaveRoom
+<LI><strong>Create a room</strong> - L2MID_Console_CreateRoom
+<LI><strong>Join a room</strong> - L2MID_Console_JoinRoom
+<LI><strong>Get details about a specific room</strong> - L2MID_Console_GetRoomDetails
+<LI><strong>Send a chat message to a room</strong> - L2MID_Console_SendRoomChatMessage
+<LI><strong>Get the members in a room</strong>- Lobby2Client_Steam::GetRoomMembers
+<LI><strong>Get notification of NAT Traversal success</strong> - SteamResults::Notification_Console_RoomMemberConnectivityUpdate
+    </UL>
+<p><em>See the sample project Samples\SteamLobby for an implementation of this system.</em></p></TD>
+</TR></TABLE>
+
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD><p><A HREF="index.html">Index</A><br>
+        <a href="lobby.html">Lobby</a><br>
+          <a href="natpunchthrough.html">NATPunchthrough</a><BR>
+        <a href="plugininterface.html">PluginInterface</a></p></TD></TR></TABLE>
+</BODY>
+</HTML>

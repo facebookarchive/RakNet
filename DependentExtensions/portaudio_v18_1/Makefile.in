@@ -1,0 +1,96 @@
+#
+# PortAudio Makefile.in
+#
+# Dominic Mazzoni
+#
+
+PREFIX = @prefix@
+CC = @CC@
+CFLAGS = @CFLAGS@ -Ipa_common
+LIBS = @LIBS@
+AR = @AR@
+RANLIB = @RANLIB@
+INSTALL = @INSTALL@
+SHARED_FLAGS = @SHARED_FLAGS@
+DLL_LIBS = @DLL_LIBS@
+
+OTHER_OBJS = @OTHER_OBJS@
+
+PALIB = libportaudio.a
+PADLL = @PADLL@
+PADLLV = $(PADLL).0.0.18
+PAINC = pa_common/portaudio.h
+
+COMMON_OBJS = \
+	pa_common/pa_convert.o \
+	pa_common/pa_lib.o
+
+TESTS = \
+	bin/patest_buffer \
+	bin/patest_clip \
+	bin/patest_dither \
+	bin/patest_hang \
+	bin/patest_latency \
+	bin/patest_leftright \
+	bin/patest_longsine \
+	bin/patest_many \
+	bin/patest_maxsines \
+	bin/patest_multi_sine \
+	bin/patest_pink \
+	bin/patest_record \
+	bin/patest_ringmix \
+	bin/patest_saw \
+	bin/patest_sine8 \
+	bin/patest_sine \
+	bin/patest_sine_formats \
+	bin/patest_sine_time \
+	bin/patest_stop \
+	bin/patest_sync \
+	bin/patest_toomanysines \
+	bin/patest_underflow \
+	bin/patest_wire
+
+OBJS = $(COMMON_OBJS) $(OTHER_OBJS)
+
+all: lib/$(PALIB) lib/$(PADLLV) tests
+
+tests: bin/ $(TESTS)
+
+lib/$(PALIB): lib/ $(OBJS) Makefile $(PAINC)
+	$(AR) ruv lib/$(PALIB) $(OBJS)
+	$(RANLIB) lib/$(PALIB)
+
+lib/$(PADLLV): lib/ $(OBJS) Makefile $(PAINC)
+	$(CC) $(SHARED_FLAGS) -o lib/$(PADLLV) $(OBJS) $(DLL_LIBS)
+
+$(TESTS): bin/%: lib/$(PALIB) Makefile $(PAINC) pa_tests/%.c
+	$(CC) -o $@ $(CFLAGS) pa_tests/$*.c lib/$(PALIB) $(LIBS)
+
+install: lib/$(PALIB) lib/$(PADLLV)
+	$(INSTALL) -m 644 lib/$(PADLLV) $(PREFIX)/lib/$(PADLLV)
+	$(INSTALL) -m 644 lib/$(PALIB) $(PREFIX)/lib/$(PALIB)
+	cd $(PREFIX)/lib && rm -f $(PADLL) && ln -s $(PADLLV) $(PADLL)
+	$(INSTALL) -m 644 pa_common/portaudio.h $(PREFIX)/include/portaudio.h
+	@echo ""
+	@echo "------------------------------------------------------------"
+	@echo "PortAudio was successfully installed."
+	@echo ""
+	@echo "On some systems (e.g. Linux) you should run 'ldconfig' now"
+	@echo "to make the shared object available.  You may also need to"
+	@echo "modify your LD_LIBRARY_PATH environment variable to include"
+	@echo "the directory $(PREFIX)/lib"
+	@echo "------------------------------------------------------------"
+	@echo ""
+
+clean:
+	rm -f $(OBJS) $(TESTS) lib/$(PALIB)
+	rm -f config.log config.status
+
+%.o: %.c Makefile $(PAINC)
+	$(CC) -c $(CFLAGS) $< -o $@
+
+bin:
+	mkdir bin
+
+lib:
+	mkdir lib

@@ -1,0 +1,192 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="Phil Burk">
+   <meta name="Description" content="Internal docs. How a stream is started or stopped.">
+   <meta name="KeyWords" content="audio, tutorial, library, portable, open-source, DirectSound,sound, music, JSyn, synthesis,">
+   <title>PortAudio Implementation - Start/Stop</title>
+</head>
+<body>
+&nbsp;
+<center><table COLS=1 WIDTH="100%" BGCOLOR="#FADA7A" >
+<tr>
+<td>
+<center>
+<h1>
+<a href="http://www.portaudio.com">PortAudio</a> Latency</h1></center>
+</td>
+</tr>
+</table></center>
+
+<p>This page discusses the issues of audio latency for <a href="http://www.portaudio.com">PortAudio</a>
+. It offers suggestions on how to lower latency to improve the responsiveness
+of applications.
+<blockquote><b><a href="#what">What is Latency?</a></b>
+<br><b><a href="#portaudio">PortAudio and Latency</a></b>
+<br><b><a href="#macintosh">Macintosh</a></b>
+<br><b><a href="#unix">Unix</a></b>
+<br><b><a href="#windows">WIndows</a></b></blockquote>
+By Phil Burk, Copyright 2002 Phil Burk and Ross Bencina
+<h2>
+<a NAME="what"></a>What is Latency?</h2>
+Latency is basically longest time that you have to wait before you obtain
+a desired result. For digital audio output it is the time between making
+a sound in software and finally hearing it.
+<p>Consider the example of pressing a key on the ASCII keyboard to play
+a note. There are several stages in this process which each contribute
+their own latency. First the operating system must respond to the keypress.
+Then the audio signal generated must work its way through the PortAudio
+buffers. Then it must work its way through the audio card hardware. Then
+it must go through the audio amplifier which is very quick and then travel
+through the air. Sound travels at abous one foot per millisecond through
+air so placing speakers across the room can add 5-20 msec of delay.
+<p>The reverse process occurs when recording or responding to audio input.
+If you are processing audio, for example if you implement a software guitar
+fuzz box, then you have both the audio input and audio output latencies
+added together.
+<p>The audio buffers are used to prevent glitches in the audio stream.
+The user software writes audio into the output buffers. That audio is read
+by the low level audio driver or by DMA and sent to the DAC. If the computer
+gets busy doing something like reading the disk or redrawing the screen,
+then it may not have time to fill the audio buffer. The audio hardware
+then runs out of audio data, which causes a glitch. By using a large enough
+buffer we can ensure that there is always enough audio data for the audio
+hardware to play. But if the buffer is too large then the latency is high
+and the system feels sluggish. If you play notes on the keyboard then the
+"instrument" will feel unresponsive. So you want the buffers to be as small
+as possible without glitching.
+<h2>
+<a NAME="portaudio"></a>PortAudio and Latency</h2>
+The only delay that PortAudio can control is the total length of its buffers.
+The Pa_OpenStream() call takes two parameters: numBuffers and framesPerBuffer.
+The latency is also affected by the sample rate which we will call framesPerSecond.
+A frame is a set of samples that occur simultaneously. For a stereo stream,
+a frame is two samples.
+<p>The latency in milliseconds due to this buffering&nbsp; is:
+<blockquote><tt>latency_msec = 1000 * numBuffers * framesPerBuffer / framesPerSecond</tt></blockquote>
+This is not the total latency, as we have seen, but it is the part we can
+control.
+<p>If you call Pa_OpenStream() with numBuffers equal to zero, then PortAudio
+will select a conservative number that will prevent audio glitches. If
+you still get glitches, then you can pass a larger value for numBuffers
+until the glitching stops. if you try to pass a numBuffers value that is
+too small, then PortAudio will use its own idea of the minimum value.
+<p>PortAudio decides on the minimum number of buffers in a conservative
+way based on the frameRate, operating system and other variables. You can
+query the value that PortAudio will use by calling:
+<blockquote><tt>int Pa_GetMinNumBuffers( int framesPerBuffer, double sampleRate
+);</tt></blockquote>
+On some systems you can override the PortAudio minimum if you know your
+system can handle a lower value. You do this by setting an environment
+variable called PA_MIN_LATENCY_MSEC which is read by PortAudio when it
+starts up. This is supported on the PortAudio implementations for Windows
+MME, Windows DirectSound, and Unix OSS.
+<h2>
+<a NAME="macintosh"></a>Macintosh</h2>
+The best thing you can do to improve latency on Mac OS 8 and 9 is to turn
+off Virtual Memory. PortAudio V18 will detect that Virtual Memory is turned
+off and use a very low latency.
+<p>For Mac OS X the latency is very low because Apple Core Audio is so
+well written. You can set the PA_MIN_LATENCY_MSEC variable using:
+<blockquote><tt>setenv PA_MIN_LATENCY_MSEC 4</tt></blockquote>
+
+<h2>
+<a NAME="unix"></a>Unix</h2>
+PortAudio under Unix currently uses a backgroud thread that reads and writes
+to OSS. This gives you decent but not great latency. But if you raise the
+priority of the background thread to a very priority then you can get under
+10 milliseconds latency. In order to raise your priority you must run the
+PortAudio program as root! You must also set PA_MIN_LATENCY_MSEC using
+the appropriate command for your shell.
+<h2>
+<a NAME="windows"></a>Windows</h2>
+Latency under Windows is a complex issue because of all the alternative
+operating system versions and device drivers. I have seen latency range
+from 8 milliseconds to 400 milliseconds. The worst case is when using Windows
+NT. Windows 98 is a little better, and Windows XP can be quite good if
+properly tuned.
+<p>The underlying audio API also makes a lot of difference. If the audio
+device has its own DirectSound driver then DirectSound can often provide
+better latency than WMME. But if a real DirectSound driver is not available
+for your device then it is emulated using WMME and the latency can be very
+high. That's where I saw the 400 millisecond latency. The ASIO implementation
+is generally very good and will give the lowest latency if available.
+<p>You can set the PA_MIN_LATENCY_MSEC variable to 50, for example, by
+entering in MS-DOS:
+<blockquote><tt>set PA_MIN_LATENCY_MSEC=50</tt></blockquote>
+If you enter this in a DOS window then you must run the PortAudio program
+from that same window for the variable to have an effect. You can add that
+line to your C:\AUTOEXEC.BAT file and reboot if you want it to affect any
+PortAudio based program.
+<p>For Windows XP, you can set environment variables as follows:
+<ol>
+<li>
+Select "Control Panel" from the "Start Menu".</li>
+
+<li>
+Launch the "System" Control Panel</li>
+
+<li>
+Click on the "Advanced" tab.</li>
+
+<li>
+Click on the "Environment Variables" button.</li>
+
+<li>
+Click "New" button under&nbsp; User Variables.</li>
+
+<li>
+Enter PA_MIN_LATENCY_MSEC for the name and some optimistic number for the
+value.</li>
+
+<li>
+Click OK, OK, OK.</li>
+</ol>
+
+<h3>
+Improving Latency on Windows</h3>
+There are several steps you can take to improve latency under windows.
+<ol>
+<li>
+Avoid reading or writng to disk when doing audio.</li>
+
+<li>
+Turn off all automated background tasks such as email clients, virus scanners,
+backup programs, FTP servers, web servers, etc. when doing audio.</li>
+
+<li>
+Disconnect from the network to prevent network traffic from interrupting
+your CPU.</li>
+</ol>
+<b>Important: </b>Windows XP users can also tune the OS to favor background
+tasks, such as audio, over foreground tasks, such as word processing. I
+lowered my latency from 40 to 10 milliseconds using this simple technique.
+<ol>
+<li>
+Select "Control Panel" from the "Start Menu".</li>
+
+<li>
+Launch the "System" Control Panel</li>
+
+<li>
+Click on the "Advanced" tab.</li>
+
+<li>
+Click on the "Settings" button in the Performance area.</li>
+
+<li>
+Click on the "Advanced" tab.</li>
+
+<li>
+Select "Background services" in the Processor Scheduling area.</li>
+
+<li>
+Click OK, OK.</li>
+</ol>
+Please let us know if you have others sugestions for lowering latency.
+<br>&nbsp;
+<br>&nbsp;
+</body>
+</html>

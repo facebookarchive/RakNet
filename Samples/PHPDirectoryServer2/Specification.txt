@@ -1,0 +1,70 @@
+RakNet is using a PHP page to hold listings of running games. For example, I might run a server whose name is "MyServer" with the game mode "Deathmatch" and I want people to know that this server is running. Other people would connect to this webpage to download the list of running servers, in which case you would return those two fields to them.
+
+General requirements:
+
+1. Page must not assume any kind of database or special configuration, other than the ability to run PHP
+2. Operations must work 100% of the time.
+
+Operations:
+
+1. Admin: When the PHP is run, if no password file exists, prompt to set two passwords: Upload and download. The user must set both passwords before the system will do any other functionality. When the passwords are set, create the password file. The password file must not be readable by the general public. The passwords must be checked for syntax such that they can be used in subsequent operations and passed in the URL. There are otherwise no restrictions on what can be used for passwords. Once the two passwords are set, the only way to change them is to delete the file that holds the passwords. After doing so, the page will once again prompt to set the two passwords.
+
+If in any operation the password is required and missing or incorrect, simply ignore the operation.
+
+2. Upload:
+
+A. User executes DirectoryServer.php?query=upload&uploadPassword=yyy
+B. Body of the message contains data to store. Every odd indexed field is the column name. Every even indexed field is the value. Fields are separated by ASCII value 1.
+C. Column names will always contain at a minimum __GAME_PORT and __GAME_NAME
+D. A column name __System_Address with corresponding value is automatically added to the input, based on the IP address of the system doing the upload. If the body of the message also contains __System_Address as a column name, use that instead of the automatically generated column.
+E. A column name __SEC_AFTER_EPOCH_SINCE_LAST_ <div class="ii gt" id=":xy"><wbr></wbr>UPDATE with a corresponding value is automatically added to the input, based on the current time of the update.
+F. If the __System_Address, __GAME_PORT, and __GAME_NAME fields all match an existing entry, overwrite that row
+
+Input example:
+__GAME_PORT?1235?__GAME_NAME?
+My game?MapType?Deathmatch?Number of players?5
+
+Stored example:
+__GAME_PORT=1235
+__GAME_NAME=My game
+MapType=Deathmatch
+NumberOfPlayers=5
+__System_Address="1.2.4.5"
+__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE=1234567
+
+
+3. Download
+
+A. User executes DirectoryServer.php?query=download&downloadPassword=xxx
+B. Return all rows stored that are less than 60 seconds old
+C. Output format is same as input, except that ASCII value 2 is used to separate rows
+
+Output example, with two rows returned
+__GAME_PORT?1235?__GAME_NAME?
+My game?__System_Address?1.2.4.5?__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE?1234567?MapType?Deathmatch?Number of players?5?__GAME_PORT?1236?__GAME_NAME?My game 2?__System_Address?1.2.4.5?__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE?188888?MapType?Deathmatch?Number of players?3
+
+
+Not all entries necessarily have the same number or types of columns
+
+4. Upload and download
+
+A. User executes DirectoryServer.php?query=upDown&downloadPassword=xxx&uploadPassword=yyy
+B. Prepare query result, same as if the user had executed DirectoryServer.php?query=download
+C. Add to table data, same as if the user had executed DirectoryServer.php?query=upload
+D. Uploaded data from step C is not returned in query
+
+5. Expire rows
+
+If a row is more than 60 seconds old, remove it from the records
+
+6. Viewing
+
+Viewing the webpage with no commands should display the uploaded entries. No password is required for viewing the webpage
+
+Testing:
+
+You will be provided with two Windows applications to test with that should follow the specified data protocol. One is a console application that will repeatedly update and query over time. Another is a game that will upload and download at the same time when the game is started. The PHP page must work consistently with both applications to be considered acceptable. In order to run the test applications you must have Windows installed.
+
+The PHP file must work correctly on both your own internal test server, and on jenkinssoftware.com.
+
+All inputs must be accepted and processed correctly, including 0, or empty strings. A 0 is treated as a string, the same as any other string. Empty strings generate a column with no entry in that field. 

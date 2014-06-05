@@ -1,0 +1,57 @@
+
+# Makefile for PortAudio on mingw (http://mingw.sourceforge.net)
+
+# Contributed by Bill Eldridge, bill@rfa.org, Radio Free Asia
+# Copyright 2002/02/20, GPL
+
+# Uses a common mingw32 cross-compiler that defaults
+# to everything in /usr/local/cross-tools
+
+# First edit your path with 
+# export PATH=/usr/local/cross-tools/bin:$PATH
+
+# Usage: make -f Makefile.mingw all
+# or     make -f Makefile.mingw sharedlib
+#        make -f Makefile.mingw tests
+#
+# Then copy executables & portaudio.dll to your Windows machine
+#
+# To make work with pa_win_ds, you'll have to substitue
+# all the pa_win_wmme files with pa_win_ds files, no biggie.
+
+CC= i586-mingw32msvc-gcc
+DLLTOOL= i586-mingw32msvc-dlltool
+DLLWRAP= i586-mingw32msvc-dllwrap
+
+ARCH= pa_win_wmme
+
+TESTS:= $(wildcard pa_tests/pa*.c pa_tests/debug*.c)
+
+.c.o:
+	-$(CC) -c -I./pa_common $< -o $*.o
+	-$(CC) $*.o -o $*.exe -L/usr/local/lib -L$(ARCH) -lportaudio.dll -lwinmm
+
+all:	sharedlib tests
+
+sharedlib: ./pa_common/pa_lib.c 
+	$(CC) -c -I./pa_common pa_common/pa_lib.c -o pa_common/pa_lib.o
+	$(CC) -c -I./pa_common pa_win_wmme/pa_win_wmme.c -o pa_win_wmme/pa_win_wmme.o
+	$(CC) -shared -mthreads -o portaudio.dll pa_common/pa_lib.o pa_win_wmme/pa_win_wmme.o -L/usr/local/cross-tools/i586-win32msvc/lib -lwinmm -lm
+	$(DLLWRAP) --export-all --output-def=libportaudio.def --output-lib=libportaudio.a --dllname=portaudio.dll --drivername=i586-mingw32msvc-gcc  pa_common/pa_lib.o pa_win_wmme/pa_win_wmme.o -L/usr/local/cross-tools/i586-win32msvc/lib -lwinmm -lm
+	$(CC) -shared -Wl,--enable-auto-image-base -o portaudio.dll -Wl,--out-implib=pa_win_wmme/libportaudio.dll.a pa_common/pa_lib.o pa_win_wmme/pa_win_wmme.o -L/usr/local/cross-tools/i586-win32msvc/lib -lwinmm
+
+
+tests:	$(TESTS:.c=.o)
+
+sine:
+	$(CC) -c -I./pa_common pa_tests/patest_sine.c -o pa_tests/patest_sine.o
+	$(CC) pa_tests/patest_sine.o -o pa_tests/patest_sine.exe -L/usr/local/lib -lportaudio.dll -lwinmm
+
+clean:
+	-rm ./pa_tests/*.exe
+	-rm ./pa_tests/*.o
+	
+nothing:
+	$(CC) pa_tests/patest_sine.o -L/usr/lib/w32api -L./pa_win_wmme -lportaudio.dll -lwinmm
+
+	

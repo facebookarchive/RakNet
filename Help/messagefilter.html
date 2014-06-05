@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+<TITLE>MessageFilter manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Message Filter Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Limit incoming messages by category</span> <BR></p>
+      <p>With client/server topologies, you do not usually want any system to send any message. For example, perhaps only the server can send kill messages. Or perhaps you want to segment players into stages, where players who have logged on but not yet provided their password cannot yet send game messages. The message filter is designed to deal with these situations automatically.</p>
+      <p>The MessageFilter plugin defines categories of users by 'filterSet' which is just a numerical identifier supplied by the user. For example, you may have one filter set for newly connected systems, and another for authenticated systems. For each filter set you can</p>
+      <ol>
+        <li>Automatically add new connections</li>
+        <li>Allow RPC calls</li>
+        <li>Limit what messages, or ranges of messages, can be received, and what actions to take if this condition is violated (kick/ban/notify)</li>
+        <li>Delete them</li>
+      </ol>
+      <p><strong>Example:</strong></p>
+      <p class="RakNetCode">messageFilter.SetAutoAddNewConnectionsToFilter(0);<br>
+ messageFilter.SetAllowMessageID(true, ID_USER_PACKET_ENUM, ID_USER_PACKET_ENUM, 0);<br>
+messageFilter.SetAllowMessageID(true, ID_USER_PACKET_ENUM+1, ID_USER_PACKET_ENUM+1, 1);</p>
+      <p>This setup would automatically add all new connections to filter set 0, and only allow the message ID_USER_PACKET_ENUM to arrive. It would also create a new filter set, with the filterSet id 1, that only allowed ID_USER_PACKET_ENUM+1 to arrive.</p>
+      <p><strong>Messages that are always allowed (filtering them has no effect):</strong></p>
+      <p class="RakNetCode">ID_CONNECTION_LOST<br>
+        ID_DISCONNECTION_NOTIFICATION<br>
+        ID_NEW_INCOMING_CONNECTION<br>
+        ID_CONNECTION_REQUEST_ACCEPTED<br>
+        ID_CONNECTION_ATTEMPT_FAILED<br>
+        ID_NO_FREE_INCOMING_CONNECTIONS<br>
+       ID_RSA_PUBLIC_KEY_MISMATCH<br>
+       ID_CONNECTION_BANNED<br>
+       ID_INVALID_PASSWORD<br>
+       ID_MODIFIED_PACKET<br>
+       ID_PONG<br>
+       ID_ALREADY_CONNECTED<br>
+       ID_ADVERTISE_SYSTEM<br>
+       ID_REMOTE_DISCONNECTION_NOTIFICATION<br>
+        ID_REMOTE_CONNECTION_LOST<br>
+        ID_REMOTE_NEW_INCOMING_CONNECTION<br>
+      ID_DOWNLOAD_PROGRESS</p>
+      <p>See <em>Samples/MessageFilter</em> for a complete sample. See MessageFilter.h for a complete list of all documented functions and parameters.</p>
+      
+  </TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <A HREF="index.html">Index</A><BR>          </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

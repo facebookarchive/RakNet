@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+<TITLE>Console Server Manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Command Console Server Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Use the console to remotely control a game server</span> <BR>
+    </p>
+      <p>Sometimes it is useful to control a server when you are not in front of that particular computer. This can arise due to server hosting, where the host is located offsite. Or perhaps you have many servers, and you want to control them via a script. The ConsoleServer, CommandParserInterface, and TransportInterface are three classes that work together to meet these needs.</p>
+      <p><strong>ConsoleServer</strong></p>
+      <p>The ConsoleServer class, located at ConsoleServer.h, contains a list of CommandParserInterface classes, added with ConsoleServer::AddCommandParser(). By calling ConsoleServer::Update() once per game tick, all CommandParserInterface classes are processed for incoming input</p>
+      <p><strong>CommandParserInterface</strong></p>
+      <p>A command parser is a class which operates on a named set of registered commands. CommandParserInterface is a base class from which you should derive functionality for each command parser. For example, RakNetCommandParser.h exposes most functions that are available to call in RakPeerInterface. RakNetTransportCommandParser exposes functions that deal with the RakNetTransport class, used to actually send data used by the ConsoleServer.</p>
+      <p><strong>TransportInterface</strong></p>
+      <p>The TransportInterface class provides functionality to the ConsoleServer to send strings. There are currently two implementations of TransportInterface: TelnetTransport, and RakNetTransport. TelnetTransport uses <a href="tcpinterface.html">TCPInterface.h</a> to reply to a remote telnet terminal. RakNetTransport sends strings through an instance of RakPeer, with <a href="secureconnections.html">secure connections</a> enabled.</p>
+      <p><strong>Putting it all together</strong></p>
+      <p>Excerpts from the sample CommandConsoleServer</p>
+      <p class="RakNetCode">ConsoleServer consoleServer;<br>
+      TelnetTransport tt;<br>
+      RakNetCommandParser rcp;<br>
+LogCommandParser lcp;</p>
+      <p class="RakNetCode">consoleServer.AddCommandParser(&amp;rcp);<br>
+  consoleServer.AddCommandParser(&amp;lcp);<br>
+consoleServer.SetTransportProvider(ti, port);<br>
+lcp.AddChannel(&quot;TestChannel&quot;);<br>
+      </p>
+      <p class="RakNetCode">while (1)<br>
+{<br>
+lcp.WriteLog(&quot;TestChannel&quot;, &quot;Test of logger&quot;);<br>
+consoleServer.Update();<br>
+// Game loop here<br>
+        }</p>
+      <p>It's quite simple in practice. You have one instance of a console server, one instance of a transport interface (EIther TelnetTransport or RakNetTransport), and your command parsers. Call ConsoleServer::AddCommandParser for each parser, ConsoleServer::SetTransportProvider() for telnet or RakNet, and ConsoleServer::Update() once per tick. Here I also add an output channel to the LogCommandParser, and output to the log once per tick.</p>
+      <p>Assuming the server is already started, you can connect as follows:</p>
+      <p><strong>Start telnet from the start menu</strong><br>
+        <img src="telnet1.jpg" alt="Start Telnet" width="348" height="176"></p>
+      <p><strong>Connect to your server with telnet</strong><br>
+        <img src="telnet2.jpg" alt="Connect to localhost" width="641" height="302"></p>
+      <p><strong>The system should handle everything else</strong><br>
+        <img src="telnet3.jpg" alt="Help" width="640" height="301"></p>
+    
+  </TR>
+</TABLE>
+
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;RakNetTransport</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+<TR>
+  <TD>
+    <p class="RakNetBlueHeader">Secure console connections</p>
+    <p>Telnet is easy to use but not secure. If you want to send passwords or other sensitive data, you should use RakNetTransport on the server instead. This comes with an additional command parser, RakNetTransportCommandParser, which adds the functionality to change the password on the instance of RakPeer that is internal to RakNetTransport. It was designed this way so remote users connect to the command parser without connecting to the game itself, and the game and the command parser can have different passwords.</p>
+    <p>For the client-side, the sample CommandConsoleClient is an implementation of a console application that uses RakNet to connect to RakNetTransport</p>
+    </TD>
+  </TR>
+</TABLE>
+
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Creating your own command parser</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+<TR>
+  <TD>
+    <p class="RakNetBlueHeader">Predefine commands and/or pass the command strings directly to your scripting system</p>
+    <p>To add a new command parser, first derive a class from CommandParserInterface, as was done in RakNetCommandParser.h. You will want to override OnCommand, GetName, and SendHelp. Additionally, any functionality you need to communicate with your game, such as SetGamePointer() or SetLogger(), you should add on your own.</p>
+    <p>1. In the constructor of your new class, call RegisterCommand for each command you want to add. Here is an example from <strong>RakNetCommandParser.cpp</strong></p>
+    <p><code>RegisterCommand(4, &quot;Startup&quot;,&quot;( unsigned short maxConnections, int _threadSleepTimer, unsigned short localPort, const char *forceHostAddress );&quot;);</code></p>
+    <p>The first parameter, 4, is the number of parameters to pass to the function. The second parameter, &quot;Startup&quot; is the name of the command, and will show up in the abbreviated command list. The third parameter, &quot;unsigned short maxConnections ...&quot;, defines the helpString, displayed when help is called on a particular named command.</p>
+    <p>Given this syntax, ConsoleServer will verify that the correct number of parameters was passed, and return an error to the user should this not be the case when calling a particular command.</p>
+    <p>2. In OnCommand(), compare the command string to your registered commands, and take the desired action</p>
+    <p><code>if (strcmp(command, &quot;Startup&quot;)==0)<br>
+{<br>
+SocketDescriptor socketDescriptor((unsigned short)atoi(parameterList[1]), parameterList[3]);<br>
+ReturnResult(peer-&gt;Startup((unsigned short)atoi(parameterList[0]), atoi(parameterList[2]), &amp;socketDescriptor, 1), command, transport, systemAddress);<br>
+}</code></p>
+    <p>The return value of OnCommand is currently not used, so just return true.</p>
+    <p>ReturnResult is a function you can optionally call that will return back a string to the requesting system.</p>
+    <p>3. Implement GetName(), returning the name of your command parser. This will show up in the command parser listing.</p>
+    <p>4. Implement SendHelp(), which will return extended help when queried for your particular parser. If your parser is not runnable due to failed preconditions, it is a good idea to return a notification message about that here.</p>
+    <p><strong>Unknown or variable number of parameters:</strong></p>
+    <p>Pass CommandParserInterface::VARIABLE_NUMBER_OF_PARAMETERS as the first parameter to RegisterCommand. CommandServer will not check for a valid number of parameters in this case. It is up to you in OnCommand() to deal with error conditions that may come up in this case.</p>
+    <p><strong>Direct string parsing</strong></p>
+    <p>If you don't want ConsoleServer to parse the incoming string for you, use the parameter originalString passed to OnCommand. For example, if you are controlling your scripting system, you would probably want to pass this string directly along.</p>
+    <p><strong>Changing delineators</strong></p>
+    <p>If you want to separate your commands by something other than space, or separate your strings by something other than quotation marks, the defines are found in CommandServer.cpp</p>
+    <p class="RakNetCode">#define COMMAND_DELINATOR ' '<br>
+      #define COMMAND_DELINATOR_TOGGLE '&quot;'</p>
+    </TD>
+  </TR>
+</TABLE>
+
+	  <table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+    </table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <p><A HREF="index.html">Index</A><br>
+          <a href="http://en.wikipedia.org/wiki/TELNET">Telnet (Wikipedia)</a><br>  
+            <a href="tcpinterface.html">TCP Interface</a><br>  
+            <a href="secureconnections.html">Secure connections</a><BR>          
+        </p>
+        </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

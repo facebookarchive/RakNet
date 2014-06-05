@@ -1,0 +1,130 @@
+<HTML>
+<HEAD>
+
+<TITLE>PHP Directory Server</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">PHP Directory Server Overview</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p><span class="RakNetBlueHeader">Use a shared webhost to list games</span><BR>
+        <BR>
+      The <A HREF="lightweightdatabase.html">Lightweight database</A> plugin is powerful, but requires an instance of RakNet running on a dedicated server. In some cases this is more than is needed and the burden of running a dedicated server is undesirable. For these instances, RakNet provides DirectoryServer.php, found under Samples\PHPDirectoryServer.</P>
+      
+    To setup the web server, simply upload Samples\PHPDirectoryServer\DirectoryServer.php to your PHP capable webhost (which is any standard shared webhost). Go to your newly uploaded webpage, click the reveal button, and enter a password and other settings if desired.</P>
+    
+    The C++ code is more complicated. First, you need an instance of TCPInterface that is started. This is used for general TPC communication
+    
+    <p class="RakNetCode">TCPInterface tcp;<br>
+    tcp.Start(0, 64);</p>
+    
+    Second, you need an instance of HTTPConnection. This is used to communicate with webpages through TCPInterface.
+    
+    <p class="RakNetCode">HTTPConnection httpConnection(tcp, "jenkinssoftware.com");</p>
+    
+    Third, you need an instance of PHPDirectoryServer. This does parsing and communications that are specific to DirectoryServer.php.
+    
+    <p class="RakNetCode">PHPDirectoryServer phpDirectoryServer(httpConnection, "/raknet/DirectoryServer.php");</p>
+    
+  You can actually see this page if you to go <A HREF="http://www.jenkinssoftware.com/raknet/DirectoryServer.php">http://www.jenkinssoftware.com/raknet/DirectoryServer.php</A>.<BR>
+    <BR>
+    You can then set columns, upload your table, or download the existing tables:
+    
+    <p class="RakNetCode">// Set fields with columnname / value<br>
+    phpDirectoryServer.SetField("beehive","inthewater");<br>
+   <br>
+	// Upload previously set fields, along with required parameters game name, game port, and password<br>
+	phpDirectoryServer.UploadTable(50, "Game name", 1234, "");<br>
+<br>
+	// Download uploaded servers<br>
+	phpDirectoryServer.DownloadTable("");</p>
+        
+To update the system, you should pass packets from TCPInterface to both interfaces, and also call Update(). This is complicated by the fact that TCP packets may not contain an entire webpage response, the webpage may contain error codes, and not all messages from the webpage are necessarily relevent to our directory server. The sample demonstrates how to do this. The following is an abbreviated excerpt:
+
+<p class="RakNetCode">Packet *packet = tcp.Receive();<br>
+if(packet)<br>
+{<br>
+	// In this sample this line is not necessary, but if we were using TCPInterface for other things, we want to make sure we only give it messages intended for this connection<br>
+	if (packet->systemAddress==httpConnection.GetServerAddress())<br>
+	{<br>
+		// Multiple packets may come in for a single reply from a webserver. When the final packet arrives, ProcessFinalTCPPacket will return true<br>
+		if (httpConnection.ProcessFinalTCPPacket(packet))<br>
+		{<br>
+			int code;<br>
+			RakNet::RakString data;<br>
+			/// Check that the request was handled and is not an error code<br>
+			if (httpConnection.HasBadResponse(&code, &data)==false)<br>
+			{<br>
+				// Good response, let the PHPDirectoryServer class handle the data<br>
+				// If resultCode is not an empty string, then we got something other than a table<br>
+				<span class="RakNetCode">// (such as delete row success notification, or the message is for HTTP only and not for this class).<br>
+HTTPReadResult readResult = phpDirectoryServer.ProcessHTTPRead(httpResult);<BR>
+if (readResult==HTTP_RESULT_GOT_TABLE)<BR>
+				{<br>
+					/// Got a table which was stored internally. Print it out<br>
+					char out[10000];<br>
+					const DataStructures::Table *games = phpDirectoryServer.GetLastDownloadedTable();<br>
+					games->PrintColumnHeaders(out,sizeof(out),',');<br>
+					printf("COLUMNS: %s\n", out);<br>
+<br>
+					// print each row of the table<br>
+					for (unsigned i=0; i < games->GetRowCount(); i++)<br>
+					{<br>
+						games->PrintRow(out,sizeof(out),',',true, games->GetRowByIndex(i,NULL));<br>
+						printf("ROW %i: %s\n", i+1, out);<br>
+					}<br>
+				}<br>
+			}<br>
+		}<br>
+	}<br>
+	<br>
+	// Deallocate the packet the same way you do with RakPeerInterface<br>
+	tcp.DeallocatePacket(packet);<br>
+}<br>
+httpConnection.Update();<br>
+phpDirectoryServer.Update();<br>
+</p>
+<br>
+Certain columns are reserved, and returned to you in a query. These column names are not allowed for use by the end-user, and will assert if attempted.<br>
+<br>
+<p class="RakNetCode">
+// Column with this header contains the name of the game, passed to UploadTable()<br>
+static const char *GAME_NAME_COMMAND="__GAME_NAME";<br>
+// Column with this header contains the port of the game, passed to UploadTable()<br>
+static const char *GAME_PORT_COMMAND="__GAME_PORT";<br>
+// Returned from the PHP server indicating when this row was last updated.<br>
+static const char *LAST_UPDATE_COMMAND="__SEC_AFTER_EPOCH_SINCE_LAST_UPDATE";<br>
+// Command to delete a row. Internal<br>
+static const char *DELETEME_COMMAND="__DELETE_ROW";<br>
+// Column passed to the PHP server as the password. Internal<br>
+static const char *GAME_PASSWORD_COMMAND="__PHP_DIRECTORY_SERVER_PASSWORD";<br>
+// Column passed to the PHP server as how long to list this server before auto expiring. Internal<br>
+static const char *GAME_TIMEOUT_COMMAND="__GAME_LISTING_TIMEOUT";<br>
+</p> 
+<br>
+__SYSTEM_ADDRESS will also be returned indicating the external IP that was used to upload to the webpage.<br>
+<br>
+Note that due to technical limitations only one upload can be processed at a time. This is not a problem if your server is only hosting one game anyway. Calling PHPDirectoryServer::UploadTable() while an upload is pending will overwrite the prior upload. You can perform another upload when HTTPConnectionIsBusy() returns false.<br>
+        <br>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><br>
+<a href="tcpinterface.html">TCP Interface</a><br>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

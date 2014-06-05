@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+
+<TITLE>IPV6 Support</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92">
+<img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">IPV6 support</span></td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+<span class="RakNetBlueHeader">IPV6 addresses
+</p> and the difference between IPV4.
+</span>
+<p>IPV6 is the next-generation of IP address. IPV6 was developed because of all available IPV4 addresses have been allocated. Over time the industry will transition to use IPV6 so it is necessary to support this for future-generation appplications.</p>
+<p>IPV4 represents IP addresses with 4 bytes, in the notation 127.0.0.1. IPV6 uses 16 bytes, with a notation such as fe80::7c:31f7:fec4:27de. When RAKNET_SUPPORT_IPV6 is set to 1 in RakNetDefines.h, which it is by default, support for IPV6 will be built into RakNet.</p>
+<p>The loopback address with IPV4 is 127.0.0.1. The loopback address with IPV6 is ::1. The broadcast address with IPV4 is 255.255.255.255. IPV6 does not support broadcast. It does support multicast if you configure your router to do so. There is no default multicast address for IPV6, meaning LANServerDiscovery will not work without manual configuration by the end-user.</p>
+<p>NAT Punchthrough is not necessary when using IPV6 exclusively. Provided that you know the IP address of the system, you can connect to that system directly even if that system is behind a router.</p>
+<p>IPV4 sockets / IP addresses cannot connect to IPV6 sockets / IP addresses and vice-versa.</p>
+<p>It is valid to start two sockets on the same port if one socket is used for IPV4 and the other IPV6, as you can see in the code fragment below.</p>
+<p><strong>Supporting IPV6</strong></p>
+<p>This code is from the project ChatExampleServer. It starts two sockets if possible, the second of which supports IPV6. Not all operating systems support IPV6 by default or necessarily at all, so the fallback is necessary.</p>
+<p class="RakNetCode">RakNet::SocketDescriptor socketDescriptors[2];<br>
+socketDescriptors[0].port=atoi(portstring);<br>
+socketDescriptors[0].socketFamily=AF_INET; // Test out IPV4<br>
+socketDescriptors[1].port=atoi(portstring);<br>
+socketDescriptors[1].socketFamily=AF_INET6; // Test out IPV6<br>
+bool b = server-&gt;Startup(4, socketDescriptors, 2 )==RakNet::RAKNET_STARTED;<br>
+server-&gt;SetMaximumIncomingConnections(4);<br>
+if (!b)<br>
+{<br>
+printf(&quot;Failed to start dual IPV4 and IPV6 ports. Trying IPV4 only.\n&quot;);<br>
+// Try again, but leave out IPV6<br>
+  b = server-&gt;Startup(4, socketDescriptors, 1 )==RakNet::RAKNET_STARTED;<br>
+  if (!b)<br>
+  {<br>
+  puts(&quot;Server failed to start.  Terminating.&quot;);<br>
+  exit(1);<br>
+  }<br>
+  }</p>
+<p class="RakNetManualTextBody">As you can see, the process to enable IPV6 is to set the socketFamily member in the SocketDescriptor structure to AF_INET6. The default is AF_INET, which is to say IPV4.</p>
+<p class="RakNetManualTextBody">RakNet's console platforms do not support IPV6 at the time of this writing.</p></TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92">
+<img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">See Also</span></td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A></p>
+  </TD>
+</TR></TABLE>
+</BODY>
+</HTML>

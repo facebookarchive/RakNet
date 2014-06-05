@@ -1,0 +1,19 @@
+{
+  "name": "NaCl Chat Example Client",
+  "version": "0.5",
+  "manifest_version" : 2,
+
+  "description": "NaCl Chat Example Client",
+  "icons": {
+	"16": "icon_16.png",
+    "32": "icon_32.png",
+    "128": "icon_128.png"
+  },
+
+  "app": {
+    "launch": {
+      "local_path": "index.htm"
+    }
+  }
+
+}

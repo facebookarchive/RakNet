@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libspeex", "libspeex.vcproj", "{C59B2B00-C33D-4D80-A617-18BDFA4DF9E6}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libspeex_dynamic", "libspeex_dynamic.vcproj", "{9D10EC3C-6A04-4687-A95F-059E5AFC6DAC}"
+EndProject
+Global
+	GlobalSection(SourceCodeControl) = preSolution
+		SccNumberOfProjects = 1
+		SccProjectUniqueName0 = libspeex.vcproj
+		SccProjectName0 = Perforce\u0020Project
+		SccLocalPath0 = ..\\..
+		SccProvider0 = MSSCCI:Microsoft\u0020Visual\u0020SourceSafe
+		SccProjectFilePathRelativizedFromConnection0 = win32\\libspeex\\
+	EndGlobalSection
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C59B2B00-C33D-4D80-A617-18BDFA4DF9E6}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C59B2B00-C33D-4D80-A617-18BDFA4DF9E6}.Debug|Win32.Build.0 = Debug|Win32
+		{C59B2B00-C33D-4D80-A617-18BDFA4DF9E6}.Release|Win32.ActiveCfg = Release|Win32
+		{C59B2B00-C33D-4D80-A617-18BDFA4DF9E6}.Release|Win32.Build.0 = Release|Win32
+		{9D10EC3C-6A04-4687-A95F-059E5AFC6DAC}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9D10EC3C-6A04-4687-A95F-059E5AFC6DAC}.Debug|Win32.Build.0 = Debug|Win32
+		{9D10EC3C-6A04-4687-A95F-059E5AFC6DAC}.Release|Win32.ActiveCfg = Release|Win32
+		{9D10EC3C-6A04-4687-A95F-059E5AFC6DAC}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

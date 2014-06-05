@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+
+<TITLE>Programming Tips</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Programming Tips</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+Miscellaneous tips
+<BR><BR>
+
+This section assumes you have already read the <A HREF="detailedimplementation.html">Detailed Implementation</A>.  If you have not you should read that first then return to this section.<BR>
+<BR>
+For information on data transfer, see <A HREF="creatingpackets.html">Creating Packets</A>, <A HREF="sendingpackets.html">Sending Packets</A>, and <A HREF="receivingpackets.html">Receiving Packets</A>.<BR>
+<BR>
+<B>Debugging aids:<BR>
+Use PacketLogger class or one of the related classes</B>.<BR>
+Logging packets that come in or go out can be very useful for debugging.  This way if there is some strange crash on the network you can see which packets may have caused it.  This is simple to do, just attach an instance of PacketLogger class (or derived class) to your peer, set some parameters if you want, and all your network traffic will be logged.<BR>
+<BR>
+<B>How to:<BR>
+Eliminate visible lag</B><BR>
+Eliminating visible lag will make your game both look and play better.  There are a variety of ways to eliminate visible lag, of which we'll cover two the most common here.<BR>
+<BR>
+First is interpolation.  Suppose a player were at position 0,0 and got a packet saying he or she is now at position 100,100.  You COULD just pop the player over to that position, but a better technique would be to gradually slide the player over.  There's a lot of ways to do this, but the easiest is something along the lines of "A player will reach his new position within 300 ms."  That way if the player is far off we can shift him or her over quickly, and if the player is close he or she moves slowly.  In practice you'll probably want to use more sophisticated algorithms such as interpolating between points.  It depends on the game and the context in which it is used, which I'll leave that to the reader.<BR>
+<BR>
+Second is allowing the visible effect of an action to take place immediately, and if it turns out to be wrong then undo it.  Suppose you were writing a first person shooter, and to make things easy everyone dies in only one hit.  If you were to process all hits through the server, then anytime a client killed someone they'd see him fall dead a few hundred ms after shooting him.  The game wouldn't look very good.  However, if you process the visible effect, the player falling dead, immediately then the game looks identical to single player.  If it turns out on the server that the player should have misssed we can just undo the death and have the victim get up again.  Since the client would usually be right the game usually runs identical to single player as far as the client is concerned.  Things look bad under high lag conditions, but that's to be expected no matter what.<BR>
+<BR>
+<B>Client vs. server authorization</B><BR>
+When creating almost any kind of packet that affects other players you need to answer the following question:<BR>
+<BR>
+"Who is the authority on this event, the client or the server?"<BR>
+<BR>
+This generally falls under three categories:<BR>
+<BR>
+The client is the authority.  An example of this would be chatting.  If a client writes a chat message, the server can assume the client is correct in the assertion that it did generate a chat message and simply process it.<BR>
+<BR>
+The server is the authority.  An example of this would be connecting to a game.  If the server tells a client that it is not connected, it would be silly for the client to assume it is connected and start a game.  Massively Multiplayer Online RPGs use this extensively.<BR>
+Both the client and the server have partial authority.  An example of this would be shooting someone in a well-written first person shooter, where if you don't see yourself hit the other player you don't, but if the client doesn't see you hit the other player you don't either.<BR>
+<BR>
+Generally speaking, allowing the client to be right lets the gameplay be more fun for the client because things seem fair.  However, under high lag conditions it can be unfair to other players.  Allowing the server to be right makes it fair for everyone, but results in a poor gaming experience when it seems like you can't take any action.<BR>
+<BR>
+You should think carefully in each condition on how to split authority so as to make it fun for the client, yet fair for other players as well.<BR>
+<BR>
+<B>Using timestamping to show more accurate positions</B><BR>
+This boils down to using kinematircs for moving objects.  Obviously it takes time for a packet to arrive on a remote system.  So don't pass raw position data, also include velocity and acceleration.  Then timestamp your packet.  When the packet arrives on the other system you can check the difference between your own system's time and the timestamp to find out how much time to use when finding out where your object should be.<BR>
+<BR>
+Formula for position with a constant accleration:<BR>
+x = x0 + v * t + .5 * t * t<BR>
+x is the final position.  x0 is the initial position.  v is the velocity.  t is the elapsed time.<BR>
+<BR>
+<B>General tips</B><BR>
+<B>Set the MTU size to match your connection</B><BR>
+The MTU size is the maximum size of a packet RakNet will generate.  If a single packet is larger than this, it will be split at a significant performance hit.  Multiple user packets will be coalesced into a single larger packet, up to the size of the MTU.  Therefore, increasing this size will also allow more user packets to be sent out at the same time.  Doubling the MTU size can literally double your bandwidth in certain conditions.  However, if you set the MTU size larger than your or any router along the network path takes, then the network will split the packet at best, or drop it at worst.  The MTU size defaults to 576 bytes (modem users) so it works for everyone.  However, broadband users have a higher limit and will want to increase this via the SetMTUSize method in both the client and the server.  You should set it according to the following chart:
+<UL>
+<LI>1500. The largest Ethernet packet size. This is the typical setting for non-PPPoE, non-VPN connections. The default value for NETGEAR routers, adapters and switches. 
+<LI>1492. The size PPPoE prefers. 
+<LI>1472. Maximum size to use for pinging. (Bigger packets are fragmented.) 
+<LI>1468. The size DHCP prefers. 
+<LI>1460. Usable by AOL if you don't have large email attachments, etc. 
+<LI>1430. The size VPN and PPTP prefer. 
+<LI>1400. Maximum size for AOL DSL. 
+<LI>576. Typical value to connect to dial-up ISPs.
+</UL>
+<B>Send all the data, not just the changes</B><BR>
+From experience I can tell you that you need a certain level of redundancy to have things work right because small errors will accumulate. In my first networked game I would only send the position once, and from then on only keyboard input:<BR>
+Thrust<BR>
+Stop thrusting<BR>
+Turn<BR>
+Stop turning<BR>
+<BR>
+On all systems the spaceship would start at the correct position.  However, everytime I sent a thrust packet or a turn packet, even with timestamping there was some error.  The error was only a few ms, but after playing for just 5 or 6 seconds the ship would be at a noticeably different position on different computers.<BR>
+<BR>
+The better way to handle this would be:<BR>
+Thrust and current position<BR>
+Stop thrusting and current position<BR>
+Turn and current position<BR>
+Stop turning and current position.<BR>
+<BR>
+<B>Send data to only those who need it</B><BR>
+If somebody in your gameworld is 500 feet away from another player but that other player can only see 300 feet, is it necessary to send that player all the actions of the first?  It would be a better idea to only relay actions that have an effect on those who care about it.<BR>
+<BR>
+<B>Use the correct packet type for the correct situation</B><BR>
+Reliable, ordered packets are very useful for programming because you don't have to account for strange events such as killing a monster that hasn't spawned yet.  However, every reliable packet you send needs to be acknowledged by the recipient so you know not to resend it.  For very small packets this could double the amount of bandwidth you use since you have to send the entire UDP header whether your packet is 1 byte or 400 bytes.<BR>
+<BR>
+Here's some examples on when to use and when not to use particular types of packets:<BR>
+<BR>
+<I>Chat messages</I><BR>
+These have to arrive, so ordered and reliable would be fine.<BR>
+<BR>
+<I>Position updates that are sent every 100 ms</I><BR>
+Packetloss is generally only a few percent, so it wouldn't kill us to miss a packet.  Even if we did the next packet arriving very soon would fix the problem.  Unreliable sequenced would be very good here.  Note however that this assumes we continually send packets.  If we were to stop sending at some point the last packet(s) may never arrive which might be a problem.<BR>
+<BR>
+<I>Position updates that are sent every 2000 ms</I><BR>
+If we miss a packet people will see the same object sitting at the same spot for a long time even when it wasn't there.  Reliable and ordered would be best.<BR>
+<BR>
+<I>Some declining number, such as health in game where healing is not possible</I><BR>
+We don't care about ordering packets, only sequencing packets, because older packets are always wrong.  If this happened frequently unreliable sequenced would be best.  Otherwise reliable sequenced.  Note that if we stop sending packets at some point, such as when health reaches 0, we'll need to do reliable sequenced instead of unreliable sequenced.  Otherwise that last packet may never arrive and the recipient(s) will still think health is greater than 0.<BR>
+<BR>
+<I>A toggle switch</I><BR>
+The only thing that matters would be how many times the switch was activated.  We don't care about the order.  Reliable would be most suitable.<BR>
+<BR>
+<I>A frequent audio taunt that has no bearing on the gameplay.</I><BR>
+It doesn't matter if this taunt arrives or not, and we don't care when it arrives.  Unreliable would be most suitable.<BR>
+
+</TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+
+</BODY>
+</HTML>

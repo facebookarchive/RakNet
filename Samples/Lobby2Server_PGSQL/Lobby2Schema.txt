@@ -1,0 +1,928 @@
+BEGIN;
+       
+---------------------------------------------
+
+-- DROP SCHEMA lobby2 CASCADE;
+
+CREATE SCHEMA lobby2
+  AUTHORIZATION postgres;
+
+---------------------------------------------
+
+CREATE LANGUAGE plpgsql;
+
+---------------------------------------------
+
+CREATE TABLE lobby2.country
+(
+  country_id integer PRIMARY KEY NOT NULL, -- country id
+  country_sort_id integer NOT NULL, -- display order for a list of countries...
+  country_code character varying(2) NOT NULL, -- country 2 letters ISO code, like...
+  country_name character varying(100) NOT NULL, -- county's full name
+  country_has_states boolean NOT NULL DEFAULT false, -- defines if a country has a pre-defined list of states. can be TRUE or FALSE
+  country_enable boolean NOT NULL DEFAULT true -- country enabled or disbaled, can be either true or false
+)
+WITH (OIDS=FALSE);
+
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (120, 100, 'AF', 'Afghanistan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (121, 200, 'AL', 'Albania', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (122, 300, 'DZ', 'Algeria', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (123, 400, 'AS', 'American Samoa', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (124, 500, 'AD', 'Andorra', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (125, 600, 'AO', 'Angola', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (126, 700, 'AI', 'Anguilla', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (127, 800, 'AQ', 'Antarctica', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (128, 900, 'AG', 'Antigua and Barbuda', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (129, 1000, 'AR', 'Argentina', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (130, 1100, 'AM', 'Armenia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (131, 1200, 'AW', 'Aruba', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (132, 1300, 'AU', 'Australia', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (133, 1400, 'AT', 'Austria', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (134, 1500, 'AZ', 'Azerbaijan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (135, 1600, 'AP', 'Azores', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (136, 1700, 'BS', 'Bahamas', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (137, 1800, 'BH', 'Bahrain', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (138, 1900, 'BD', 'Bangladesh', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (139, 2000, 'BB', 'Barbados', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (140, 2100, 'BY', 'Belarus', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (141, 2200, 'BE', 'Belgium', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (142, 2300, 'BZ', 'Belize', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (143, 2400, 'BJ', 'Benin', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (144, 2500, 'BM', 'Bermuda', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (145, 2600, 'BT', 'Bhutan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (146, 2700, 'BO', 'Bolivia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (147, 2800, 'BA', 'Bosnia And Herzegowina', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (148, 2900, 'XB', 'Bosnia-Herzegovina', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (149, 3000, 'BW', 'Botswana', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (150, 3100, 'BV', 'Bouvet Island', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (151, 3200, 'BR', 'Brazil', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (152, 3300, 'IO', 'British Indian Ocean Territory', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (153, 3400, 'VG', 'British Virgin Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (154, 3500, 'BN', 'Brunei Darussalam', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (155, 3600, 'BG', 'Bulgaria', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (156, 3700, 'BF', 'Burkina Faso', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (157, 3800, 'BI', 'Burundi', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (158, 3900, 'KH', 'Cambodia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (159, 4000, 'CM', 'Cameroon', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (160, 4100, 'CA', 'Canada', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (161, 4200, 'CV', 'Cape Verde', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (162, 4300, 'KY', 'Cayman Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (163, 4400, 'CF', 'Central African Republic', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (164, 4500, 'TD', 'Chad', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (165, 4600, 'CL', 'Chile', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (166, 4700, 'CN', 'China', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (167, 4800, 'CX', 'Christmas Island', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (168, 4900, 'CC', 'Cocos (Keeling) Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (169, 5000, 'CO', 'Colombia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (170, 5100, 'KM', 'Comoros', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (171, 5200, 'CG', 'Congo', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (172, 5300, 'CD', 'Congo, The Democratic Republic O', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (173, 5400, 'CK', 'Cook Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (174, 5500, 'XE', 'Corsica', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (175, 5600, 'CR', 'Costa Rica', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (176, 5700, 'CI', 'Cote d` Ivoire (Ivory Coast)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (177, 5800, 'HR', 'Croatia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (178, 5900, 'CU', 'Cuba', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (179, 6000, 'CY', 'Cyprus', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (180, 6100, 'CZ', 'Czech Republic', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (181, 6200, 'DK', 'Denmark', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (182, 6300, 'DJ', 'Djibouti', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (183, 6400, 'DM', 'Dominica', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (184, 6500, 'DO', 'Dominican Republic', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (185, 6600, 'TP', 'East Timor', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (186, 6700, 'EC', 'Ecuador', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (187, 6800, 'EG', 'Egypt', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (188, 6900, 'SV', 'El Salvador', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (189, 7000, 'GQ', 'Equatorial Guinea', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (190, 7100, 'ER', 'Eritrea', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (191, 7200, 'EE', 'Estonia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (192, 7300, 'ET', 'Ethiopia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (193, 7400, 'FK', 'Falkland Islands (Malvinas)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (194, 7500, 'FO', 'Faroe Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (195, 7600, 'FJ', 'Fiji', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (196, 7700, 'FI', 'Finland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (197, 7800, 'FR', 'France (Includes Monaco)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (198, 7900, 'FX', 'France, Metropolitan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (199, 8000, 'GF', 'French Guiana', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (200, 8100, 'PF', 'French Polynesia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (201, 8200, 'TA', 'French Polynesia (Tahiti)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (202, 8300, 'TF', 'French Southern Territories', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (203, 8400, 'GA', 'Gabon', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (204, 8500, 'GM', 'Gambia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (205, 8600, 'GE', 'Georgia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (206, 8700, 'DE', 'Germany', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (207, 8800, 'GH', 'Ghana', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (208, 8900, 'GI', 'Gibraltar', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (209, 9000, 'GR', 'Greece', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (210, 9100, 'GL', 'Greenland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (211, 9200, 'GD', 'Grenada', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (212, 9300, 'GP', 'Guadeloupe', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (213, 9400, 'GU', 'Guam', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (214, 9500, 'GT', 'Guatemala', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (215, 9600, 'GN', 'Guinea', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (216, 9700, 'GW', 'Guinea-Bissau', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (217, 9800, 'GY', 'Guyana', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (218, 9900, 'HT', 'Haiti', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (219, 10000, 'HM', 'Heard And Mc Donald Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (220, 10100, 'VA', 'Holy See (Vatican City State)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (221, 10200, 'HN', 'Honduras', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (222, 10300, 'HK', 'Hong Kong', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (223, 10400, 'HU', 'Hungary', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (224, 10500, 'IS', 'Iceland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (225, 10600, 'IN', 'India', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (226, 10700, 'ID', 'Indonesia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (227, 10800, 'IR', 'Iran', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (228, 10900, 'IQ', 'Iraq', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (229, 11000, 'IE', 'Ireland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (230, 11100, 'EI', 'Ireland (Eire)', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (231, 11200, 'IL', 'Israel', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (232, 11300, 'IT', 'Italy', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (233, 11400, 'JM', 'Jamaica', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (234, 11500, 'JP', 'Japan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (235, 11600, 'JO', 'Jordan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (236, 11700, 'KZ', 'Kazakhstan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (237, 11800, 'KE', 'Kenya', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (238, 11900, 'KI', 'Kiribati', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (239, 12000, 'KP', 'Korea, Democratic People''s Repub', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (240, 12100, 'KW', 'Kuwait', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (241, 12200, 'KG', 'Kyrgyzstan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (242, 12300, 'LA', 'Laos', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (243, 12400, 'LV', 'Latvia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (244, 12500, 'LB', 'Lebanon', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (245, 12600, 'LS', 'Lesotho', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (246, 12700, 'LR', 'Liberia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (247, 12800, 'LY', 'Libya', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (248, 12900, 'LI', 'Liechtenstein', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (249, 13000, 'LT', 'Lithuania', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (250, 13100, 'LU', 'Luxembourg', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (251, 13200, 'MO', 'Macao', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (252, 13300, 'MK', 'Macedonia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (253, 13400, 'MG', 'Madagascar', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (254, 13500, 'ME', 'Madeira Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (255, 13600, 'MW', 'Malawi', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (256, 13700, 'MY', 'Malaysia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (257, 13800, 'MV', 'Maldives', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (258, 13900, 'ML', 'Mali', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (259, 14000, 'MT', 'Malta', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (260, 14100, 'MH', 'Marshall Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (261, 14200, 'MQ', 'Martinique', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (262, 14300, 'MR', 'Mauritania', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (263, 14400, 'MU', 'Mauritius', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (264, 14500, 'YT', 'Mayotte', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (265, 14600, 'MX', 'Mexico', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (266, 14700, 'FM', 'Micronesia, Federated States Of', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (267, 14800, 'MD', 'Moldova, Republic Of', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (268, 14900, 'MC', 'Monaco', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (269, 15000, 'MN', 'Mongolia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (270, 15100, 'MS', 'Montserrat', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (271, 15200, 'MA', 'Morocco', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (272, 15300, 'MZ', 'Mozambique', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (273, 15400, 'MM', 'Myanmar (Burma)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (274, 15500, 'NA', 'Namibia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (275, 15600, 'NR', 'Nauru', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (276, 15700, 'NP', 'Nepal', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (277, 15800, 'NL', 'Netherlands', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (278, 15900, 'AN', 'Netherlands Antilles', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (279, 16000, 'NC', 'New Caledonia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (280, 16100, 'NZ', 'New Zealand', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (281, 16200, 'NI', 'Nicaragua', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (282, 16300, 'NE', 'Niger', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (283, 16400, 'NG', 'Nigeria', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (284, 16500, 'NU', 'Niue', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (285, 16600, 'NF', 'Norfolk Island', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (286, 16700, 'MP', 'Northern Mariana Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (287, 16800, 'NO', 'Norway', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (288, 16900, 'OM', 'Oman', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (289, 17000, 'PK', 'Pakistan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (290, 17100, 'PW', 'Palau', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (291, 17200, 'PS', 'Palestinian Territory, Occupied', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (292, 17300, 'PA', 'Panama', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (293, 17400, 'PG', 'Papua New Guinea', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (294, 17500, 'PY', 'Paraguay', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (295, 17600, 'PE', 'Peru', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (296, 17700, 'PH', 'Philippines', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (297, 17800, 'PN', 'Pitcairn', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (298, 17900, 'PL', 'Poland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (299, 18000, 'PT', 'Portugal', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (300, 18100, 'PR', 'Puerto Rico', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (301, 18200, 'QA', 'Qatar', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (302, 18300, 'RE', 'Reunion', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (303, 18400, 'RO', 'Romania', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (304, 18500, 'RU', 'Russian Federation', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (305, 18600, 'RW', 'Rwanda', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (306, 18700, 'KN', 'Saint Kitts And Nevis', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (307, 18800, 'SM', 'San Marino', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (308, 18900, 'ST', 'Sao Tome and Principe', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (309, 19000, 'SA', 'Saudi Arabia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (310, 19100, 'SN', 'Senegal', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (311, 19200, 'XS', 'Serbia-Montenegro', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (312, 19300, 'SC', 'Seychelles', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (313, 19400, 'SL', 'Sierra Leone', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (314, 19500, 'SG', 'Singapore', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (315, 19600, 'SK', 'Slovak Republic', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (316, 19700, 'SI', 'Slovenia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (317, 19800, 'SB', 'Solomon Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (318, 19900, 'SO', 'Somalia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (319, 20100, 'ZA', 'South Africa', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (320, 20200, 'GS', 'South Georgia And The South Sand', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (321, 20300, 'KR', 'South Korea', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (322, 20400, 'ES', 'Spain', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (323, 20500, 'LK', 'Sri Lanka', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (324, 20600, 'NV', 'St. Christopher and Nevis', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (325, 20700, 'SH', 'St. Helena', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (326, 20800, 'LC', 'St. Lucia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (327, 20900, 'PM', 'St. Pierre and Miquelon', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (328, 21000, 'VC', 'St. Vincent and the Grenadines', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (329, 21100, 'SD', 'Sudan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (330, 21200, 'SR', 'Suriname', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (331, 21300, 'SJ', 'Svalbard And Jan Mayen Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (332, 21400, 'SZ', 'Swaziland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (333, 21500, 'SE', 'Sweden', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (334, 21600, 'CH', 'Switzerland', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (335, 21700, 'SY', 'Syrian Arab Republic', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (336, 21800, 'TW', 'Taiwan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (337, 21900, 'TJ', 'Tajikistan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (338, 22000, 'TZ', 'Tanzania', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (339, 22100, 'TH', 'Thailand', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (340, 22200, 'TG', 'Togo', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (341, 22300, 'TK', 'Tokelau', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (342, 22400, 'TO', 'Tonga', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (343, 22500, 'TT', 'Trinidad and Tobago', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (344, 22600, 'XU', 'Tristan da Cunha', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (345, 22700, 'TN', 'Tunisia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (346, 22800, 'TR', 'Turkey', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (347, 22900, 'TM', 'Turkmenistan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (348, 23000, 'TC', 'Turks and Caicos Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (349, 23100, 'TV', 'Tuvalu', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (350, 23200, 'UG', 'Uganda', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (351, 23300, 'UA', 'Ukraine', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (352, 23400, 'AE', 'Unid Arab Emirates', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (353, 23500, 'UK', 'United Kingdom', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (375, 0, '00', 'Select country', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (355, 23700, 'US', 'United States', true, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (356, 23800, 'UM', 'United States Minor Outlying Isl', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (357, 23900, 'UY', 'Uruguay', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (358, 24000, 'UZ', 'Uzbekistan', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (359, 24100, 'VU', 'Vanuatu', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (360, 24200, 'XV', 'Vatican City', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (361, 24300, 'VE', 'Venezuela', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (362, 24400, 'VN', 'Vietnam', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (363, 24500, 'VI', 'Virgin Islands (U.S.)', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (364, 24600, 'WF', 'Wallis and Furuna Islands', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (365, 24700, 'EH', 'Western Sahara', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (366, 24800, 'WS', 'Western Samoa', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (367, 24900, 'YE', 'Yemen', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (368, 25000, 'YU', 'Yugoslavia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (369, 25100, 'ZR', 'Zaire', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (370, 25200, 'ZM', 'Zambia', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (371, 25300, 'ZW', 'Zimbabwe', false, true);
+INSERT INTO lobby2.country (country_id, country_sort_id, country_code, country_name, country_has_states, country_enable) VALUES (354, 23600, 'GB', 'Great Britain', false, false);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.race (
+    race_id SERIAL NOT NULL PRIMARY KEY,
+    race_sort_id integer NOT NULL,
+    race_text character varying(50) DEFAULT 'code description'::character varying NOT NULL,
+    race_enable boolean DEFAULT true NOT NULL,
+    race_timestamp timestamp without time zone DEFAULT now()
+);
+
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (1, 10, 'causcasian', true);
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (2, 20, 'afrcan american', true);
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (3, 30, 'native american', true);
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (4, 40, 'hispanic', true);
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (5, 50, 'asian', true);
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (6, 60, 'pacific islands', true);
+INSERT INTO lobby2.race (race_id, race_sort_id, race_text, race_enable) VALUES (7, 70, 'unspecified', true);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.state (
+    state_id SERIAL NOT NULL PRIMARY KEY,
+    state_country_id integer,
+    state_sort_id integer NOT NULL,
+    state_code character varying(20) NOT NULL,
+    state_name character varying(100) NOT NULL,
+    state_enable boolean DEFAULT true NOT NULL
+);
+
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (1, 355, 100, 'AK', 'Alaska', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (2, 355, 200, 'AL', 'Alabama', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (3, 355, 300, 'AR', 'Arkansas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (4, 355, 400, 'AS', 'American Samoa', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (5, 355, 500, 'AZ', 'Arizona', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (6, 355, 600, 'CA', 'California', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (7, 355, 700, 'CO', 'Colorado', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (8, 355, 800, 'CT', 'Connecticut', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (9, 355, 900, 'DC', 'D.C.', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (10, 355, 1000, 'DE', 'Delaware', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (11, 355, 1100, 'FL', 'Florida', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (12, 355, 1200, 'FM', 'Micronesia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (13, 355, 1300, 'GA', 'Georgia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (14, 355, 1400, 'GU', 'Guam', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (15, 355, 1500, 'HI', 'Hawaii', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (16, 355, 1600, 'IA', 'Iowa', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (17, 355, 1700, 'ID', 'Idaho', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (18, 355, 1800, 'IL', 'Illinois', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (19, 355, 1900, 'IN', 'Indiana', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (20, 355, 2000, 'KS', 'Kansas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (21, 355, 2100, 'KY', 'Kentucky', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (22, 355, 2200, 'LA', 'Louisiana', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (23, 355, 2300, 'MA', 'Massachusetts', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (24, 355, 2400, 'MD', 'Maryland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (25, 355, 2500, 'ME', 'Maine', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (26, 355, 2600, 'MH', 'Marshall Islands', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (27, 355, 2700, 'MI', 'Michigan', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (28, 355, 2800, 'MN', 'Minnesota', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (29, 355, 2900, 'MO', 'Missouri', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (30, 355, 3000, 'MP', 'Marianas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (31, 355, 3100, 'MS', 'Mississippi', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (32, 355, 3200, 'MT', 'Montana', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (33, 355, 3300, 'NC', 'North Carolina', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (34, 355, 3400, 'ND', 'North Dakota', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (35, 355, 3500, 'NE', 'Nebraska', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (36, 355, 3600, 'NH', 'New Hampshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (37, 355, 3700, 'NJ', 'New Jersey', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (38, 355, 3800, 'NM', 'New Mexico', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (39, 355, 3900, 'NV', 'Nevada', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (40, 355, 4000, 'NY', 'New York', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (41, 355, 4100, 'OH', 'Ohio', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (42, 355, 4200, 'OK', 'Oklahoma', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (43, 355, 4300, 'OR', 'Oregon', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (44, 355, 4400, 'PA', 'Pennsylvania', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (45, 355, 4500, 'PR', 'Puerto Rico', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (46, 355, 4600, 'PW', 'Palau', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (47, 355, 4700, 'RI', 'Rhode Island', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (48, 355, 4800, 'SC', 'South Carolina', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (49, 355, 4900, 'SD', 'South Dakota', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (50, 355, 5000, 'TN', 'Tennessee', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (51, 355, 5100, 'TX', 'Texas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (52, 355, 5200, 'UT', 'Utah', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (53, 355, 5300, 'VA', 'Virginia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (54, 355, 5400, 'VI', 'Virgin Islands', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (55, 355, 5500, 'VT', 'Vermont', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (56, 355, 5600, 'WA', 'Washington', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (57, 355, 5700, 'WI', 'Wisconsin', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (58, 355, 5800, 'WV', 'West Virginia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (59, 355, 5900, 'WY', 'Wyoming', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (60, 355, 6000, 'AA', 'Military Americas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (61, 355, 6100, 'AE', 'Military Europe/ME/Canada', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (62, 355, 6200, 'AP', 'Military Pacific', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (65, 160, 300, 'AB', 'Alberta', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (66, 160, 400, 'BC', 'British Columbia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (67, 160, 500, 'MB', 'Manitoba', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (68, 160, 600, 'NB', 'New Brunswick', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (69, 160, 700, 'NL', 'Newfoundland and Labrador', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (70, 160, 800, 'NS', 'Nova Scotia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (71, 160, 900, 'NT', 'Northwest Territories', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (72, 160, 1000, 'NU', 'Nunavut', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (73, 160, 1100, 'ON', 'Ontario', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (74, 160, 1200, 'PE', 'Prince Edward Island', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (75, 160, 1300, 'QC', 'Quebec', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (76, 160, 1400, 'SK', 'Saskatchewan', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (77, 160, 1500, 'YT', 'Yukon Territory', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (78, 132, 100, 'AAT', 'Australian Antarctic Territory', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (79, 132, 200, 'ACT', 'Australian Capital Territory', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (80, 132, 300, 'NT', 'Northern Territory', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (81, 132, 400, 'NSW', 'New South Wales', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (82, 132, 500, 'QLD', 'Queensland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (83, 132, 600, 'SA', 'South Australia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (84, 132, 700, 'TAS', 'Tasmania', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (85, 132, 800, 'VIC', 'Victoria', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (86, 132, 900, 'WA', 'Western Australia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (87, 151, 100, 'AC', 'Acre', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (88, 151, 200, 'AL', 'Alagoas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (89, 151, 300, 'AM', 'Amazonas', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (90, 151, 400, 'AP', 'Amapa', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (91, 151, 500, 'BA', 'Baia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (92, 151, 600, 'CE', 'Ceara', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (93, 151, 700, 'DF', 'Distrito Federal', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (94, 151, 800, 'ES', 'Espirito Santo', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (95, 151, 900, 'FN', 'Fernando de Noronha', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (96, 151, 1000, 'GO', 'Goias', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (97, 151, 1100, 'MA', 'Maranhao', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (98, 151, 1200, 'MG', 'Minas Gerais', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (99, 151, 1300, 'MS', 'Mato Grosso do Sul', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (100, 151, 1400, 'MT', 'Mato Grosso', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (101, 151, 1500, 'PA', 'Para', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (102, 151, 1600, 'PB', 'Paraiba', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (103, 151, 1700, 'PE', 'Pernambuco', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (104, 151, 1800, 'PI', 'Piaui', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (105, 151, 1900, 'PR', 'Parana', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (106, 151, 2000, 'RJ', 'Rio de Janeiro', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (107, 151, 2100, 'RN', 'Rio Grande do Norte', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (108, 151, 2200, 'RO', 'Rondonia', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (109, 151, 2300, 'RR', 'Roraima', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (110, 151, 2400, 'RS', 'Rio Grande do Sul', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (111, 151, 2500, 'SC', 'Santa Catarina', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (112, 151, 2600, 'SE', 'Sergipe', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (113, 151, 2700, 'SP', 'Sao Paulo', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (114, 151, 2800, 'TO', 'Tocatins', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (115, 277, 100, 'DR', 'Drente', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (116, 277, 200, 'FL', 'Flevoland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (117, 277, 300, 'FR', 'Friesland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (118, 277, 400, 'GL', 'Gelderland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (119, 277, 500, 'GR', 'Groningen', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (120, 277, 600, 'LB', 'Limburg', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (121, 277, 700, 'NB', 'Noord Brabant', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (122, 277, 800, 'NH', 'Noord Holland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (123, 277, 900, 'OV', 'Overijssel', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (124, 277, 1000, 'UT', 'Utrecht', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (125, 277, 1100, 'ZH', 'Zuid Holland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (126, 277, 1200, 'ZL', 'Zeeland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (127, 353, 100, 'AVON', 'Avon', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (128, 353, 200, 'BEDS', 'Bedfordshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (129, 353, 300, 'BERKS', 'Berkshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (130, 353, 400, 'BUCKS', 'Buckinghamshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (131, 353, 500, 'CAMBS', 'Cambridgeshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (132, 353, 600, 'CHESH', 'Cheshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (133, 353, 700, 'CLEVE', 'Cleveland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (134, 353, 800, 'CORN', 'Cornwall', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (135, 353, 900, 'CUMB', 'Cumbria', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (136, 353, 1000, 'DERBY', 'Derbyshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (137, 353, 1100, 'DEVON', 'Devon', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (138, 353, 1200, 'DORSET', 'Dorset', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (139, 353, 1300, 'DURHAM', 'Durham', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (140, 353, 1400, 'ESSEX', 'Essex', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (141, 353, 1500, 'GLO', 'Gloucestershire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (142, 353, 1600, 'GLONDON', 'Greater London', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (143, 353, 1700, 'GMANCH', 'Greater Manchester', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (144, 353, 1800, 'HANTS', 'Hampshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (145, 353, 1900, 'HERWOR', 'Hereford & Worcestershire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (146, 353, 2000, 'HERTS', 'Hertfordshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (147, 353, 2100, 'HUMBER', 'Humberside', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (148, 353, 2200, 'IOM', 'Isle of Man', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (149, 353, 2300, 'IOW', 'Isle of Wight', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (150, 353, 2400, 'KENT', 'Kent', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (151, 353, 2500, 'LANCS', 'Lancashire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (152, 353, 2600, 'LEICS', 'Leicestershire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (153, 353, 2700, 'LINCS', 'Lincolnshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (154, 353, 2800, 'MERSEY', 'Merseyside', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (155, 353, 2900, 'NORF', 'Norfolk', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (156, 353, 3000, 'NHANTS', 'Northamptonshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (157, 353, 3100, 'NTHUMB', 'Northumberland', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (158, 353, 3200, 'NOTTS', 'Nottinghamshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (159, 353, 3300, 'OXON', 'Oxfordshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (160, 353, 3400, 'SHROPS', 'Shropshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (161, 353, 3500, 'SOM', 'Somerset', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (162, 353, 3600, 'STAFFS', 'Staffordshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (163, 353, 3700, 'SUFF', 'Suffolk', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (164, 353, 3800, 'SURREY', 'Surrey', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (165, 353, 3900, 'SUSS', 'Sussex', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (166, 353, 4000, 'WARKS', 'Warwickshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (167, 353, 4100, 'WMID', 'West Midlands', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (168, 353, 4200, 'WILTS', 'Wiltshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (169, 353, 4300, 'YORK', 'Yorkshire', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (170, 230, 100, 'CO ANTRIM', 'County Antrim', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (171, 230, 200, 'CO ARMAGH', 'County Armagh', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (172, 230, 300, 'CO DOWN', 'County Down', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (173, 230, 400, 'CO FERMANAGH', 'County Fermanagh', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (174, 230, 500, 'CO DERRY', 'County Londonderry', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (175, 230, 600, 'CO TYRONE', 'County Tyrone', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (176, 230, 700, 'CO CAVAN', 'County Cavan', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (177, 230, 800, 'CO DONEGAL', 'County Donegal', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (178, 230, 900, 'CO MONAGHAN', 'County Monaghan', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (179, 230, 1000, 'CO DUBLIN', 'County Dublin', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (180, 230, 1100, 'CO CARLOW', 'County Carlow', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (181, 230, 1200, 'CO KILDARE', 'County Kildare', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (182, 230, 1300, 'CO KILKENNY', 'County Kilkenny', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (183, 230, 1400, 'CO LAOIS', 'County Laois', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (184, 230, 1500, 'CO LONGFORD', 'County Longford', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (185, 230, 1600, 'CO LOUTH', 'County Louth', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (186, 230, 1700, 'CO MEATH', 'County Meath', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (187, 230, 1800, 'CO OFFALY', 'County Offaly', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (188, 230, 1900, 'CO WESTMEATH', 'County Westmeath', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (189, 230, 2000, 'CO WEXFORD', 'County Wexford', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (190, 230, 2100, 'CO WICKLOW', 'County Wicklow', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (191, 230, 2200, 'CO GALWAY', 'County Galway', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (192, 230, 2300, 'CO MAYO', 'County Mayo', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (193, 230, 2400, 'CO LEITRIM', 'County Leitrim', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (194, 230, 2500, 'CO ROSCOMMON', 'County Roscommon', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (195, 230, 2600, 'CO SLIGO', 'County Sligo', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (196, 230, 2700, 'CO CLARE', 'County Clare', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (197, 230, 2800, 'CO CORK', 'County Cork', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (198, 230, 2900, 'CO KERRY', 'County Kerry', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (199, 230, 3000, 'CO LIMERICK', 'County Limerick', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (200, 230, 3100, 'CO TIPPERARY', 'County Tipperary', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (201, 230, 3200, 'CO WATERFORD', 'County Waterford', true);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (202, 375, 100, 'DEFAULT STATE', 'Select state/province/territory', false);
+INSERT INTO lobby2.state (state_id, state_country_id, state_sort_id, state_code, state_name, state_enable) VALUES (203, 375, 0, '_BLANK_', ' ', false);
+
+
+---------------------------------------------
+
+CREATE OR REPLACE FUNCTION lobby2.handle2lower()
+  RETURNS trigger AS
+$BODY$
+ BEGIN
+	 NEW.handlelower = lower(NEW.handle);
+   RETURN NEW;
+ END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+
+---------------------------------------------
+
+CREATE TABLE lobby2.users
+(
+  userid_pk serial NOT NULL PRIMARY KEY,
+  handle character varying(64) NOT NULL,
+  handleLower character varying(64) NOT NULL UNIQUE DEFAULT 'UNDEFINED',
+  firstname character varying(64) NOT NULL,
+  middlename character varying(64),
+  lastname character varying(64) NOT NULL,
+  raceId_fk integer REFERENCES lobby2.race (race_id) ON DELETE CASCADE,
+  sex_male boolean,
+  homeaddress1 character varying(128),
+  homeaddress2 character varying(128),
+  homecity character varying(64),
+  homeStateId_fk integer REFERENCES lobby2.state (state_id) ON DELETE CASCADE,
+  homeCountryId_fk integer REFERENCES lobby2.country (country_id) ON DELETE CASCADE,
+  homezipcode character varying(64),
+  billingaddress1 character varying(128),
+  billingaddress2 character varying(128),
+  billingcity character varying(64),
+  billingStateId_fk integer REFERENCES lobby2.state (state_id) ON DELETE CASCADE,
+  billingCountryId_fk integer REFERENCES lobby2.country (country_id) ON DELETE CASCADE,
+  billingzipcode character varying(64),
+  emailaddress character varying(64),
+  emailAddressValidated boolean NOT NULL default false,
+  password character varying(64) NOT NULL,
+  passwordrecoveryquestion character varying(128) NOT NULL,
+  passwordrecoveryanswer character varying(128) NOT NULL,
+  caption1 character varying(128),
+  caption2 character varying(128),
+  dateofbirth date,
+  binaryData bytea
+)
+WITH (OIDS=FALSE);
+
+
+-- add trigger to table
+CREATE TRIGGER auto_handlelower
+  BEFORE INSERT OR UPDATE
+  ON lobby2.users
+  FOR EACH ROW
+  EXECUTE PROCEDURE lobby2.handle2lower();
+ 
+---------------------------------------------
+
+CREATE TABLE lobby2.bannedUsers
+(
+userId_fk serial PRIMARY KEY REFERENCES lobby2.users (userId_pk) ON DELETE SET NULL,
+description character varying(256),
+timeout timestamp,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+---------------------------------------------
+
+CREATE TABLE lobby2.userHistoryTriggers
+(
+triggerId_pk serial NOT NULL PRIMARY KEY,
+description character varying(32)
+)
+WITH (OIDS=FALSE);
+
+INSERT INTO lobby2.userHistoryTriggers (description) VALUES ('Banned');
+INSERT INTO lobby2.userHistoryTriggers (description) VALUES ('Unbanned');
+INSERT INTO lobby2.userHistoryTriggers (description) VALUES ('Login');
+INSERT INTO lobby2.userHistoryTriggers (description) VALUES ('Logoff');
+
+---------------------------------------------
+
+CREATE TABLE lobby2.userHistory
+(
+userHistoryId_pk serial PRIMARY KEY NOT NULL,
+userId_fk integer REFERENCES lobby2.users (userId_pk) ON DELETE SET NULL,
+description character varying(256),
+triggerId_fk integer REFERENCES lobby2.userHistoryTriggers (triggerId_pk) ON DELETE SET NULL,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.titles
+(
+titleName_pk character varying(64) NOT NULL UNIQUE PRIMARY KEY,
+titleSecretKey character varying(64) NOT NULL,
+requiredAge integer,
+binaryData bytea
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.perTitlePerUserIntegerStorage
+(
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+slotIndex integer,
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+value double precision,
+CONSTRAINT ptpuis_pk PRIMARY KEY (titleName_fk, userId_fk, slotIndex)
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.perTitlePerUserBinaryStorage
+(
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+slotIndex integer,
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+binaryData bytea,
+CONSTRAINT ptpubs_pk PRIMARY KEY (titleName_fk, userId_fk, slotIndex)
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.profanity
+(
+word character varying(32) NOT NULL UNIQUE PRIMARY KEY,
+wordLower character varying(32)
+)
+WITH (OIDS=FALSE);
+
+CREATE OR REPLACE FUNCTION lobby2.profanity2lower()
+  RETURNS trigger AS
+$BODY$
+ BEGIN
+	 NEW.wordLower = lower(NEW.word);
+   RETURN NEW;
+ END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+
+-- add trigger to table
+CREATE TRIGGER auto_profanityhandlelower
+  BEFORE INSERT OR UPDATE
+  ON lobby2.profanity
+  FOR EACH ROW
+  EXECUTE PROCEDURE lobby2.profanity2lower();
+
+---------------------------------------------
+
+CREATE TABLE lobby2.cdkeys
+(
+cdKey character varying(64) PRIMARY KEY NOT NULL,
+usable boolean,
+stolen boolean,
+creationDate timestamp DEFAULT now(),
+activationDate timestamp,
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+userId_fk integer REFERENCES lobby2.users (userId_pk) ON DELETE SET NULL
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.emailTriggers
+(
+triggerId_pk serial NOT NULL PRIMARY KEY,
+description character varying(32)
+)
+WITH (OIDS=FALSE);
+
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Friends_SendInvite');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Friends_AcceptInvite');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Friends_RejectInvite');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Friends_Remove');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Emails_Send');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_GrantLeader');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_SetSubleaderStatus');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_Leave');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_SendJoinInvitation');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_WithdrawJoinInvitation');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_AcceptJoinInvitation');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_SendJoinRequest');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_WithdrawJoinRequest');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_AcceptJoinRequest');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_RejectJoinRequest');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_KickAndBlacklistUser');
+INSERT INTO lobby2.emailTriggers (description) VALUES ('Clans_UnblacklistUser');
+
+---------------------------------------------
+
+CREATE TABLE lobby2.emails
+(
+emailId_pk serial NOT NULL PRIMARY KEY,
+subject text,
+body text,
+binaryData bytea,
+creationDate timestamp DEFAULT now(),
+triggerId_fk integer REFERENCES lobby2.emailTriggers (triggerId_pk) ON DELETE SET NULL
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.emailTargets
+(
+emailTarget_pk serial NOT NULL PRIMARY KEY,
+emailId_fk integer NOT NULL REFERENCES lobby2.emails (emailId_pk) ON DELETE CASCADE,
+userMe_fk integer REFERENCES lobby2.users (userId_pk) ON DELETE SET NULL,
+userOther_fk integer REFERENCES lobby2.users (userId_pk) ON DELETE SET NULL CHECK(userMe_fk!=userOther_fk),
+status integer,
+wasRead boolean,
+ISentThisEmail boolean NOT NULL,
+isDeleted boolean NOT NULL DEFAULT FALSE
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.ignore
+(
+userMe_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+userOther_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE CHECK(userMe_fk!=userOther_fk),
+CONSTRAINT ignore_pk PRIMARY KEY (userMe_fk, userOther_fk)
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.friendActions
+(
+actionId_pk serial NOT NULL PRIMARY KEY,
+description character varying(32)
+)
+WITH (OIDS=FALSE);
+
+INSERT INTO lobby2.friendActions (description) VALUES ('sentInvite');
+INSERT INTO lobby2.friendActions (description) VALUES ('isFriends');
+
+---------------------------------------------
+
+CREATE TABLE lobby2.friends
+(
+friends_pk serial NOT NULL PRIMARY KEY,
+userOne_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+userTwo_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE CHECK(userOne_fk!=userTwo_fk),
+actionId_fk integer NOT NULL REFERENCES lobby2.friendActions (actionId_pk) ON DELETE CASCADE
+-- TODO - Need constraint that userOne_fk and userTwo_fk are pairwise unique
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.bookmarkedUsers
+(
+userMe_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+userOther_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE CHECK(userMe_fk!=userOther_fk),
+type integer NOT NULL,
+CONSTRAINT bookmarkedUsers_pk PRIMARY KEY (userMe_fk, userOther_fk, type),
+description character varying(256),
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.matches
+(
+matchId_pk serial NOT NULL PRIMARY KEY,
+gameTypeName character varying(64),
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+matchNote character varying(256),
+binaryData bytea,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.matchParticipants
+(
+matchId_fk integer NOT NULL REFERENCES lobby2.matches (matchId_pk) ON DELETE CASCADE,
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+score real,
+CONSTRAINT matchParticipant_pk PRIMARY KEY (matchId_fk, userId_fk)
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.ratings
+(
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+gameTypeName character varying(64),
+titleName_fk character varying(64) NOT NULL REFERENCES lobby2.titles (titleName_pk) ON DELETE CASCADE,
+userRating real,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.clans
+(
+clanId_pk serial NOT NULL PRIMARY KEY,
+leaderUserId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+clanHandle character varying(64) NOT NULL UNIQUE,
+clanHandleLower character varying(64) NOT NULL UNIQUE DEFAULT 'UNDEFINED',
+requiresInvitationsToJoin boolean NOT NULL,
+description character varying(128),
+binaryData bytea
+)
+WITH (OIDS=FALSE);
+
+CREATE OR REPLACE FUNCTION lobby2.clanhandle2lower()
+  RETURNS trigger AS
+$BODY$
+ BEGIN
+	 NEW.clanHandleLower = lower(NEW.clanHandle);
+   RETURN NEW;
+ END;
+$BODY$
+  LANGUAGE 'plpgsql' VOLATILE;
+  
+  -- add trigger to table
+CREATE TRIGGER auto_clanhandlelower
+  BEFORE INSERT OR UPDATE
+  ON lobby2.clans
+  FOR EACH ROW
+  EXECUTE PROCEDURE lobby2.clanhandle2lower();
+
+---------------------------------------------
+
+CREATE TABLE lobby2.clanMemberStates
+(
+stateId_pk serial NOT NULL PRIMARY KEY,
+description character varying(32)
+)
+WITH (OIDS=FALSE);
+
+INSERT INTO lobby2.clanMemberStates (description) VALUES ('ClanMember_Active');
+INSERT INTO lobby2.clanMemberStates (description) VALUES ('ClanMember_Banned');
+INSERT INTO lobby2.clanMemberStates (description) VALUES ('ClanMember_JoinInvited');
+INSERT INTO lobby2.clanMemberStates (description) VALUES ('ClanMember_JoinRequested');
+
+---------------------------------------------
+
+CREATE TABLE lobby2.clanMembers
+(
+clanMemberId_pk serial NOT NULL PRIMARY KEY,
+userId_fk integer NOT NULL REFERENCES lobby2.users (userId_pk) ON DELETE CASCADE,
+clanId_fk integer NOT NULL REFERENCES lobby2.clans (clanId_pk) ON DELETE CASCADE,
+description character varying(128),
+binaryData bytea,
+isSubleader boolean,
+rank integer DEFAULT 0,
+memberState_fk integer REFERENCES lobby2.clanMemberStates (stateId_pk) ON DELETE SET NULL,
+banReason character varying(128),
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+
+---------------------------------------------
+
+CREATE TABLE lobby2.clanBoard
+(
+clanBoardId_pk serial NOT NULL PRIMARY KEY,
+clanId_fk integer NOT NULL REFERENCES lobby2.clans (clanId_pk) ON DELETE CASCADE,
+boardName character varying(64),
+description character varying(128),
+allowPublicReads boolean,
+allowPublicWrites boolean,
+binaryData bytea,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.clanTopic
+(
+topicId_pk serial NOT NULL PRIMARY KEY,
+clanId_fk integer NOT NULL REFERENCES lobby2.clans (clanId_pk) ON DELETE CASCADE,
+clanBoard_fk integer NOT NULL REFERENCES lobby2.clanBoard (clanBoardId_pk) ON DELETE CASCADE,
+subject text,
+body text,
+binaryData bytea,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+CREATE TABLE lobby2.clanTopicReply
+(
+postId_pk serial NOT NULL PRIMARY KEY,
+topicId_fk integer NOT NULL REFERENCES lobby2.clanTopic (topicId_pk) ON DELETE CASCADE,
+clanId_fk integer NOT NULL REFERENCES lobby2.clans (clanId_pk) ON DELETE CASCADE,
+clanBoard_fk integer NOT NULL REFERENCES lobby2.clanBoard (clanBoardId_pk) ON DELETE CASCADE,
+subject text,
+body text,
+binaryData bytea,
+creationDate timestamp DEFAULT now()
+)
+WITH (OIDS=FALSE);
+
+---------------------------------------------
+
+
+COMMIT;

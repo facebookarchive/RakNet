@@ -1,0 +1,488 @@
+/*
+	This file contains the host-neutral code for implementing multiple driver model 
+	support in PortAudio.
+
+	It has not been compiled, but it is supplied only for example purposes at this stage.
+
+	TODO: use of CHECK_DRIVER_MODEL is bogus in some instances since some 
+		of those functions don't return a PaError
+
+
+*/
+
+#include "pa_drivermodel.h.txt"
+
+
+#ifndef PA_MULTIDRIVER 
+/* single driver support, most functions will stay in the implementation files */
+
+PaDriverModelID Pa_CountDriverModels()
+{
+	return 1;
+}
+
+/*
+Perhaps all drivers should define this with this signature
+const PaDriverModelInfo* Pa_GetDriverModelInfo( PaDriverModelID driverModelID )
+{
+}
+*/
+
+PaDeviceID Pa_DriverModelDefaultInputDeviceID( PaDriverModelID driverModelID )
+{
+	return Pa_GetDefaultInputDeviceID();
+}
+
+
+PaDeviceID Pa_DriverModelDefaultOutputDeviceID( PaDriverModelID driverModelID )
+{
+	return Pa_GetDefaultInputDeviceID();
+}
+
+/*
+Perhaps all drivers should define with this signature
+int Pa_DriverModelMinNumBuffers( PaDriverModelID driverModelID, int framesPerBuffer, double sampleRate )
+{
+
+}
+*/
+
+int Pa_DriverModelCountDevices( PaDriverModelID driverModelID )
+{
+	return Pa_CountDevices();
+}
+
+PaDeviceID Pa_DriverModelGetDeviceID(PaDriverModelID driverModelID, int perDriverModelIndex )
+{
+	return perDriverModelIndex;
+}
+
+
+#else
+/* multidriver support */
+
+
+typedef PaError (*PaInitializeFunPtr)( PaDriverModelImplementation** );
+
+/*
+	the initializers array is a static table of function pointers
+	to all the available driverModels on the current platform.
+
+	the order of pointers in the array is important. the first
+	pointer is always considered to be the "default" driver model.
+*/
+
+static PaInitializeFunPtr driverModelInitializers[] = {
+#ifdef WINDOWS
+	PaWin32WMME_MultiDriverInitialize,
+	PaWin32DS_MultiDriverInitialize,
+	PaASIO_MultiDriverInitialize
+#endif
+#ifdef MAC
+	PaMacSM_MultiDriverInitialize,
+	PaMacCA_MultiDriverInitialize,
+	PaASIO_MultiDriverInitialize
+#endif
+/* other platforms here */
+	(PaInitializeFunPtr*)0 /* NULL terminate the list */
+}; 
+
+
+/*
+	the driverModels array is a dynamically created table of
+	currently available driverModels.
+*/
+static PaDriverModelImplementation* driverModels = 0;
+static int numDriverModels = 0;
+
+
+#define PA_CHECK_INITIALIZED\
+	if( driverModels == 0 )
+		return paLibraryNotInitialised
+
+#define PA_CHECK_DRIVER_MODEL_ID( id )
+	if( id < 0 || id >= numDriverModels )
+		return paBadDriverModelID;
+
+
+/*
+	ConvertPublicDeviceIdToImplementationDeviceId converts deviceId
+	from a public device id, to a device id for a particular 
+	PortAudio implementation. On return impl will either point
+	to a valid implementation or will be NULL.
+*/
+static void ConvertPublicDeviceIDToImplementationDeviceID( 
+	PaDriverModelImplementation *impl, PaDeviceID deviceID )
+{
+	int i, count;
+
+	impl = NULL;
+
+	for( i=0; i < numDriverModels; ++i ){
+		count = driverModels[i]->countDevices();
+		if( deviceID < count ){
+			impl = driverModels[i];
+			return NULL;			
+		}else{
+			deviceID -= count;
+		}
+	}
+}
+
+static PaDeviceID ConvertImplementationDeviceIDToPublicDeviceID( 
+		PaDriverModelID driverModelID, PaDeviceID deviceID )
+{
+	int i;
+
+	for( i=0; i < driverModelID; ++i )
+		deviceID += driverModels[i]->countDevices();
+}
+
+
+PaError Pa_Initialize( void )
+{
+	PaError result = paNoError;
+	int i, initializerCount;
+	PaDriverModelImplementation *impl;
+
+	if( driverModels != 0 )
+		return paAlreadyInitialized;
+
+	/* count the number of driverModels */
+	initializerCount=0;
+	while( driverModelInitializers[initializerCount] != 0 ){
+		++initializerCount;
+	}
+
+	driverModels = malloc( sizeof(PaDriverModelImplementation*) * initializerCount );
+	if( driverModels == NULL )
+		return paInsufficientMemory;
+
+	numDriverModels = 0;
+	for( i=0; i<initializerCount; ++i ){
+		result = (*driverModelInitializers[i])( &impl );
+		if( result == paNoError ){
+			driverModels[numDriverModels] = impl;
+			++numDriverModels;
+		}else{
+			// TODO: terminate the drivers which have already been initialized.
+		}
+	}
+
+	return result;
+}
+
+
+
+PaError Pa_Terminate( void )
+{
+	int i;
+
+	PA_CHECK_INITIALIZED;
+
+	/*
+		rather than require each implementation to do it separately we could
+		keep track of all open streams and close them here
+	*/
+
+	for( i=0; i<numDriverModels; ++i )
+		driverModels[i]->terminate( driverModels[i] );
+}
+
+
+long Pa_GetHostError( void )
+{
+	PA_CHECK_INITIALIZED;
+	
+	under construction. depends on error text proposal.
+}
+
+
+const char *Pa_GetErrorText( PaError errnum )
+{
+	PA_CHECK_INITIALIZED;
+
+	under construction. may need to call driver model specific code 
+	depending on how the error text proposal pans out.
+}
+
+
+
+int Pa_CountDevices()
+{
+	int i, result;
+
+	PA_CHECK_INITIALIZED;
+
+	result = 0;
+	for( i=0; i < numDriverModels; ++i )
+		result += driverModels[i]->countDevices();
+	
+	return result;
+}
+
+
+PaDeviceID Pa_GetDefaultInputDeviceID( void )
+{
+	PA_CHECK_INITIALIZED;
+
+	return driverModels[0]->getDefaultInputDeviceID();
+}
+
+PaDeviceID Pa_GetDefaultOutputDeviceID( void )
+{
+	PA_CHECK_INITIALIZED;
+
+	return driverModels[0]->getDefaultInputDeviceID();
+}
+
+
+const PaDeviceInfo* Pa_GetDeviceInfo( PaDeviceID deviceID )
+{
+	PaDriverModelImplementation *impl;	
+
+	PA_CHECK_INITIALIZED;
+
+	ConvertPublicDeviceIDToImplementationDeviceID( impl, deviceID );
+	if( impl == NULL )
+		return paInvalidDeviceID;
+
+	return impl->getDeviceInfo( deviceID );
+}
+
+/* NEW MULTIPLE DRIVER MODEL FUNCTIONS ---------------------------------- */
+
+PaDriverModelID Pa_CountDriverModels()
+{
+	PA_CHECK_INITIALIZED;
+
+	return numDriverModels;
+}
+
+
+const PaDriverModelInfo* Pa_GetDriverModelInfo( PaDriverModelID driverModelID )
+{
+	PA_CHECK_INITIALIZED;
+	PA_CHECK_DRIVER_MODEL_ID( driverModelID );
+
+	return driverModels[ driverModelID ]->getDriverModelInfo();
+}
+
+
+PaDeviceID Pa_DriverModelDefaultInputDeviceID( PaDriverModelID driverModelID )
+{
+	PA_CHECK_INITIALIZED;
+	PA_CHECK_DRIVER_MODEL_ID( driverModelID );
+
+	return ConvertImplementationDeviceIDToPublicDeviceID( driverModelID,
+			driverModels[ driverModelID ]->getDefaultInputDeviceID();
+}
+
+
+PaDeviceID Pa_DriverModelDefaultOutputDeviceID( PaDriverModelID driverModelID )
+{
+	PA_CHECK_INITIALIZED;
+	PA_CHECK_DRIVER_MODEL_ID( driverModelID );
+	
+	return ConvertImplementationDeviceIDToPublicDeviceID( driverModelID,
+			driverModels[ driverModelID ]->getDefaultOutputDeviceID();
+}
+
+
+int Pa_DriverModelMinNumBuffers( PaDriverModelID driverModelID, int framesPerBuffer, double sampleRate )
+{
+	PA_CHECK_INITIALIZED;
+	PA_CHECK_DRIVER_MODEL_ID( driverModelID );
+
+	return driverModels[ driverModelID ]->getMinNumBuffers( int framesPerBuffer, double sampleRate );
+}
+
+
+int Pa_DriverModelCountDevices( PaDriverModelID driverModelID )
+{
+	PA_CHECK_INITIALIZED;
+	PA_CHECK_DRIVER_MODEL_ID( driverModelID );
+
+	return driverModels[ driverModelID ]->coundDevices();
+}
+
+PaDeviceID Pa_DriverModelGetDeviceID(PaDriverModelID driverModelID, int perDriverModelIndex )
+{
+	PA_CHECK_INITIALIZED;
+	PA_CHECK_DRIVER_MODEL_ID( driverModelID );
+
+	return ConvertImplementationDeviceIDToPublicDeviceID( driverModelID, perDriverModelIndex );
+}
+
+/* END NEW MULTIPLE DRIVER MODEL FUNCTIONS ------------------------------ */
+
+
+PaError Pa_OpenStream( PortAudioStream** stream,
+				PaDeviceID inputDevice,
+				int numInputChannels,
+				PaSampleFormat inputSampleFormat,
+				void *inputDriverInfo,
+				PaDeviceID outputDevice,
+				int numOutputChannels,
+				PaSampleFormat outputSampleFormat,
+				void *outputDriverInfo,
+				double sampleRate,
+				unsigned long framesPerBuffer,
+				unsigned long numberOfBuffers,
+				PaStreamFlags streamFlags,
+				PortAudioCallback *callback,
+				void *userData )
+{
+	PaError result;
+	PaDriverModelImplementation *inputImpl, *outputImpl, impl;
+
+	PA_CHECK_INITIALIZED;
+	
+	if( inputDevice != paNoDevice ){
+		ConvertPublicDeviceIDToImplementationDeviceID( inputImpl, inputDevice );
+		if( inputImpl == NULL )
+			return paInvalidDeviceID;
+		else
+			impl = inputImpl;	
+	}
+
+	if( outputDevice != paNoDevice ){
+		ConvertPublicDeviceIDToImplementationDeviceID( outputImpl, outputDevice );
+		if( outputImpl == NULL )
+			return paInvalidDeviceID;
+		else
+			impl = outputImpl;
+	}
+
+	if( inputDevice != paNoDevice && outputDevice != paNoDevice ){	
+		if( inputImpl != outputImpl )
+			return paDevicesMustBelongToTheSameDriverModel;
+	}
+
+	
+	result = impl->openStream( stream, inputDevice, numInputChannels, inputSampleFormat, inputDriverInfo,
+				outputDevice, numOutputChannels, outputSampleFormat, outputDriverInfo,
+				sampleRate, framesPerBuffer, numberOfBuffers, streamFlags, callback, userData );
+
+
+	if( result == paNoError )
+		((PaStreamImplementation*)stream)->magic = PA_STREAM_MAGIC;
+	
+	return result;
+}
+
+
+PaError Pa_OpenDefaultStream( PortAudioStream** stream,
+				int numInputChannels,
+				int numOutputChannels,
+				PaSampleFormat sampleFormat,
+				double sampleRate,
+				unsigned long framesPerBuffer,
+				unsigned long numberOfBuffers,
+				PortAudioCallback *callback,
+				void *userData )
+{
+	PaError result;
+	int inputDevice = driverModels[0]->getDefaultInputDeviceID;
+	int outputDevice = driverModels[0]->getDefaultOutputDeviceID;		
+		
+	result = driverModels[0]->openStream( stream, inputDevice, numInputChannels, sampleFormat, 0, 
+								outputDevice, numOutputChannels, sampleFormat, 0, 
+								sampleRate, framesPerBuffer, numberOfBuffers,
+								streamFlags, callback, userData );
+
+	if( result == paNoError )
+		((PaStreamImplementation*)stream)->magic = PA_STREAM_MAGIC;
+	
+	return result;
+}
+
+
+PaError Pa_CloseStream( PortAudioStream* stream )
+{
+	PA_CHECK_INITIALIZED;
+
+	PaError result = ((PaStreamImplementation*)stream)->close();
+
+	if( result == PaNoError )
+		((PaStreamImplementation*)stream)->magic = 0; /* clear magic number */
+
+	return result;
+}
+
+
+PaError Pa_StartStream( PortAudioStream *stream );
+{
+	PA_CHECK_INITIALIZED;
+
+	return ((PaStreamImplementation*)stream)->start();
+}
+
+
+PaError Pa_StopStream( PortAudioStream *stream );
+{
+	PA_CHECK_INITIALIZED;
+
+	return ((PaStreamImplementation*)stream)->stop();
+}
+
+
+PaError Pa_AbortStream( PortAudioStream *stream );
+{
+	PA_CHECK_INITIALIZED;
+
+	return ((PaStreamImplementation*)stream)->abort();
+}
+
+
+PaError Pa_StreamActive( PortAudioStream *stream )
+{
+	PA_CHECK_INITIALIZED;
+
+	return ((PaStreamImplementation*)stream)->active();
+}
+
+PaTimestamp Pa_StreamTime( PortAudioStream *stream )
+{
+	PA_CHECK_INITIALIZED;
+
+	return ((PaStreamImplementation*)stream)->time();
+}
+
+
+double Pa_StreamCPULoad( PortAudioStream* stream )
+{
+	PA_CHECK_INITIALIZED;
+
+	return ((PaStreamImplementation*)stream)->cpuLoad();
+}
+
+
+
+int Pa_GetMinNumBuffers( PaDeviceID deviceID, int framesPerBuffer, double sampleRate )
+{	
+	PaDriverModelImplementation *impl;
+	PA_CHECK_INITIALIZED;
+
+	ConvertPublicDeviceIDToImplementationDeviceID( impl, deviceID );
+	if( impl == NULL )
+		return paInvalidDeviceID;
+
+	return impl->getMinNumBuffers( framesPerBuffer, sampleRate );	
+}
+
+
+void Pa_Sleep( long msec )
+{
+	same as existing implementaion
+}
+
+
+PaError Pa_GetSampleSize( PaSampleFormat format )
+{
+	same as existing implementation
+}
+
+#endif /* PA_MULTIDRIVER */
+
+

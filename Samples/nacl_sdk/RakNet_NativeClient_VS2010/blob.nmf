@@ -1,0 +1,32 @@
+{
+ "program": {
+   "x86-64": {"url": "lib64/runnable-ld.so"},
+   "x86-32": {"url": "lib32/runnable-ld.so"}
+ },
+ "files": {
+   "libc.so.a9de5678" : {
+     "x86-64": {"url": "lib64/libc.so.a9de5678"},
+     "x86-32": {"url": "lib32/libc.so.a9de5678"}
+   },
+   "libgcc_s.so.1" : {
+     "x86-64": {"url": "lib64/libgcc_s.so.1"},
+     "x86-32": {"url": "lib32/libgcc_s.so.1"}
+   },
+   "libm.so.a9de5678" : {
+     "x86-64": {"url": "lib64/libm.so.a9de5678"},
+     "x86-32": {"url": "lib32/libm.so.a9de5678"}
+   },
+   "libpthread.so.a9de5678" : {
+     "x86-64": {"url": "lib64/libpthread.so.a9de5678"},
+     "x86-32": {"url": "lib32/libpthread.so.a9de5678"}
+   },
+   "libstdc++.so.6" : {
+     "x86-64": {"url": "lib64/libstdc++.so.6"},
+     "x86-32": {"url": "lib32/libstdc++.so.6"}
+   },
+   "main.nexe" : {
+     "x86-64": {"url": "chatexampleclient_x86_64_Debug.nexe"},
+     "x86-32": {"url": "chatexampleclient_x86_32_Debug.nexe"}
+   }
+ }
+}

@@ -1,0 +1,172 @@
+<HTML>
+<HEAD>
+<TITLE>Compiler Setup (Xcode)</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Xcode notes</td>
+</tr></table>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+<TR>
+<TD>
+
+Although Raknet is cross-platform, not all of the samples provided will compile/run on Mac OS X or iOS.
+Here I'll show you how to compile Raknet for Mac OS X and iOS, along with one of the samples for testing
+<br><br>
+</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Compiling as a static library for Mac OS X</td>
+</tr></table>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+  <p class="RakNetBlueHeader">Create an empty workspace</p>
+  <ol>
+  <li>Create a folder named <i>RakNetTests</i>, and then create a new empty Workspace. Name it <i>RakNetTests</i>, and save it inside the new folder<BR><BR>
+  <IMG SRC="xcode_newworkspace.jpg"><BR><BR>
+  </li>
+  </ol>
+
+  <p class="RakNetBlueHeader">Create the RakNet static library project</p>
+  <ol>
+  <li>
+  Using <i>File->New->New Project</i>, create a new Mac OS X C/C++ library project<BR><BR>
+  <A HREF="xcode_library.jpg"><IMG SRC="xcode_librarysmall.jpg"></A><BR><BR>
+  Name it <i>RakNet</i> and use the following options:<BR>
+  <IMG SRC="xcode_libraryname.jpg"><BR>
+  Save it inside the same folder as the workspace<BR><BR>
+  </li>
+  
+  <li>Using Finder, copy RakNet's source code (<i>Source</i> folder) to where RakNet project file was created<BR><BR>
+  <IMG SRC="xcode_sourcefolder.jpg">
+  <BR><BR>
+  </li>
+  <li>
+  Right-click the <i>RakNet</i> project, and select <i>Add Files to "RakNet"...</i> ,
+  and select the new <i>Source</i> folder you should have in the same folder as the <i>RakNet</i> 
+  Project file. Use the following options:<BR><BR>
+  <IMG SRC="xcode_addfiles.jpg"><BR><BR>
+  This should create a <i>Source</i> group, like this:<BR>
+  <IMG SRC="xcode_addfiles_newgroup.jpg"><BR><BR>
+  </li>
+  
+  <li>
+  The <font color="red">files inside the <i>cat</i> folder aren't supposed to be compiled</font>, so remove the <i>Source/cat</i> group from the project files.<br>
+  When prompted for the deletion method, pick <strong><i>Remove References Only</i></strong>.<BR>
+  <IMG SRC="xcode_remove_cat.jpg"><BR><BR>
+  </li>
+  
+  <li>
+  Build Raknet using <i>Product->Build</i><BR>
+  You should get a successful compilation.
+  </li>
+
+  </ol>
+  </TD></TR>
+</TABLE>
+
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Testing the static library</td>
+</tr></table>
+
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+  <p class="RakNetBlueHeader">A simple sample...</p>
+  For testing, we're going to use the sample <i>"Chat Example"</i> provided with the Raknet. You can find it the <i>"Samples/Chat Example"</i> folder.
+  This sample has 2 source files, named <i>"Chat Example Server.cpp"</i> and <i>"Chat Example Client.cpp"</i>.
+  We are going to create two projects from those files (one project for the Server, and another for the Client).
+
+  <BR><BR>
+  Inside the folder where you have your workspace, create another folder named <i>Samples</i>, 
+  and copy <i>"Chat Example Server.cpp"</i> and <i>"Chat Example Client.cpp"</i> into that folder.<BR><BR>
+  
+  <p class="RakNetBlueHeader">The server</p>
+  <ol>
+  <li>Create a <i>Command Line Tool</i> project for the Server:<BR>
+  <IMG SRC="xcode_newcommandlinetool.jpg"><BR>
+  In the next window where it asks for the options for your new project, name it <i>ChatExampleServer</i>, 
+  leave <i>Type</i> as <i>C++</i>, and <i>"Use Automatic Reference Counting"</i> unchecked.<BR>
+  Save the project inside your <i>Samples</i> folder.<BR><BR>
+  <li>
+  Inside the newly created ChatExampleServer, you should have a group named <i>ChatExampleServer</i>.
+  Delete the <i>main.cpp</i> you'll find inside that group, and add the <i>"Chat Example Server.cpp"</i> file<BR><BR>
+  </li>
+
+  <li>
+  Specify where to look for the RakNet header files, by changing the Build Settings of the ChatExampleServer project.
+  This can be done in the <strong><i>Header Search Paths</i></strong> option, under the <strong><i>Search Paths</i></strong> section:<BR>
+  <IMG SRC="xcode_headersearchpaths.jpg"><BR>
+  If your folder structure is exactly the same as the one used for this tutorial, then the search path
+  should be what you see in the above image. If not then you need to adjust it accordingly.<BR>
+  <strong>NOTE:</strong> The search path is relative to the project file's location.<BR><BR>
+  </li>
+  
+  <li>
+  Link <i>ChatExampleServer</i> project with our RakNet static library, by going to <strong><i>Build Phases</i></strong>, section
+  <strong><i>Link Binary With Libraries</i></strong>, clicking the <strong>'+'</strong> button and picking our RakNet library as shown:<BR>
+  <IMG SRC="xcode_linkwithlibrary.jpg"><BR><BR>
+  </li>
+  <li>
+  You should be able to successfully build and run the Server now.<BR>
+  </li>
+  </ol>
+  
+   <p class="RakNetBlueHeader">The Client</p>
+  The steps to create the client project are the same as the ones for the Server:
+  <ol>
+  <li>Create a <i>"Command Line Tool"</i> project, and name it <i>ChatExampleClient</i></li>
+  <li>Delete the file <i>main.cpp</i> and add the file <i>"Chat Example Client.cpp"</i></li>
+  <li>Change the C/C++ compiler to <strong><i>LLVM GCC</i></strong></li>
+  <li>Set the header search paths</li>
+  <li>Add <i>RakNet</i> library to the list of libraries to link with.</li>
+  </ol>
+
+   <p class="RakNetBlueHeader">Running the sample</p>
+   You should now have 2 products ready to run (ChatExampleClient and ChatExampleServer). You can run
+   one of them from inside Xcode, and run the other externally by right-clicking on it and selecting 
+   <strong>"Open With External Editor"</strong>.
+  
+</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Compiling as a static library for iOS</td>
+</tr></table>
+<br>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+Compiling Raknet as a static library for iOS is essentially the same as for Mac OS X.<br>
+You can create a new project for the iOS library, or you can just create another Target for your Mac OS X
+static library project, and change what SDK to use:<br><br>
+<img src="xcode_changesdk.jpg">
+<br>
+<br>
+You can find some iOS samples in the <strong>Samples/iOS</strong> folder.<br><br>
+<br>
+</TD></TR>
+</TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A><BR>
+     <A HREF="dependencies.html">3rd party dependencies</A><BR>
+    <A HREF="introduction.html">Introduction</A><BR>
+    <A HREF="systemoverview.html">System Overview</A><BR>
+    <A HREF="detailedimplementation.html">Detailed Implementation</A><BR>
+    <A HREF="tutorial.html">Tutorial</A><BR>
+    <A HREF="preprocessordirectives.html">Preprocessor directives</A><BR>
+  </p></TD></TR></TABLE>
+
+
+
+</BODY>
+</HTML>

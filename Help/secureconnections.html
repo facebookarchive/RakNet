@@ -1,0 +1,86 @@
+<HTML>
+<HEAD>
+
+<TITLE>Secure Connections</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Secure Connections</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<p><span class="RakNetBlueHeader">Secure your network traffic</span><BR>
+  <BR>
+  
+  Once your online game reaches a certain popularity people will try to cheat.  You will need to account for this both at the game layer and at the network layer.  RakNet handles the network layer by providing secure connections if you wish to use them.  </p>
+  RakNet provides data security on par with 256-bit TLS. An efficient 256-bit Elliptic Curve key agreement with forward secrecy protects each connection with the server.
+
+<ul>
+  <li>Cookies: Uses stateless cookie in the handshake, analogous to SYN cookies, that ensures the remote IP address
+is not spoofed</li>
+  <li>Efficient: Modern techniques published and improved in the last 2 years   are
+    employed to offer security without a performance penalty.</li>
+    <li>Forward secrecy: Uses Tunnel Key Agreement "Tabby" protocol. If the server is compromised at some point in the  future,
+    previously exchanged data cannot be decrypted.</li>
+    <li>Protection: Each message is encrypted and stamped with a message
+    authentication code (MAC) and unique identifier to protect sensitive data
+    and prevent replays.</li>
+    <li> Immune to active attacks (man-in-the-middle) if server key is  known ahead of time</li>
+    <li>Uses 256-bit Elliptic Curve Cryptography</li>
+    <li>Elliptic Curve: Over finite field Fp, p = 2^n - c, c small<br>
+      &nbsp; &nbsp; &nbsp;Shape of curve: a' * x^2 + y^2 = 1 + d' * x^2 * y^2, a' = -1   (square
+      in Fp)<br>
+  &nbsp; &nbsp; &nbsp;d' (non square in Fp) -&gt; order of curve = q * cofactor h,   order of
+      generator point = q<br>
+  &nbsp; &nbsp; &nbsp;Curves satisfy MOV conditions and are not anomalous<br>
+  &nbsp; &nbsp; &nbsp;Point operations performed with Extended Twisted Edwards group   laws</li>
+</ul>
+<p>Secure connections add up to 11 bytes per packet and take time to compute so you may wish to limit usage to release mode.</p>
+<p><span class="RakNetBlueHeader">Usage:</span></p>
+<p>1. Add #define LIBCAT_SECURITY 1 to &quot;NativeFeatureIncludesOverrides.h&quot;. Rebuild all.</p>
+<p>2. Include &quot;Source/SecureHandshake.h&quot;. <strong>DO NOT  INCLUDE ANY FILES FROM Source/cat</strong></p>
+<p>3.  Create the public and private keys in advance</p>
+<p><span class="RakNetCode">cat::EasyHandshake::Initialize()<br>
+  cat::EasyHandshake handshake;<br>
+char public_key[cat::EasyHandshake::PUBLIC_KEY_BYTES];<br>
+char private_key[cat::EasyHandshake::PRIVATE_KEY_BYTES];<br>
+handshake.GenerateServerKey(public_key, private_key);</span><br>
+<br>
+4. Save the public and private keys to disk</p>
+<p class="RakNetCode">  fwrite(private_key, sizeof(private_key), 1, fp);  <br>
+  fwrite(public_key, sizeof(public_key), 1, fp);</p>
+<p>5. The server should load the public and private keys, and pass it to RakPeerInterface::InitializeSecurity(); Do not distribute the private key, this should remain secret.</p>
+<p>6. The client should load the public key. The public key should be distributed with the client application, or downloaded from a secure location. Pass the public key to RakPeerInterface::Connect()</p>
+<p>7. Connect the server to the client as usual.</p>
+<p>Possible errors, returned in packet-&gt;data[0]:</p>
+<p><strong>ID_REMOTE_SYSTEM_REQUIRES_PUBLIC_KEY</strong>: You didn't pass a public key to RakPeerInterface::Connect().<br>
+  <strong>ID_OUR_SYSTEM_REQUIRES_SECURITY</strong>: You did pass a public key to RakPeerInterface::Connect(), but InitializeSecurity() was not called on the server.<br>
+  <strong>ID_PUBLIC_KEY_MISMATCH</strong>: The public key on the client does not match the public key on the server.</p>
+<p><span class="RakNetBlueHeader">Public key transmission:</span></p>
+<p>You should generate the public key on a remote system in advance of trying to connect to that system. The   reason is that the public key is used to identify the remote system, so you know the system that replied is the one you are actually trying to connect to. An attacker might know the public key, but they wouldn't know the private key (which you keep secret) so they would not be able to establish a connection with you.<br>
+  <br>
+  For peer to peer, you should run a dedicated server, which itself is secure. Distribute the   client with the public key to that server known in advance. Connect to   that server, upload the peer's public key into a database, and then wait   for incoming connections. Correspondingly, when a peer wants to   connect, connect to that server, download the public key for that peer,   and use that public key for connections.</p>
+<p>  You can rent a discounted dedicated server from dx.net at <a href="http://www.dx.net/raknet_dx.php">http://www.dx.net/raknet_dx.php</a></p>
+<p>Alternate solutions:</p>
+<ol>
+  <li>You can use PHPDirectoryServer to pass the public keys. While not secure, it will work with a PHP enabled webhost (typically $5 to $10 a month)  and it's more secure than option 2 which is</li>
+  <li>In RakPeer::Connect, pass true for acceptAnyPublicKey for the publicKey parameter. This is similar to RakNet version 3 where you just pass 0 for each parameter for InitializeSecurity. In this case it is not necessary to transmit the public key in advance.</li>
+</ol>
+<p>  See the sample at <I>Samples\Encryption</I> for a working example.</p></TD>
+</TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

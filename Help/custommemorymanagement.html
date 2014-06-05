@@ -1,0 +1,54 @@
+<HTML>
+<HEAD>
+
+<TITLE>Custom Memory Management</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92">
+<img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">Custom Memory Management</span></td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+<span class="RakNetBlueHeader">Override new, delete, malloc, free, and realloc
+</p>
+</span>
+<p>Users wishing to provide custom memory management functions can do so via RakMemoryOverride.cpp.</p>
+<p>There are 3 global pointers defined in this file, with predefined defaults:</p>
+<p class="RakNetCode">void* (*rakMalloc) (size_t size) = RakMalloc;<br>
+  void* (*rakRealloc) (void *p, size_t size) = RakRealloc;<br>
+  void (*rakFree) (void *p) = RakFree;</p>
+<p>To override, simply set the values of these variables to something else.</p>
+<p>For example, to override malloc, you may write:</p>
+<p class="RakNetCode">#include &quot;RakMemoryOverride.h&quot;</p>
+<p class="RakNetCode">void *MyMalloc(size_t size)<br>
+  {<br>
+return malloc(size);<br>
+}</p>
+<p class="RakNetCode">int main()<br>
+  {<br>
+  rakMalloc=MyMalloc;<br>
+  // ...<br>
+  }</p>
+<p>Then edit the file RakNetDefinesOverrides.h and add </p>
+<p class="RakNetCode">#define _USE_RAK_MEMORY_OVERRIDE 1</p>
+<p>Alternatively, edit RakNetDefines.h _USE_RAK_MEMORY_OVERRIDE</p></TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92">
+<img src="spacer.gif" width="8" height="1"><span class="RakNetWhiteHeader">See Also</span></td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A><br>
+  <A HREF="networkidobject.html">NetworkIDObject</A></p>
+  </TD>
+</TR></TABLE>
+</BODY>
+</HTML>

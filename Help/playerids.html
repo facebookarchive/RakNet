@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+
+<TITLE>Player IDs</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">Player IDs</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+What are Player IDs?
+<BR><BR>
+
+PlayerIDs are structs containing the binary IP address and port of a system on the network.  Here's some cases where you'll need PlayerID:<BR>
+<UL>
+<LI>The server got a message from a particular client and wants to relay to all other clients.  You would specify the sender PlayerID (given in the Packet::PlayerID field) in the Send function with broadcast as true.
+<LI>Some item in the gameworld, such as a mine, belongs to a particular player and you want to give the appropriate person points for the kill.
+<LI>You want some kind of 1:1 mapping for each player that every client knows about.  For example if each player in your game had a unique score.
+<LI>You want to send a message to any peer on a peer to peer network.
+</UL>
+
+<BR>
+<B>Important Considerations:</B><BR><BR>
+1.  The recipient of a packet automatically knows the PlayerID of any system that sends a packet to it because it determines this from the sender's IP/Port combination.  The sender does not need to encode its own PlayerID in the data structure if all you need is for the server to know what the PlayerID is.  The PlayerID of the originating sender is automatically passed to the programmer in the Packet structure that is returned by Receive.<BR>
+<BR>
+2.  When using the client server model, clients DO NOT know the PlayerID of who originally sent the packet.  As far as a client is concerned all packets originate with the server.  Therefore if it is necessary that a client know the PlayerID of another client you must add a PlayerID field into the data struct.  You can either have the sending client fill this field in, or you can have the server fill it out when it gets the packet from the original sender.<BR>
+<BR>
+3.  PlayerIDs are no longer sequentially assigned or assigned within a certain range.  Prior users should be aware of this.<BR>
+<BR>
+
+</TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">See Also</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

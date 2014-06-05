@@ -1,0 +1,339 @@
+<HTML>
+<HEAD>
+
+<TITLE>Replica Manager</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Replica Manager 3 Plugin Interface Implementation</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p><span class="RakNetBlueHeader">Replica Manager 3 Implementation Overview</span>      <BR>
+      </p>
+    <p>Any game that has objects that are created and destroyed while the game is in progress, almost all non-trivial games, faces a minimum of 3 problems:</p>
+    <ul>
+      <li>How to broadcast existing game objects to new players</li>
+      <li>How to broadcast new game objects to existing players</li>
+      <li>How to broadcast deleted game objects to existing players</li>
+    </ul>
+    <p>Additional potential problems, depending on  complexity and optimization</p>
+    <ul>
+      <li>How to create and destroy objects dynamically as the player moves around the world</li>
+      <li>How to allow the client to create objects locally when this is necessary right away for programming or graphical reasons (such as shooting a bullet).</li>
+      <li>How to update objects as they change over time</li>
+      </ul>
+    <p>The solution to most of these problems is usually straightforward, yet still requires a significant amount of work and debugging, with several dozen lines of code per object.</p>
+    <p>ReplicaManager3 is designed to be a generic, overridable plugin that handles as many of these details as possible automatically. ReplicaManager3 automatically creates and destroys objects, downloads the world to new players, manages players, and automatically serializes as needed. It also includes the advanced ability to automatically relay messages, and to automatically serialize your objects when the serialized member data changes.</p>
+    <p><strong>Order of operations:</strong></p>
+    <p>Objects are remotely created in the order they are registered using ReplicaManager3::Reference(). All objects created or destroyed in a tick are created or destroyed in the same packet, meaning all calls to construct or destroy objects are triggered by the same RakPeerInterface::Receive() call.</p>
+    <p>Serialize() happens after construction. Therefore, all objects will be created and will have DeserializeConstruction() called before any Serialize() call happens for any of the objects created that update tick. Unlike construction, Serialize() calls may be spread out over multiple calls to RakPeerInterface::Receive() call depending on bandwidth availability. Therefore, be sure that you send all data necessary for the object to be properly setup in the initial SerializeConstruction() call, since it is not guaranteed you will receive Deserialize() on the same tick.</p>
+    <p>The first time objects are sent to a remote system, you will get the Connection_RM3::DeserializeOnDownloadComplete() once all objects have been constructed and Deserialized().</p>
+<p><strong>Dependency resolution:</strong></p>
+    <p>If one object refers to another (for example, a gun has a pointer to its owner) then the dependent objects need to be created first. In the case of a gun with a pointer to its owner, the owner would be created first. The gun would serialize the NetworkID of the owner, and lookup the owner in its DeserializeConstruction call. This can be achieved by registering the objects in that order using ReplicaManager3::Reference().</p>
+    <p>Sometimes you have dependency chains that cannot be resolved through reordering. For example, a player has an inventory list, and each item in the inventory has a pointer to its owner. Or you may have a circular chain, where A depends on B, B depends on C, and C depends on A. Or it may not be feasable to reorder the objects. For these cases, you can resolve dependencies in the Replica3::PostDeserializeConstruction() callback. PostDeserializeConstruction() is called after DeserializeConstruction() completes for all objects in a given update tick, so all objects that are going to be created will have been created by then.</p>
+<p><strong>Static Objects:</strong></p>
+    <p>Sometimes you have an object that already exists in the world and is known to all systems. For example, a door on level load. In those situations you usually do not want the server to transmit the object creation message, since it would result in the same door twice. Yet you still want to reference and serialize the object, such as the door opening and closing, or the remaining health for the door.</p>
+    <OL>
+		<LI>Derive your object from Replica3
+		<LI>BEFORE calling replicaManager3->Reference() on the object, call replica3Object->SetNetworkIDManager(replicaManager3->GetNetworkIDManager());
+		<LI>BEFORE calling replicaManager3->Reference() on the object, call replica3Object->SetNetworkID(unique64BitIDLoadedWithLevel);
+		<LI>return RM3CS_ALREADY_EXISTS_REMOTELY from QueryConstruction() from the host/server. Otherwise return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT. Alternatively, use QueryConstruction_PeerToPeer() with R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE or R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE.
+		<LI>WriteAllocationID(), SerializeConstruction(), DeserializeConstruction() are not used for static objects, and can have empty implementations.
+		<LI>If the object should also never be destroyed over the network, Implement QueryActionOnPopConnection(), to return RM3AOPC_DO_NOTHING. SerializeDestruction(), DeserializeDestruction(), DeallocReplica() can have empty implementations.
+		<LI>Return whatever you want from QueryRemoteConstruction(), as it will not be called
+		<LI>Implement QuerySerialization() to return RM3QSR_CALL_SERIALIZE from the system that serializes the object, typically the peer to peer host or the server. If a system is not currently but can later become a host, such as for peer to peer with host migration, return RM3QSR_DO_NOT_CALL_SERIALIZE. Otherwise return RM3QSR_NEVER_CALL_SERIALIZE. Alternatively, use QuerySerialization_PeerToPeer() with R3P2PM_STATIC_OBJECT_CURRENTLY_AUTHORITATIVE or R3P2PM_STATIC_OBJECT_NOT_CURRENTLY_AUTHORITATIVE.
+        <LI>Write to the BitStream in SerializeConstructionExisting() your one-time initialization data, and read it in DeserializeConstructionExisting(). This function is called if and only if QueryConstruction returns RM3CS_ALREADY_EXISTS_REMOTELY.
+		<LI>Write per-tick serialization data in Serialize(), and read it in Deserialize().
+      </OL>
+    <p>RM3CS_ALREADY_EXISTS_REMOTELY causes ReplicaManager3 to consider the door to exist on the other system, so when Serialize() is called updates will still be sent to that system. But the SerializeConstruction() call and object creation is skpped. </p>
+    
+	<p><span class="RakNetBlueHeader">Combining with FullyConnectedMesh2</span><BR></p>
+	
+    <p>If you are using <a href="fullyconnectedmesh2.html">FullyConnectedMesh2</a> for host determination and ReplicaManager3 relies on a host, then you have to delay calling AddParticipant() until a host has been determined. Here is how to do so:</p>
+	<OL>
+    	<LI><span class="RakNetCode">replicaManager3-&gt;SetAutoManageConnections(false, [false or true, depends on your preference]);</span></LI>
+    	<LI><span class="RakNetCode">fullyConnectedMesh2-&gt;SetAutoparticipateConnections(false);</span> (optional)</LI>
+    	<LI>Start connections to all remote systems</LI>
+      	<LI>On ID_CONNECTION_REQUEST_ACCEPTED or ID_NEW_INCOMING_CONNECTION, execute:<br>
+          <span class="RakNetCode">
+          	
+          // Add mid-game joins to ReplicaManager3 as long as we know who the host is<BR>
+					if (fullyConnectedMesh2-&gt;GetConnectedHost()!=UNASSIGNED_RAKNET_GUID)<BR>
+					{<BR>
+						bool success = replicaManager3-&gt;PushConnection(replicaManager3-&gt;AllocConnection(packet-&gt;systemAddress, packet-&gt;guid));<BR>
+						RakAssert(success);<BR>
+					}<BR>
+</span></LI>
+      	<LI>On ID_FCM2_NEW_HOST execute:<br>
+      	  <span class="RakNetCode">BitStream bsIn(packet-&gt;data, packet-&gt;length, false);<br>
+      	  bsIn.IgnoreBytes(sizeof(MessageID));<br>
+      	  RakNetGUID oldHost;<br>
+      	  bsIn.Read(oldHost);<br>
+      	  if (oldHost==UNASSIGNED_RAKNET_GUID)<br>
+      	  { <br>
+// First time calculated host. Add existing connections to ReplicaManager3<BR>
+AddFullyConnectedMesh2ParticipantsToReplicaManager3(); <br>
+}</span></LI>
+      	<LI><span class="RakNetCode">
+      		
+void AddFullyConnectedMesh2ParticipantsToReplicaManager3(void)<br>
+{<br>
+	{<br>
+		DataStructures::List<RakNetGUID> participantList;<br>
+		fullyConnectedMesh2-&gt;GetParticipantList(participantList);<br>
+		for (unsigned int i=0; i < participantList.Size(); i++)<br>
+		{<br>
+			Connection_RM3 *connection = replicaManager3-&gt;AllocConnection(rakPeer-&gt;GetSystemAddressFromGuid(participantList[i]), participantList[i]);<br>
+			if (replicaManager3-&gt;PushConnection(connection)==false)<br>
+				replicaManager3-&gt;DeallocConnection(connection);<br>
+		}<br>
+};<br>
+
+      	  
+      	  </span></LI>
+     </OL>
+      <p><em>Explanation:</em></p>
+      <p>Line 1, the first parameter to Replicamanager3::SetAutoManageConnections() is set to false in order to disable ReplicaManager3 from automatically calling PushConnection(), because you want to delay systems from participating in Replicamanager3 until a host has been determined. The second parameter is up to you.</p>
+      <p>Line 2: If every system that connects to you is another game instance, you can leave SetAutoparticipantConnections() as the default to true, and do not need to call fullyConnectedMesh2-&gt;AddParticipant(packet-&gt;guid); later either. The reason this is here is in case you want to connect to a profiling tool or other non-game program.</p>
+      <p>Line 3: FullyConnectedMesh2 requires a fully connected mesh topology, so you need to connect to everyone else in the game instance. This can be done with a simple rakPeer-&gt;Connect() call, or you could have other systems such as <a href="natpunchthrough.html">NAT punchthrough</a> involved depending on your needs. The code here works with both everyone starting at the same time from a lobby, and with mid-game joins. See the manual page on <a href="connecting.html">connecting</a> for more information about this.</p>
+      <p>Line 4: Until a host has been determined, fullyConnectedMesh2-&gt;GetConnectedHost() will return UNASSIGNED_RAKNET_GUID. In that case, we delay replicaManager3-&gt;PushConnection() until ID_FCM2_NEW_HOST is returned. However, if a host is already known (for example, the game is already in progress), then the remote system is added immediately.</p>
+      <p>Line 5: Once the host is known for the first time, all connected systems can be added to ReplicaManager3. oldHost==UNASSIGNED_RAKNET_GUID means there was no prior host.</p>
+      <p>Line 6: A function to uniquely add connections to ReplicaManager3 given a list of remote RakNetGUIDs.</p>
+
+<p><span class="RakNetBlueHeader">Integration with component based systems</span><BR></p>
+
+<p>By component-based system I mean one where a game actor has a list of classes attached, each of which contain an attribute of the actor itself. For example, a player may have position, health, animation, physics components for example.</p>
+
+1. Instances of the same actor either have the same type, order, and and number of components or else when you serialize you will have to provide a way to identify components. To Serialize(), first Serialize() your actor. Then Serialize() your components in order.<BR><BR>
+2. Here is an example of QuerySerialization() in a peer to peer game where the host controls objects loaded with the level (static objects). Otherwise, the peer that created the object serializes it. However, a component can override this and allow the host to serialize the object regardless. For example, if a player puts a weapon on the ground, the weapon could return RM3QSR_CALL_SERIALIZE if our own system is the host system, and RM3QSR_DO_NOT_CALL_SERIALIZE otherwise.<BR>
+
+<pre>
+if (IsAStaticObject())
+{
+	// Objects loaded with the level are serialized by the host
+	if (fullyConnectedMesh2->IsHostSystem())
+		return RM3QSR_CALL_SERIALIZE;
+	else
+		return RM3QSR_DO_NOT_CALL_SERIALIZE;
+}
+else
+{
+	// Allow components opportunity to overwrite method of serialization
+	for (int i=0; i < components.Size(); i++)
+	{
+		RM3QuerySerializationResult res = components[i]->QuerySerialization(destinationconnection);
+		if(res != RM3QSR_MAX)
+			return res;
+	}
+	return QuerySerialization_PeerToPeer(destinationconnection);
+}
+</pre>
+
+3. This variation, for QueryConstruction(), has components return Replica3P2PMode instead. Using the gun example, a gun may controlled by the host when on the ground, or by another player when picked up. If R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE or R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE is returned by a component, then QueryConstruction_PeerToPeer() will use that value to return an appropriate value for RM3ConstructionState. Internally, QueryConstruction_PeerToPeer() will return RM3CS_SEND_CONSTRUCTION if we control the object, RM3CS_NEVER_CONSTRUCT if we do not control the object and nobody else ever can, and RM3CS_ALREADY_EXISTS_REMOTELY if someone else controls the object but the owner can change.<BR>
+
+<pre>
+if (destinationConnection->HasLoadedLevel() == false)
+	return RM3CS_NO_ACTION;
+if (IsAStaticObject())
+{
+	if(fullyConnectedMesh2->IsHostSystem())
+            return RM3CS_ALREADY_EXISTS_REMOTELY;
+	else
+            return RM3CS_ALREADY_EXISTS_REMOTELY_DO_NOT_CONSTRUCT;
+}
+else
+{
+	Replica3P2PMode p2pMode = R3P2PM_SINGLE_OWNER;
+	for (int i=0; i < components.Size(); i++)
+	{
+		p2pMode = components[i]->QueryP2PMode();
+		if(p2pMode != R3P2PM_SINGLE_OWNER)
+			break;
+	}
+	return QueryConstruction_PeerToPeer(destinationconnection, p2pMode);
+}
+
+virtual Replica3P2PMode BaseClassComponent::QueryP2PMode() {return R3P2PM_SINGLE_OWNER;}
+
+virtual Replica3P2PMode GunComponent::QueryP2PMode()
+{
+	if (IsOnTheGround())
+		if(fullyConnectedMesh2->IsHostSystem())
+			return R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE;
+		else
+			return R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE;
+	else
+		if (WeOwnTheGun())
+			return R3P2PM_MULTI_OWNER_CURRENTLY_AUTHORITATIVE;
+		else
+			return R3P2PM_MULTI_OWNER_NOT_CURRENTLY_AUTHORITATIVE;		
+}
+</pre>
+
+4. If you need to use composition instead of derivation see Replica3Composite in ReplicaManager3.h. It is a templated class with only one member, r3CompositeOwner. All Replica3 interfaces are queried on r3CompositeOwner.
+
+<p><strong>Methods of object serialization:</strong></p>
+    <p><strong>Manual sends on dirty flags</strong><br>
+      <em>Description</em>: When a variable changes, it's up to you to set some flag that the  variable has changed. The next Serialize() tick, you send all variables  with dirty flags set<br>
+<em>Pros</em>: fast, memory efficient<br>
+<em>Cons</em>: All replicated variables must change through accessors so the  flags can be set. So it's labor intensive on the programmer as you have  to program it to set the dirty flags, and bugs will likely be made during the process</p>
+    <p><em>Example</em><br>
+      <br>
+      <span class="RakNetCode">void SetHealth(float newHealth) {if (health==newHealth) return; health=newHealth; serializeHealth=true;}<br>
+        void SetScore(float newScore) {if (score==newScore) return; score=newScore; serializeScore=true;}<br>
+        virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)<br>
+        {<br>
+        bool anyVariablesNeedToBeSent=false;
+        <br>
+        if (serializeHealth==true)<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(true);<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(health);<br>
+        anyVariablesNeedToBeSent=true;<br>
+        }<br>
+        else<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(false);<br>
+        }<br>
+        if (serializeScore==true)<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(true);<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(score);<br>
+        anyVariablesNeedToBeSent=true;<br>
+        }<br>
+        else<br>
+        {<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Write(false);<br>
+        }      <br>
+        if 
+        (anyVariablesNeedToBeSent==false)<br>
+        serializeParameters-&gt;outputBitstream[0]-&gt;Reset();<br>
+        // Won't send anything if the bitStream is empty (was Reset()). 
+        RM3SR_SERIALIZED_ALWAYS skips default memory compare<br>
+        return 
+        RM3SR_SERIALIZED_ALWAYS;<br>
+        }</span></p>
+    <p class="RakNetCode">virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)<br>
+{<br>
+bool healthWasChanged, scoreWasChanged;<br>
+deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(healthWasChanged);<br>
+if (healthWasChanged)<br>
+    deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(health); <br>
+      deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(scoreWasChanged);<br>
+if (scoreWasChanged)<br>
+      deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(score);    <br>
+      }</p>
+<p><strong>Serializing based on the object changing</strong><br>
+      <em>Description</em>: This is what ReplicaManager3 comes with. If the object's state for a  bitStream channel change at all, the entire channel is resent<br>
+      <em>Pros:</em> Easy to use for the programmer<br>
+      <em>Cons:</em> Some variables will be sent unneeded, using more bandwidth than necessary. Moderate CPU and memory usage</p>
+<p><em>Example</em></p>
+<p><span class="RakNetCode">void SetHealth(float newHealth) {health=newHealth;}<br>
+virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)<br>
+{<br>
+serializeParameters-&gt;outputBitstream[0]-&gt;Write(health);<br>
+serializeParameters-&gt;outputBitstream[0]-&gt;Write(score);<br>
+// Memory compares against last outputBitstream write. If changed, writes everything on the changed channel(s), which can be wasteful in this case if only health or score changed, and not both
+</span><span class="RakNetCode"><br>
+  ieturn 
+  RM3SR_BROADCAST_IDENTICALLY;<br>
+  }</span><br>
+  <span class="RakNetCode">virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters)<br>
+    {<br>
+    deserializeParameters-&gt;serializationBitstream[0]-&gt;Read(health); <br>
+    deserializeParameters-  &gt;serializationBitstream[0]-&gt;Read(score);  </span><span class="RakNetCode"><br>
+  }</span></p>
+<p><br>
+  <strong>Serializing per-variable</strong><br>
+  <em>Description</em>: The optional module I was talking about. Every variable is copied internally and compared to the last state<br>
+  <em>Pros:</em> Maximum bandwidth savings<br>
+  <em>Cons:</em> Heavy CPU and memory usage</p>
+<p><em>Example (also see ReplicaManager3 sample project)</em></p>
+<p class="RakNetCode">virtual RM3SerializationResult Serialize(SerializeParameters *serializeParameters)	{<br>
+VariableDeltaSerializer::SerializationContext serializationContext;<br>
+ // All variables to be sent using a different mode go on different channels<br>
+  serializeParameters-&gt;pro[0].reliability=RELIABLE_ORDERED;<br>
+  variableDeltaSerializer.BeginIdenticalSerialize(<br>
+  &amp;serializationContext,<br>
+  serializeParameters-&gt;whenLastSerialized==0,<br>
+  &amp;serializeParameters-&gt;outputBitstream[0]<br>
+  );<br>
+  variableDeltaSerializer.SerializeVariable(&amp;serializationContext, var3Reliable);<br>
+  variableDeltaSerializer.SerializeVariable(&amp;serializationContext, var4Reliable);<br>
+  variableDeltaSerializer.EndSerialize(&amp;serializationContext);<br>
+  return RM3SR_SERIALIZED_ALWAYS_IDENTICALLY;<br>
+  }<br>
+  <br>
+  virtual void Deserialize(RakNet::DeserializeParameters *deserializeParameters) {<br>
+   VariableDeltaSerializer::DeserializationContext deserializationContext;<br>
+   variableDeltaSerializer.BeginDeserialize(&amp;deserializationContext, &amp;deserializeParameters-&gt;serializationBitstream[0]);<br>
+  if (variableDeltaSerializer.DeserializeVariable(&amp;deserializationContext, var3Reliable))<br>
+  printf(&quot;var3Reliable changed to %i\n&quot;, var3Reliable);<br>
+  if (variableDeltaSerializer.DeserializeVariable(&amp;deserializationContext, var4Reliable))<br>
+  printf(&quot;var4Reliable changed to %i\n&quot;, var4Reliable);<br>
+  variableDeltaSerializer.EndDeserialize(&amp;deserializationContext);<br>
+  } </p>
+    <p><strong> Quick start:</strong><br>
+    </p>
+    <ol>
+      <li> Derive from Connection_RM3 and implement Connection_RM3::AllocReplica(). This is a factory function where given an identifier for a class (such as name) return an instance of that class. Should be able to return any networked object in your game.</li>
+      <li> Derive from ReplicaManager3 and implement AllocConnection() and DeallocConnection() to return the class you created in step 1.</li>
+      <li> Derive your networked game objects from Replica3. All pure virtuals have to be implemented, however defaults are provided for Replica3::QueryConstruction() and Replica3::QueryRemoteConstruction() depending on your network architecture.</li>
+      <li> When a new game object is created on the local system, pass it to ReplicaManager3::Reference().</li>
+      <li> When a game object is destroyed on the local system, and you want other systems to know about it, call Replica3::BroadcastDestruction()</li>
+      <li> Attach ReplicaManager3 as a plugin</li>
+    </ol>    
+    <p>For a full list of functions with detailed documentation on each parameter, see ReplicaManager3.h.</p>
+    <p>The primary sample is located at <I>Samples\ReplicaManager3</I>.<BR>
+      </p></TD>
+</TR>
+  <TR>
+    <TD>&nbsp;</TD>
+  </TR>
+</TABLE>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Differences between ReplicaManager3 and ReplicaManager2</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <span class="RakNetBlueHeader">ReplicaManager3 should be simpler and more transparent</span>
+    <OL>
+    <LI>Connection_RM2::Construct is now two functions: Connection_RM3::AllocReplica and Connection_RM3::DeserializeConstruction. Previously, you were given raw data in Connection_RM2::Construct and expected to both create and deserialize construction yourself. Now, AllocReplica will create the object. DeserializeConstruction will fill out the data for the object.</LI>
+    <LI>Because of the change above,  NetworkID, creatingSystemGUID, and replicaManager are already set as member variables before you get the DeserializeConstruction callback. This simplies usage because the object is already ready to use.</LI>
+    <LI>Objects created the same tick were previously sent in individual messages. This means it was possible for the two objects to arrive on different remote game ticks for recipients already connected. This is a problem if two objects depend on each other before either will work. Now, all objects created the same tick (defined by calls to RakPeerInterface::Receive(), which calls PluginInterface2::Update() are sent in the same message.</LI>
+    <LI>Previously, you would call ReplicaManager2::SetConnectionFactory with a special connection factory class to create instances of Connection_RM2. Now, ReplicaManager3 itself has pure virtual functions AllocConnection() and DeallocConnection()</LI>
+    <LI>Previously, object references were implicit. A call to ReplicaManager2::SendConstruction, ReplicaManager2::SendSerialize, or ReplicaManager2::SendVisibility would register the instance if it didn't already exist. Now, references are explicit, with ReplicaManager3::Reference replacing all three of those ReplicaManager2 calls. This was a previous source of confusion, where those Send functions (or the Broadcast equivalents) did not check the corresponding Replica2::Query* functions. The Construction and Serialization functions are now gone, and happen soley through the automatic update tick.</LI>
+    <LI>ReplicaManager2 did not support different serializations per-connection. ReplicaManager3 does, by returning RM3SR_SERIALIZED_UNIQUELY from ReplicaManager3::Serialize. It is still more efficient to return RM3SR_SERIALIZED_IDENTICALLY if serializations are the same for all connections.</LI>
+    <LI>ReplicaManager3 does not support the visiblity commands, such as ReplicaManager2::SendVisibility, to keep the system simpler and more transparent. To support this, add a boolean visiblity flag. Transmit it once in Serialize, using RM3SR_SERIALIZED_UNIQUELY. On the remote system, if the visibility flag is false, hide the object. On the sending system, if the visibility flag is false, return RM3SR_DO_NOT_SERIALIZE from ReplicaManager3::Serialize. You can check if the visibility flag for this replica / connection pair has changed by reading SerializeParameters::lastSerializationSent, which will contain the last transmitted value of SerializeParameters::outputBitstream</LI>
+    <LI>ReplicaManager3 does not support Connection_RM2::SerializeDownloadStarted to keep the system simpler and more transparent. You can check the equivalent in the function ReplicaManager3::SerializeConstruction withthe value of destinationConnection->IsInitialDownload(). For more complex behavior, you can also send data before registering the remote system. Call ReplicaManager3::SetAutoManageConnections with the autoCreate parameter as false. Send your data. Then call ReplicaManager3::PushConnection.</LI>
+    <LI>QueryDestruction no longer exists. QueryConstruction now has a return value that indicates destruction.</LI>
+    <LI>QueryIs*Authority no longer exists. Return values from the existing functions in ReplicaManager3 achieve the same results.</LI>
+    </ol>
+    </TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A><BR>
+      <A HREF="connecting.html">Connecting</A><BR>
+      <A HREF="natpunchthrough.html">NAT punchthrough</A><BR>
+      <A HREF="plugininterface.html">PluginInterface</A><BR>
+      <A HREF="http://www.jenkinssoftware.com/raknet/manual/ReplicaManager3Video.htm">ReplicaManager3 Video</A><BR>
+        <BR>
+    </p>
+  </TD></TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,52 @@
+<HTML>
+<HEAD>
+<TITLE>Directory Delta Transfer Manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+.style1 {color: #333333}
+-->
+</style>
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">Directory Delta Transfer Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Send file differences between directories automatically</span><BR>
+        <BR>
+      DirectoryDeltaTransfer.h is useful if you allow user-moddable content. For example, if each server has a /skins directory, you could run this plugin to upload that directory to the clients. Each client that does not already have a particular skin will get it. You will get download progress notifications via a user-supplied callback. DirectoryDeltaTransfer relies on the FileListTransfer plugin to actually transmit hte files.</p>
+      <p>Usage:</p>
+      <ol>
+        <li>Attach the plugin and connect to the remote system</li>
+        <li>Server and client: Call directoryDeltaTransfer.SetFileListTransferPlugin(&amp;fileListTransfer);</li>
+        <li>Server: set the application directory: <span class="style1"><code> directoryDeltaTransfer.SetApplicationDirectory(&quot;c:\myGame&quot;);</code></span></li>
+        <li>Server: set the download directory: <span class="RakNetCode">directoryDeltaTransfer.AddUploadsFromSubdirectory(&quot;skins&quot;);</span></li>
+        <li>Client: to download call: <span class="RakNetCode">directoryDeltaTransfer.DownloadFromSubdirectory(&quot;skins&quot;, &quot;downloaded\skins&quot;, true, serverAddress, &amp;transferCallback, HIGH_PRIORITY, 0);</span></li>
+        <li>Client: Wait for the callback member <span class="RakNetCode">OnFileProgress()</span>. When onFileStruct-&gt;fileIndex is equal to onFileStruct-&gt;setCount this download is done.</li>
+      </ol>
+      <p>For full details on all parameters and other available functions, see the header file DirectoryDeltaTransfer.h and the sample at <em>Samples/DirectoryDeltaTransfer</em></p>
+      
+  </TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <A HREF="index.html">Index</A><br>
+        <A HREF="filelisttransfer.html">FileListTransfer</A> <BR>          </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

@@ -1,0 +1,67 @@
+<HTML>
+<HEAD>
+
+<TITLE>Statistics</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Statistics</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+  <p><span class="RakNetBlueHeader">How to read and interpret RakNet's statistical data
+    </span><BR>
+    <BR>
+    
+    Statistical data is important for an online game because it lets you see where your traffic bottlenecks are.</p>
+  <p> RakPeerInterface provides the structure RakNetStatistics which is returned by the GetStatistics() function present in RakPeerInterface.  This structure is defined in <I>Source/RakNetStatistics.h</I>.  The function StatisticsToString is also provided which will convert these statistics to a formatted buffer.</p>
+  <p>A running total is kept for the following enumerations</p>
+  <p class="RakNetCode">/// How many bytes per pushed via a call to RakPeerInterface::Send()<br>
+USER_MESSAGE_BYTES_PUSHED,</p>
+  <p class="RakNetCode"> /// How many user message bytes were sent via a call to RakPeerInterface::Send(). This is less than or equal to USER_MESSAGE_BYTES_PUSHED.<br>
+    /// A message would be pushed, but not yet sent, due to congestion control<br>
+    USER_MESSAGE_BYTES_SENT,</p>
+  <p class="RakNetCode"> /// How many user message bytes were resent. A message is resent if it is marked as reliable, and either the message didn't arrive or the message ack didn't arrive.<br>
+    USER_MESSAGE_BYTES_RESENT,</p>
+  <p class="RakNetCode"> /// How many user message bytes were received, and returned to the user successfully.<br>
+    USER_MESSAGE_BYTES_RECEIVED_PROCESSED,</p>
+  <p class="RakNetCode"> /// How many user message bytes were received, but ignored due to data format errors. This will usually be 0.<br>
+    USER_MESSAGE_BYTES_RECEIVED_IGNORED,</p>
+  <p class="RakNetCode"> /// How many actual bytes were sent, including per-message and per-datagram overhead, and reliable message acks<br>
+    ACTUAL_BYTES_SENT,</p>
+  <p class="RakNetCode"> /// How many actual bytes were received, including overead and acks.<br>
+    ACTUAL_BYTES_RECEIVED,</p>
+<p>If you want to track statistics over time, we also provide <em>Source/StatisticsHistoryPlugin.h, </em>used by the sample<em> StatisticsHistoryTest</em>. It tracks values for some user-defined amount of time and does various calculations on the data set. RakPeerInterface::GetStatistics() is read automatically. Here is sample code that tracks a sin and cos wave.</p>
+<p class="RakNetCode">DataStructures::Queue&lt;StatisticsHistory::TimeAndValue&gt; histogram;<br>
+StatisticsHistory::TimeAndValueQueue *tav;<br>
+StatisticsHistory::TimeAndValueQueue tavInst;<br>
+StatisticsHistory statisticsHistory;<br>
+statisticsHistory.SetDefaultTimeToTrack(10000);<br>
+statisticsHistory.AddObject(StatisticsHistory::TrackedObjectData(HO_SIN_WAVE,0,0));<br>
+statisticsHistory.AddObject(StatisticsHistory::TrackedObjectData(HO_COS_WAVE,0,0));<br>
+while (1) {
+<br>
+  double f = (double) ((double)GetTime() / (double)1000);<br>
+  statisticsHistory.AddValueByObjectID(HO_SIN_WAVE,&quot;Waveform&quot;,sin(f),GetTime(), false);<br>
+  statisticsHistory.AddValueByObjectID(HO_COS_WAVE,&quot;Waveform&quot;,cos(f),GetTime(), false);<br>
+  RakSleep(30);<br>
+  }
+  <BR>
+</p></TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

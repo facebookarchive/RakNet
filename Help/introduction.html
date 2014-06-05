@@ -1,0 +1,138 @@
+<HTML>
+<HEAD>
+
+<TITLE>Introduction</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+&nbsp;Introduction</td>
+</tr></table>
+<table width="100%" border="0" cellspacing="0" cellpadding="10">
+  <tr>
+    <td class="RakNetManualTextBody"><span class="RakNetBlueHeader">Installation</span><BR>
+      <BR>
+Please refer to the <A HREF="compilersetup.html">Compiler Setup</A> page, as all your questions should be answered there.  If you have additional problems please refer to the <A HREF="faq.html">FAQ</A>, <A HREF="http://www.jenkinssoftware.com">http://www.jenkinssoftware.com</A>, or <A HREF="mailto:rakkar@jenkinssoftware.com">contact us</A>.  Advanced users can jump to the <A HREF="tutorial.html">code tutorial</A>. Beginners or those wishing to learn more about RakNet should keep reading. <BR>
+<BR>
+API Description <BR>
+<BR>
+RakNet is a game engine solely managing networking and related services. It includes game-level replication, patching, NAT punchthrough, and voice chat.   It allows any application to communicate with other applications that also uses it, whether that be on the same computer, over a LAN, or over the internet.  Although RakNet can be used for any networked application, it was developed with a focus on online gaming and provides extra functionality to facilitate the programming of online games as well as being programmed to address the most common needs of online games. <BR>
+<BR>
+Networking 101 <BR>
+<BR>
+Game network connections usually fall under two general categories: peer to peer and client/server.  Each of these are implemented in a variety of ways and with a variety of protocols. 
+However, RakNet supports any topology. <BR>
+<BR>
+<CENTER>
+  <IMG SRC="clientserver.jpg" width="380" height="456">
+</CENTER>
+<BR>
+Generally speaking, the fastest computer with the best connection should act as the server, with other computers acting as the clients.<BR>
+<BR>
+While there are many types of ways to encode packets, they are all transmitted as either UDP 
+or TCP packets. TCP packets are good for sending files, but not so good for 
+games. They are often delayed (resulting in games with a lot of lag) and arrive 
+as streams rather than packets (so you have to implement your own scheme to 
+separate data). UDP packets are good because they are sent right away and are sent in packets so you can easily distinguish data.  However, the added flexibility comes with a variety of problems:<BR>
+<UL>
+  <LI>UDP packets are not guaranteed to arrive.  You may get all the packets you sent, none of them, or some fraction of them.
+  <LI>UDP packets are not guaranteed to arrive in any order.  This can be a huge problem when programming games.  For example you may get the message that a tank was destroyed before you ever got the message that that tank had been created!
+  <LI>UDP packets are guaranteed to arrive with correct data, but have no protection from hackers intercepting and changing the data once it has arrived.
+  <LI>UDP packets do not require a connection to be accepted.  This sounds like a good thing until you realize that games without protection from this would be very easy to hack.  For example, if you had a message that said "Give such and such invulnerability" a hacker could copy that message and send it to the server everytime they wanted invulnerability.
+  <LI>The UDP transport does not provide flow control or aggregation so it is possible to overrun the recipient and to send data inefficiently.
+</UL></td>
+  </tr>
+</table>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;How does RakNet help me with these issues?</td>
+  </tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="10">
+  <tr>
+    <td class="RakNetManualTextBody">At the lowest level, RakNet's peer to peer class, RakPeerInterface provides a layer over UDP packets that handle these problems transparently, allowing the programmer to focus on the game rather than worrying about the engine.<BR>
+      <UL>
+        <LI>RakNet can automatically resend packets that did not arrive.
+          
+        <LI>RakNet can automatically order or sequence packets that arrived out of order, and does so efficiently.
+          
+        <LI>RakNet protects data that is transmitted, and will inform the programmer if that data was externally changed.
+          
+        <LI>RakNet provides a fast, simple, connection layer that blocks unauthorized transmission.
+          
+        <LI>RakNet transparently handles network issues such as flow control and aggreggation.
+          
+      </UL>
+      Of course, RakNet would be not much use if it handled these issues inefficiently such as by sending a lot of data, locking up with blocking operations, or making it hard to take advantage of these features.  Fortunately, that is not the case.<BR>
+      <BR>
+Unlike some other networking APIs:<BR>
+<UL>
+  <LI>RakNet adds very few bytes to your data.
+    
+  <LI>RakNet does not incur overhead for features you do not use.
+  <LI>RakNet has nearly instantaneous connections and disconnections.
+    
+  <LI>RakNet does not assume the internet is reliable. RakNet will gracefully handle connection problems rather than block, lock-up, or crash.
+    
+  <LI>RakNet technology has been successfully used in dozens of games.  It's been proven to work.
+    
+  <LI>RakNet is easy to use.
+    
+  <LI>RakNet is well-documented.&nbsp; Every header file has every class and 
+    function documented.&nbsp; There is a Doxygen manual as well as the HTML manual 
+    you are looking at.
+</UL></td>
+  </tr>
+</table>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;What else can RakNet do for me? </td>
+  </tr>
+</table>
+<table width="100%" border="0" cellspacing="0" cellpadding="10">
+  <tr>
+    <td class="RakNetManualTextBody"><p>Working at the level of byte streams and packets is bandwidth efficient and gives you a great deal of control but is time consuming. RakNet 
+      provides many features to make networking easier, including remote function 
+      calls, the BitStream class, and automatic object synchronization.<BR>
+  <BR>
+      Most games share a common set of functionality, such as setting player limits, password production, and statistics. RakNet 
+      includes all these features and more.&nbsp; If your game needs it you should 
+      check to make sure RakNet doesn't have it integrated already. </p>
+      <p class="RakNetManualTextBody">Lastly, RakNet includes programs and services that work in conjunction with your game, such as the <A HREF="http://masterserver2.raknet.com/">master server</A> or real time voice <BR>
+          <BR>
+        Here is a partial list of things you can do "out of the box."<BR>
+      </p>
+      <UL class="RakNetManualTextBody">
+        <LI>Implement low-bandwidth  voice communications.
+          
+        <LI>Use our <A HREF="http://masterserver2.raknet.com/">master server</A> for players to find games on the internet.
+          
+        <LI>Utilize remote function calls, allowing you to call functions on other computers with variable parameters.
+          
+        <LI>Get statistics such as ping, packetloss, bytes sent, bytes received, packets sent, packets received, and more.
+          
+        <LI>Optional per-packet timestamping so you know with a fair degree of accuracy how long ago an action was performed on another system despite ping fluctuations.
+          
+      </UL>
+    Next page: <A HREF="systemoverview.html">System Overview</A> </td>
+  </tr>
+</table>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+&nbsp;See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="systemoverview.html">System Overview</A><BR>
+<A HREF="detailedimplementation.html">Detailed Implementation</A><BR>
+<A HREF="tutorial.html">Tutorial</A><BR>
+<A HREF="compilersetup.html">Compiler Setup</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

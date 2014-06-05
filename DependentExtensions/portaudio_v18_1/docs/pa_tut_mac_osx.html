@@ -1,0 +1,84 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="GENERATOR" content="Mozilla/4.79 [en] (Windows NT 5.0; U) [Netscape]">
+   <meta name="Author" content="Phil Burk">
+   <meta name="Description" content="Tutorial for PortAudio, a cross platform, open-source, audio I/O library.It provides a very simple API for recording and/or playing sound using a simple callback function.">
+   <meta name="KeyWords" content="audio, tutorial, library, portable, open-source, DirectSound,sound, music, JSyn, synthesis,">
+   <title>PortAudio Tutorial</title>
+</head>
+<body>
+&nbsp;
+<center><table COLS=1 WIDTH="100%" BGCOLOR="#FADA7A" >
+<tr>
+<td>
+<center>
+<h1>
+PortAudio Tutorial</h1></center>
+</td>
+</tr>
+</table></center>
+
+<h2>
+<font size=+2><a href="http://www.portaudio.com/">home</a> |
+<a href="pa_tutorial.html">contents</a>
+| <a href="pa_tut_over.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font></h2>
+
+<h2>
+Compiling for Macintosh OS X</h2>
+
+<blockquote>To compile a Macintosh OS X CoreAudio application with the
+PortAudio library you will use the following source files:
+<blockquote>pa_mac_core/pa_mac_core.c<br>
+pa_common/pa_lib.c<br>
+pa_common/portaudio.h<br>
+pa_common/pa_host.h<br>
+pa_common/pa_convert.c<br>
+pablio/ringbuffer.c<br>
+pablio/ringbuffer.h</blockquote>
+</blockquote>
+
+<h3>
+Using Apple Project Builder</h3>
+
+<blockquote>Create a new ProjectBuilder project. You can use a "Tool" project
+to run the PortAudio examples.
+<p>Add the source files from above to your Project.
+<p>Add both the Apple CoreAudio.framework and the AudioToolbox.framework
+to your project by selecting "Add FrameWorks..." from the Project menu.
+<p>Compile and run the "pa_tests:patest_saw.c" file first because it is
+the simplest.</blockquote>
+
+<h3>
+Or Using Metrowerks CodeWarrior 8</h3>
+
+<blockquote>by James Vanlommel</blockquote>
+
+<blockquote>Create a new CodeWarrior project using Mac OS C++ Stationery.
+<br>Then choose Mac OS X Mach-O > Standard Console > C++ Console Mach-O.
+<p>In the project window, Clear the HelloWorld.cpp file and add the source
+files from above to your Project.
+<p>Add a test file of your choosing, like
+<br>&nbsp;&nbsp; patests&nbsp;&nbsp;&nbsp; /patest_sine8.c
+<br>&nbsp;
+<br>Add the frameworks to the Frameworks tab using Project > Add Files...
+<br>&nbsp;&nbsp; CoreAudio
+<br>&nbsp;&nbsp; AudioToolbox
+<p>(The System framework should already be a part of the project.)
+<p>Open the current target's settings, and in Language Settings > C/C++
+Language, uncheck (disable) the "ANSI Strict" setting. (Do this for both
+Debug and Release projects, if necessary.)
+<p>Edit pa_mac_core.c:
+<br>&nbsp;&nbsp; On line 1546, cast the PaHost_AllocateFastMemory() result
+to a (char *) or you will get a compile error.
+<br>&nbsp;
+<br>Compile and run. (may need to run from a terminal window)
+<p>I've successfully built patest_sine8.c this way using the CVS .tar version
+of portaudio (date: 2003-04-27). I get 17 warnings during compilation,
+all of which deal with unused variables or arguments.</blockquote>
+<font size=+2><a href="http://www.portaudio.com/">home</a> |
+<a href="pa_tutorial.html">contents</a>
+| <a href="pa_tut_over.html">previous</a> |&nbsp; <a href="pa_tut_callback.html">next</a></font>
+</body>
+</html>

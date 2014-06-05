@@ -1,0 +1,94 @@
+From: "Benno Senoner" <sbenno@gardena.net>
+To: <music-dsp@shoko.calarts.edu>
+Subject: Re: [music-dsp] coding realtime guitar efx on a "pc"
+Date: Saturday, June 30, 2001 8:19 AM
+
+
+Andrè,
+you are solving your problem the wrong way:
+you need to use a single threaded solution which does this:
+
+- set the audio I/O parameters to  fragnum=4  fragsize=128 bytes (=32samples) if
+you use stereo or   fragsize=64 bytes (=32 samples) if you use mono.
+
+(do not forget to activate fulltuplex with using the _TRIGGER_ stuff)
+(you need to frist deactivate audio and then start the trigger after the DAC is
+prefilled (see below))
+
+This will give you a total input to output latency of 4x32 samples
+= 128 samples which at 44.1kHz correspond to 2.9msec latency.
+
+now set your process to SCHED_FIFO  (see man sched_setscheduler)
+
+after the initialization your code should do more than less this:
+
+- write()  4 x 32 samples to the audio fd in order to prefill the DAC.
+Without this you will get dropouts.
+
+while(1) {
+  read() 32 samples from ADC
+  perform_dsp_stuff() on the 32 samples
+  write() 32 samples  to DAC
+  }
+
+If you use a low latency kernel and pay attention to all the stuff above, then
+you will get rock solid 3msec latencies (plus eventual converter latencies but
+these are in the 1-2msec range AFAIK).
+
+Using multiple threads , pipes etc, only complicates your life and often makes
+it impossible to achieve these low latences.
+
+Realtime/audio programming is not an easy task , this is why people often
+fail to get the desired results even if their hardware is low-latency capable.
+
+The problem is that the final latency depends on the hardware you use,
+the application and the operating system.
+
+cheers,
+Benno.
+
+http://www.linuxaudiodev.org  The Home of Linux Audio Development
+
+
+
+
+
+
+On Sat, 30 Jun 2001, you wrote:
+> On 2001-06-29 21:38 +0200, Benno Senoner wrote:
+> 
+> > OSS/Free refuses to use a low # of frags ?
+> > 
+> > That's a myth.
+> 
+> I hope it is. :-)
+> 
+> The fact is that ioctl(SNDCTL_DSP_SETFRAGMENT) succeeds with
+> values as low a 0x10007 (one 128-B fragment) but the latency is
+> still high enough to be clearly noticeable, which suggests that
+> it's *way* above 2/3 ms.  This is on an otherwise idle machine
+> equipped with a SB PCI 128.
+> 
+> But maybe it's me who's doing something wrong. I've been careful
+> to flush stdio buffers or use unbuffered I/O (write(2)) but I
+> may have let something else through.
+> 
+> For example, since the signal processing and the I/O are done by
+> two different vanilla processes communicating via pipes, it may
+> be a scheduling granularity problem (E.G. the kernel giving the
+> I/O process a time slice every 20 ms).
+> 
+> -- 
+> André Majorel <amajorel@teaser.fr>
+> http://www.teaser.fr/~amajorel/
+> 
+> dupswapdrop -- the music-dsp mailing list and website: subscription info,
+> FAQ, source code archive, list archive, book reviews, dsp links
+> http://shoko.calarts.edu/musicdsp/
+-- 
+
+
+dupswapdrop -- the music-dsp mailing list and website: subscription info,
+FAQ, source code archive, list archive, book reviews, dsp links
+http://shoko.calarts.edu/musicdsp/
+

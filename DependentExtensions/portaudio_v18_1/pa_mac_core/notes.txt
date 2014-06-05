@@ -1,0 +1,34 @@
+Notes on Core Audio Implementation of PortAudio
+
+by Phil Burk and Darren Gibbs
+
+Document last updated October 18, 2002
+
+WHAT WORKS
+
+Output with very low latency, <10 msec.
+Half duplex input or output.
+Full duplex
+The paFLoat32, paInt16, paInt8, paUInt8 sample formats.
+Pa_GetCPULoad()
+Pa_StreamTime()
+
+KNOWN BUGS OR LIMITATIONS
+
+The iMic supports multiple sample rates.
+But there is a bug when changing sample rates:
+   Run patest_record.c at rate A - it works.
+   Then run patest_record.c at rate B - it FAIL!
+   Then run patest_record.c again at rate B - it works!
+
+
+DEVICE MAPPING
+
+CoreAudio devices can support both input and output. But the sample 
+rates supported may be different. So we have map one or two PortAudio 
+device to each CoreAudio device depending on whether it supports 
+input, output or both.
+
+When we query devices, we first get a list of CoreAudio devices. Then 
+we scan the list and add a PortAudio device for each CoreAudio device 
+that supports input. Then we make a scan for output devices.

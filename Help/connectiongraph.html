@@ -1,0 +1,56 @@
+<HTML>
+<HEAD>
+
+<TITLE>Connection Graph</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92">
+    <span class="RakNetWhiteHeader">Connection Graph<img src="spacer.gif" width="8" height="1">Plugin Interface Implementation</span></td>
+</tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+<span class="RakNetBlueHeader">Connection Graph Implementation Overview</span><BR>
+<BR>
+
+
+The Connection Graph plugin maintains a graph of connections for the entire network, so every peer knows about every other peer. The graph of connections is updated as new systems connect or disconnect from the network.<br />
+You can optionally specify a password which you can use to allow certain systems to take part on the graph. <br />
+<br />
+ Connection Graph doesn't connect to the other involved systems. It just keeps an aupdated graph of the entire network. If you want all systems
+ connected to each other, see <A HREF="fullyconnectedmesh2.html">Fully Connected Mesh</A>.<BR>
+<BR>
+
+
+
+
+Returns the connection graph, stored as map of adjacency lists.
+<BR>
+
+DataStructures::WeightedGraph&lt;ConnectionGraph::SystemAddressAndGroupId, unsigned short, false&gt; *GetGraph(void);<BR>
+<BR>
+
+
+See the sample at <I>Samples\ConnectioGraph</I><BR></TD>
+</TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="plugininterface.html">PluginInterface</A><br />
+<A HREF="fullyconnectedmesh.html">Full Connected Mesh</A> <BR>
+<A HREF="replicamanager.html">Replica Manager</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

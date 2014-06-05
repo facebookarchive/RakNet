@@ -1,0 +1,1 @@
+Shows how to broadcast a query on a LAN.  This can be used to discover servers.

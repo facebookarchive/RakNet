@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+  <script type="text/javascript" src="js1.js"></script>
+</head>
+<body>
+
+<h1>Native Client UDP Example</h1>
+
+<FORM id="form1">
+<button type="button" id="connectButton">Connect</button> 
+</FORM>
+
+  <div id="listener">
+  	
+	<embed name="nacl_module"
+           id="udp_example"
+           width=200  height=200
+           src="blob.nmf"
+           type="application/x-nacl" />
+           
+    <script type="text/javascript" src="js2.js"></script>
+
+	
+  </div>
+  
+  <h2>Status</h2>
+<div id="statusField">NO-STATUS</div>
+
+
+</body>
+</html>

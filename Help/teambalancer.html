@@ -1,0 +1,46 @@
+<HTML>
+<HEAD>
+
+<TITLE>TeamBalancer</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">TeamBalancer Overview</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p><span class="RakNetBlueHeader">Request and balance teams client/server or peer to peer</span></p>
+	<p><B>DEPRECATED: See <A HREF="teammanager.html">TeamManager</A></B></p>
+    <p>The TeamBalancer plugin is used to assign each player in a game session a team number. Players by default have no team, and join teams by calling <em>RequestSpecificTeam()</em> or <em>RequestAnyTeam()</em></p>
+    <p>Operations include:</p>
+    <UL>
+<LI><strong>SetTeamSizeLimits()</strong> - Define the maximum number of players that can join a given team number
+<LI><strong>SetDefaultAssignmentAlgorithm()</strong> - Define how to automatically add new players to team - either filling teams in order, or joining the smallest team. This is triggered by a call to <em>RequestAnyTeam() </em>
+<LI><strong>SetForceEvenTeams()</strong> - Cause all teams to be evenly balanced. Teams with too many players will have players randomly moved to teams with too few players.
+<LI><strong>RequestSpecificTeam()</strong> - Change to a requested team. If this team is full, your join will be pending, until either that team is not full, or a player on the desired team wants to switch with your team.
+<LI><strong>CancelRequestSpecificTeam()</strong> - If     <em>RequestSpecificTeam()</em> has not yet completed, this will remove that request.
+<LI><strong>RequestAnyTeam()</strong> - Join a team randomly, based on the default team assignment algorithm.
+<LI><strong>GetMyTeam()</strong> - Return which team I am on, if any.
+<LI><strong>SetAllowHostMigration()</strong> - Call with true for peer to peer, otherwise call with false.
+</UL>
+<p>See the header file TeamBalancer.h for more information and complete documentation of each parameter and function, as well as messages returned to the user.</p>
+<p><em>See the sample project Samples\TeamBalancer for an implementation of this system.</em></p></TD>
+</TR></TABLE>
+
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD><A HREF="index.html">Index</A><BR>
+  <a href="plugininterface.html">PluginInterface</a></TD></TR></TABLE>
+  <a href="teammanager.html">TeamManager</a></TD></TR></TABLE>
+</BODY>
+</HTML>

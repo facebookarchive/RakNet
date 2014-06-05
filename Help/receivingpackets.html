@@ -1,0 +1,124 @@
+<HTML>
+<HEAD>
+
+<TITLE>Recieving Packets</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">Recieving Packets</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<span class="RakNetBlueHeader">Receiving a packet</span><BR>
+<BR>
+
+When a packet comes in on the network, i.e. Receive returns non-zero, there are three steps involved in handling it:<BR>
+<BR>
+1.  Determine the packet type.  This is returned by the following code
+
+<PRE class="RakNetCode">
+unsigned char GetPacketIdentifier(Packet *p)
+{
+	if ((unsigned char)p->data[0] == ID_TIMESTAMP)
+		return (unsigned char) p->data[sizeof(unsigned char) + sizeof(unsigned long)];
+	else
+		return (unsigned char) p->data[0];
+}
+
+</PRE>
+
+
+2.  Process the data<br>
+
+<BR>
+<span class="RakNetBlueHeader">Receiving a structure</span><BR>
+<BR>
+
+If you originally sent a structure, you can cast it back as follows:<BR>
+<PRE class="RakNetCode">
+
+if (GetPacketIdentifier(packet)==/* User assigned packet identifier here */)
+	DoMyPacketHandler(packet);
+
+// Put this anywhere you want.  Inside the state class that handles the game is a good place
+void DoMyPacketHandler(Packet *packet)
+{
+	// Cast the data to the appropriate type of struct
+	MyStruct *s = (MyStruct *) packet->data;
+	assert(p->length == sizeof(MyStruct)); // This is a good idea if you’re transmitting structs.
+	if (p->length != sizeof(MyStruct))
+		return;
+
+	// Perform the functionality for this type of packet, with your struct,  MyStruct *s
+}
+</PRE>
+
+<I>Usability Comments</I>
+<UL>
+<LI>We cast the packet data to a pointer to the appropriate type of struct to avoid the copy overhead that would occur if were to actually create the struct.  However, in this case if we change any of the data in the struct it will change the packet as well.  This may or may not be what we want.  Take care when relaying messages as a server, as this can cause inintended bugs.
+<LI>The assert, while not necessary, is very useful for catching difficult to find bugs if we assign the wrong identifier or the wrong size when sending the packet.
+<LI>The if statement is useful just in case someone manages to send a packet of invalid size or type in order to try to crash the client or server.  This has never happened in practice, but it can't hurt to be safe.
+  <BR>
+  <BR>
+</UL>
+
+<span class="RakNetBlueHeader">Receiving a bitstream</span><BR>
+<BR>
+
+If you originally sent a bitstream, we create a bitstream to unparse the data in the same order we wrote it.  We create a bitstream, using the data and the length of the packet.  We then use the Read functions where we formerly used the Write functions, the ReadCompressed functions where we formerly used WriteCompressed, and follow the same logical branching if we wrote any data conditionally.  This is all shown in the following example which would read in the data for the mine we created in <A HREF="creatingpackets.html">creating packets</A>.<BR>
+<BR>
+
+<PRE class="RakNetCode">
+
+void DoMyPacketHandler(Packet *packet)
+{
+	Bitstream myBitStream(packet->data, packet->length, false); // The false is for efficiency so we don't make a copy of the passed data
+	myBitStream.Read(useTimeStamp);
+	myBitStream.Read(timeStamp);
+	myBitStream.Read(typeId);
+	bool isAtZero;
+	myBitStream.Read(isAtZero);
+	if (isAtZero==false)
+	{
+		x=0.0f;
+		y=0.0f;
+		z=0.0f;
+	} else {
+		myBitStream.Read(x);
+		myBitStream.Read(y);
+		myBitStream.Read(z);
+	}
+	
+	myBitStream.Read(networkID); // In the struct this is NetworkID networkId
+	myBitStream.Read(systemAddress); // In the struct this is SystemAddress systemAddress
+}
+</PRE>
+3. Deallocate the packet by passing it to DeallocatePacket(Packet *packet) of the RakPeerInterface instance that you got it from.
+
+</TD>
+</TR></TABLE>
+
+
+
+
+
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="creatingpackets.html">Creating Packets</A><BR>
+<A HREF="sendingpackets.html">Sending Packets</A>
+
+</TD></TR></TABLE>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

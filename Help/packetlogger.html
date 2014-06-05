@@ -1,0 +1,43 @@
+<HTML>
+<HEAD>
+<TITLE>PacketLogger manual</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD><BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+<table width="100%" border="0">
+  <tr>
+    <td bgcolor="#2c5d92" class="RakNetWhiteHeader">&nbsp;Packet Logger Overview</td>
+  </tr>
+</table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+  <TR>
+    <TD><p><span class="RakNetBlueHeader">Log  incoming and outgoing messages for debugging</span><BR>
+        <BR>
+			  
+	The PacketLogger is a plugin that will print all incoming and outgoing messages for debugging. It parses the message where necessary, indicating if a message is an RPC, or a timestamp. It also converts the numerical MessageID into the corresponding string. The output by default is comma delineated, readable as a <a href="http://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>, and goes to the console with printf().</p>
+      <p>To change the output destination, derive from PacketLogger and override WriteLog();</p>
+      <p>Aside from PacketLogger itself, the following  implementations are already included:</p>
+      <ul>
+        <li>PacketConsoleLogger - For use with the ConsoleServer.</li>
+        <li>PacketFileLogger - Logs to a file. Call StartLog() to open the file.</li>
+        <li>ThreadsafePacketLogger - Same as PacketLogger, but delays WriteLog() until out of the RakNet thread. Use this if you do anything significant with the logs (anything other than printf).</li>
+      </ul>
+  </TR>
+</TABLE>
+<table width="100%" border="0">
+      <tr>
+        <td bgcolor="#2c5d92" class="RakNetWhiteHeader"><img src="spacer.gif" width="8" height="1">See Also</td>
+      </tr>
+</table>
+    <TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%">
+      <TR>
+        <TD> <A HREF="index.html">Index</A><BR>          </TD>
+      </TR>
+    </TABLE></TD>
+</TR></TABLE>
+</BODY>
+</HTML>

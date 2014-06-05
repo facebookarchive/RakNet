@@ -1,0 +1,112 @@
+<HTML>
+<HEAD>
+
+<TITLE>Memory Synchronizer</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">Memory Synchronizer Implementation</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+Memory Synchronizer Overview
+<BR><BR>
+
+
+The memory synchronizer is an implementation of the message handler interface that scans memory for changes, serializes the changes, and sends it to specified systems.  This is a more advanced implementation than in the DistribtedNetworkObject class.<BR>
+<UL>
+<LI>Can work with any topology, not just client/server.
+<LI>Can specify target systems globally or per-data element, with per-system synchronization
+<LI>Strings identify common pointers, rather than relying on the user to provide enumerations.
+<LI>Can use all send parameters to send updates.
+<LI>Can include timestamps with updates.
+</UL>
+<BR>
+
+
+Adding and removing participants is optional.  Passing UNASSIGNED_PLAYER_ID to either means all connected systems.  Synchronizations will only be sent to and accepted by systems that are in the participant list.  These functions are valid to call at any time.<BR>
+
+
+
+void AddParticipant(PlayerID playerId);<BR>
+void RemoveParticipant(PlayerID playerId);<BR>
+
+<BR>
+
+
+SynchronizeMemory associates the pointer memory of size memorySize (in bytes) with a string identifier, or a class that implements MemSynchSpec (see below).  Pass 0 for either memory or memorySpec, since only one of these parameters is allowed.  stringId must be a unique identifier for this memory block.  If you have instantiated objects you either have to think of a scheme to provide a unique ID for each instance or else you can derive from NetworkIDGenerator and pass the value to optionalInstanceID, which will concatenate that value to the string for you.<BR>
+Priority, reliability, and ordering channel are equivalent to the parameters in the RakNet send call and are used in that capacity.<BR>
+sendUpdates and receiveUpdates specify whether we scan for and send updates to other systems and whether we accept updates from other systems.  Generally one system would send updates and all other systems receive updates for a particular memory block.<BR>
+
+void SynchronizeMemory(const char *stringId, int maxUpdateFrequencyMS, PacketPriority priority, PacketReliability reliability, char orderingChannel, void *memory, int memorySize, MemSynchSpec *memorySpec, bool sendUpdates, bool receiveUpdates, ObjectID optionalInstanceId=UNASSIGNED_OBJECT_ID);<BR>
+
+<BR>
+UnsynchronizeMemory stops synchronization of a memory block.  Pass a value for either memory or memorySpec, and 0 for the unused parameter.<BR>
+	
+
+void UnsynchronizeMemory(void *memory, MemSynchSpec *memorySpec);<BR>
+
+</TD></TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">MemSynchSpec class</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+Custom memory synchronization per data element
+<BR><BR>
+
+
+The class interface <I>MemSynchSpec</I> is used by the MemorySynchronizer implementation to provide the user with greater control over how and when memory elements are synchronized.  To use, pass a pointer to an implementation of MemSynchSpec to the associated parameter in SynchronizeMemory and UnsynchronizeMemory.
+
+
+<BR>
+You are supposed to serialize your networked data elements into the provided BitStream using the BitStream Write functions.  lastSentValue and lastSendTime are provided in case you want to use them for optimization purposes.<BR>
+
+virtual void Serialize(RakNet::BitStream *bitstream, MemSynchSpec *lastSentValue, unsigned long lastSendTime)=0;<BR>
+<BR>
+You are supposed to deserialize the data you serialized in the Serialize call.  You can write the data to your networked memory directly, or elsewhere if you wish to interpolate to new values. timePacketSent will be a valid timestamped value (relative to your system) if IncludeTimestamp returns true.<BR>
+
+virtual void Deserialize(RakNet::BitStream *bitstream, unsigned int timePacketSent)=0;<BR>
+<BR>
+This is called when RakNet needs to make a copy of your networked data.  You should allocate a copy of the class, copy your data to that class, and return the pointer.<BR>
+
+virtual MemSynchSpec * MakeSynchronizedDataCopy(void)=0;<BR>
+<BR>
+This is called when RakNet needs to write the last value it sent out.  You should overwrite your networked data with the values held by the pointer.  The pointer points to the user data that is synchronized, while the class called is the copy.<BR>
+
+virtual void CopySynchronizedDataFrom(MemSynchSpec *source)=0;<BR>
+<BR>
+RakNet no longer needs this copy of data.  You can delete the class immediately if you wish via a call to <I>delete this;</I><BR>
+
+virtual Release(void)=0;<BR>
+<BR>
+This is an all-purpose update function telling RakNet if a given copy of data is different, different enough to send, and worth sending to a particular player.  You have total control over whether the data gets sent or not - however for RakNet to properly record the last copy that was sent to each system IsUnifiedMemory must return true.<BR>
+
+virtual bool ShouldSendUpdate(PlayerID destinationSystem, MemSynchSpec *lastSentValue, unsigned long lastSendTime)=0;<BR>
+<BR>
+If you return true, the same value will be sent to all remote systems at the same time.  This is useful for data that is always serialized to everyone the same way regardless of context, such as the current game score.  If true, the same copy of the last sent data is used for all systems which saves memory and speed.  You should return false if different destination systems will have different values sent to them or at different times. This should be used for contextual data, such as position updates which may not be sent to everyone, or may be sent more or less frequently.  This will store an individual copy of the last sent data per remote system.<BR>
+
+virtual bool IsUnifiedMemory(void)=0;<BR>
+<BR>
+Return true if you want a valid time value sent to Deserialize.  Only set to true if you need it as bandwidth will be wasted otherwise.<BR>
+
+virtual bool IncludeTimestamp(void)=0;<BR>
+<BR>
+
+For a usage example, see the sample <I>Samples\Code Samples\MemorySynchronization</I>.
+
+</TD></TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#6699CC">
+<img src="spacer.gif" width="8" height="1">See Also</td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<A HREF="distributednetworkobject.html">Distributed Network Object</A><BR>
+<A HREF="messagehandler.html">Message Handler Interface</A><BR>
+<A HREF="fullyconnectedmesh.html">Fully Connected Mesh</A><BR>
+
+</TD></TR></TABLE>
+</BODY>
+</HTML>

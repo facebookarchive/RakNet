@@ -1,0 +1,158 @@
+<HTML>
+<HEAD>
+
+<TITLE>Tutorial code sample 3</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1"></HEAD>
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<img src="RakNetLogo.jpg" alt="Oculus VR, Inc."><BR><BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#6699CC"><font color="#FFFFFF" size="3" face="Arial, Helvetica, sans-serif"><strong> 
+<img src="spacer.gif" width="8" height="1">Tutorial code sample 3</strong></font></td></tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2" CLASS="G10" COLOR="#3366CC"><strong>Remote procedure call setup.
+</strong></FONT>
+<FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="2" CLASS="G10" COLOR="#666666">
+<BR><BR>
+The target of this exercise was to add the following features to sample 2:
+<OL>
+<LI>When the client successfully connects, send a custom user message.
+<LI>The first byte of custom messages should always start after the enumeration ID_USER_PACKET_ENUM, defined in MessageIdentifiers.h. Otherwise, RakNet would confuse its own identifiers with your game identifiers.
+<LI>Read the custom message in our packet processing loop. The native RakString type can read and write to the BitStream class. You would not be able to do this using std::string.
+</OL>
+New code over sample 2 is in bold.
+</FONT>
+<PRE><FONT FACE="Geneva, Verdana, Arial, Helvetica, sans-serif" size="1" CLASS="G10" COLOR="#111122">
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+#include "RakPeerInterface.h"
+#include "MessageIdentifiers.h"
+<strong>#include "BitStream.h"
+#include "RakNetTypes.h"  // MessageID</strong>
+
+#define MAX_CLIENTS 10
+#define SERVER_PORT 60000
+
+<strong>enum GameMessages
+{
+	ID_GAME_MESSAGE_1=ID_USER_PACKET_ENUM+1
+};</strong>
+
+int main(void)
+{
+	char str[512];
+
+	RakNet::RakPeerInterface *peer = RakNet::RakPeerInterface::GetInstance();
+	bool isServer;
+	RakNet::Packet *packet;
+
+	printf("(C) or (S)erver?\n");
+	gets(str);
+
+	if ((str[0]=='c')||(str[0]=='C'))
+	{
+		RakNet::SocketDescriptor sd;
+		peer-&gt;Startup(1,&amp;sd, 1);
+		isServer = false;
+	} else {
+		RakNet::SocketDescriptor sd(SERVER_PORT,0);
+		peer-&gt;Startup(MAX_CLIENTS, &amp;sd, 1);
+		isServer = true;
+	}
+
+	if (isServer)
+	{
+		printf("Starting the server.\n");
+		// We need to let the server accept incoming connections from the clients
+		peer-&gt;SetMaximumIncomingConnections(MAX_CLIENTS);
+	} else {
+		printf("Enter server IP or hit enter for 127.0.0.1\n");
+		gets(str);
+		if (str[0]==0){
+			strcpy(str, "127.0.0.1");
+		}
+		printf("Starting the client.\n");
+		peer-&gt;Connect(str, SERVER_PORT, 0,0);
+
+	}
+
+	while (1)
+	{
+		for (packet=peer-&gt;Receive(); packet; peer-&gt;DeallocatePacket(packet), packet=peer-&gt;Receive())
+		{
+			switch (packet-&gt;data[0])
+			{
+			case ID_REMOTE_DISCONNECTION_NOTIFICATION:
+				printf("Another client has disconnected.\n");
+				break;
+			case ID_REMOTE_CONNECTION_LOST:
+				printf("Another client has lost the connection.\n");
+				break;
+			case ID_REMOTE_NEW_INCOMING_CONNECTION:
+				printf("Another client has connected.\n");
+				break;
+			case ID_CONNECTION_REQUEST_ACCEPTED:
+				<strong>{
+					printf("Our connection request has been accepted.\n");
+
+					// Use a BitStream to write a custom user message
+					// Bitstreams are easier to use than sending casted structures, and handle endian swapping automatically
+					RakNet::BitStream bsOut;
+					bsOut.Write((RakNet::MessageID)ID_GAME_MESSAGE_1);
+					bsOut.Write("Hello world");
+					peer-&gt;Send(&amp;bsOut,HIGH_PRIORITY,RELIABLE_ORDERED,0,packet-&gt;systemAddress,false);
+				}</strong>
+				break;
+			case ID_NEW_INCOMING_CONNECTION:
+				printf("A connection is incoming.\n");
+				break;
+			case ID_NO_FREE_INCOMING_CONNECTIONS:
+				printf("The server is full.\n");
+				break;
+			case ID_DISCONNECTION_NOTIFICATION:
+				if (isServer){
+					printf("A client has disconnected.\n");
+				} else {
+					printf("We have been disconnected.\n");
+				}
+				break;
+			case ID_CONNECTION_LOST:
+				if (isServer){
+					printf("A client lost the connection.\n");
+				} else {
+					printf("Connection lost.\n");
+				}
+				break;
+				<strong>
+			case ID_GAME_MESSAGE_1:
+				{
+					RakNet::RakString rs;
+					RakNet::BitStream bsIn(packet-&gt;data,packet-&gt;length,false);
+					bsIn.IgnoreBytes(sizeof(RakNet::MessageID));
+					bsIn.Read(rs);
+					printf("%s\n", rs.C_String());
+				}
+				break;
+			</strong>
+			default:
+				printf("Message with identifier %i has arrived.\n", packet-&gt;data[0]);
+				break;
+			}
+		}
+	}
+
+
+	RakNet::RakPeerInterface::DestroyInstance(peer);
+
+	return 0;
+}
+
+</FONT></PRE>
+</TD></TR>
+  <TR>
+    <TD>&nbsp;</TD>
+  </TR>
+</TABLE>
+</BODY>
+</HTML>

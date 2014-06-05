@@ -1,0 +1,30 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Express 2012 for Windows Phone
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WinPhone8", "Samples\WinPhone8\WinPhone8.vcxproj", "{2F987AD3-AF77-40D9-951D-EF5E233EFB64}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|ARM = Debug|ARM
+		Debug|Win32 = Debug|Win32
+		Release|ARM = Release|ARM
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Debug|ARM.ActiveCfg = Debug|ARM
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Debug|ARM.Build.0 = Debug|ARM
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Debug|ARM.Deploy.0 = Debug|ARM
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Debug|Win32.Build.0 = Debug|Win32
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Debug|Win32.Deploy.0 = Debug|Win32
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Release|ARM.ActiveCfg = Release|ARM
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Release|ARM.Build.0 = Release|ARM
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Release|ARM.Deploy.0 = Release|ARM
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Release|Win32.ActiveCfg = Release|Win32
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Release|Win32.Build.0 = Release|Win32
+		{2F987AD3-AF77-40D9-951D-EF5E233EFB64}.Release|Win32.Deploy.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

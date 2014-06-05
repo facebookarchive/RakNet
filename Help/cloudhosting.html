@@ -1,0 +1,60 @@
+<HTML>
+<HEAD>
+
+<TITLE>How to setup cloud hosting with RakNet</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">How to setup cloud hosting with RakNet</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<P><span class="RakNetBlueHeader">Cloud hosting through Rackspace</span><BR>
+  <br>
+Services such as the <a href="autopatcher.html">autopatcher</a> require a server running RakNet. Technically, <a href="natpunchthrough.html">NATPunchthroughServer</a> does as well, although we do <a href="http://www.jenkinssoftware.com/forum/index.php?topic=5006.0">provide a free server</a>. While it is possible to run your server using a traditional host, such as <a href="http://www.hypernia.com/">Hypernia</a> these services will cost you about $150 USD a month. Scaling up the services also requires time-consuming installation of the codebase and it is not possible to do so programmatically.
+<P>RakNet was tested with two cloud hosting providers: <a href="http://aws.amazon.com/">Amazon AWS</a> and <a href="http://www.rackspace.com/cloud/">Rackspace Cloud</a>. I could not get Amazon AWS to work with incoming UDP connections. Furthermore, peformance on loopback using the BigPacketTest project was very bad. Rackspace did not have these problems and the cost for their lowest-end Linux servers is low. I also provide a <a href="rackspaceinterface.html">C++ interface to Rackspace</a> allowing you to programatically control your servers, so it's a good starting point.<P><strong>Signing up</strong>
+<P><img src="cloudhosting1.jpg">
+<P><br>
+  <strong>Creating the server</strong>
+<P>The first step is to create a server, using Hosting / Cloud Servers / Add Server. This will bring up a menu asking if you want Linux or Windows, and how much RAM. The low-end Linux servers are cheaper than the Windows servers. RakNet should work with either. Cloud server and NAT punchthrough server both take minimal RAM. The Autopatcher takes a lot of RAM however, I recommend four gigabytes to serve 256 concurrent users or eight gigabytes to serve 512.
+<P><img src="cloudhosting2.jpg">
+<P>Once your server has been created, you will get an email telling you the password and login IP.
+<P><img src="cloudhosting3.jpg">  
+  <P> For Windows 7, enter the username, password, and login IP using Remote Desktop, found under Start / Accessories.
+  <P><img src="cloudhosting4.jpg">  
+  <P>
+  <P><strong>Setting up the server</strong>  
+  <P>Once logged in, server setup is the same as any computer.  
+  <ol>
+    <li> The default installation contains Internet Explorer, which you can use to download <a href="http://www.mozilla.com/en-US/firefox/">Firefox</a> or <a href="http://www.google.com/chrome">Chrome</a>.</li>
+    <li> Use that webbrowser to <a href="http://www.jenkinssoftware.com/download.html">download RakNet</a>. </li>
+    <li>On Windows, you can download Visual C++ 2010 Express for free. Installation will require a reboot.</li>
+    </ol>
+  <p><img src="cloudhosting5.jpg"></p>
+  <p>Once your server is setup, open the RakNet solution and compile normally. You now have a working server, using the IP address you connected to using Remote Desktop.</p>
+  <p><strong>Backing up and scaling the server</strong></p>
+  <P>Once you have the server setup the way you want it, you can create an image of the server, which is essentially a harddrive backup. This is important for scalability, because you can create a new instance of the server with the same configuration as your image.
+  <P><img src="cloudhosting6.jpg">  
+  <P>When you are not running your server, be sure to delete the instance and leave the much cheaper image. Unlike Amazon AWS which only charges for usage, Rackspace charges as long as your server exists at all. To start your server again, or to start multiple instances of the same server, use the Cloud Servers menu under My Server Images.
+  <P><img src="cloudhosting7.jpg"> 
+</TD>
+</TR></TABLE>
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+<A HREF="index.html">Index</A><BR>
+<a href="autopatcher.html">Autopatcher</a><BR>
+<a href="cloudcomputing.html">Cloud Computing</a><BR>
+<a href="natpunchthrough.html">NAT punchthrough</a><BR>
+<a href="rackspaceinterface.html">Rackspace interface</A>
+</TD></TR></TABLE>
+</BODY>
+</HTML>

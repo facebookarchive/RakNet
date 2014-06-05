@@ -1,0 +1,48 @@
+<HTML>
+<HEAD>
+
+<TITLE>RPC4</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">RPC4 Plugin</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD><p><span class="RakNetBlueHeader">Call C functions on local and remote systems.</span></p>
+    <p>        RPC4 contains mappings between string identifiers for functions, and a pointer to those functions.</p>
+<p><strong>Registering functions:</strong></p>
+    <p>To Register a function, use the RegisterSlot() or RegisterBlockingFunction() members.</p>
+    <p class="RakNetCode">void RegisterSlot(const char *sharedIdentifier, void ( *functionPointer ) ( RakNet::BitStream *userData, Packet *packet ), int callPriority);<br>
+    bool RegisterBlockingFunction(const char* uniqueID, void ( *functionPointer ) ( RakNet::BitStream *userData, RakNet::BitStream *returnData, Packet *packet ));</p>
+    <p>The first parameter is a string representing that function. It can be the same as the name of the function. The second parameter is a pointer to the function to be called. If it is a blocking function, the parameter list also contains a BitStream to return data to the caller.</p>
+    <p>The class RPC4GlobalRegistration can be used to register functions where they are declared. For example:</p>
+    <p>void CFunc1( RakNet::BitStream *bitStream, Packet *packet ) {}<br>
+      RPC4GlobalRegistration cfunc1reg(&quot;CFunc1&quot;, CFunc1);    </p>
+    <p>If you use RPC4GlobalRegistration extensively, you may need to change RPC4_GLOBAL_REGISTRATION_MAX_FUNCTIONS to a higher number in RakNetDefines.h</p>
+    <p><strong>Calling functions:</strong></p>
+    <p>Use the Signal() function to call a non-blocking function. Use the CallBlocking() function otherwise.</p>
+    <p class="RakNetCode">void Signal(const char *sharedIdentifier, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, bool broadcast, bool invokeLocal);<br>
+    bool CallBlocking( const char* uniqueID, RakNet::BitStream * bitStream, PacketPriority priority, PacketReliability reliability, char orderingChannel, const AddressOrGUID systemIdentifier, RakNet::BitStream *returnData );</p>
+    <p>Signal will call all functions registered with that identifier using RegisterSlot(), including potentially on the same system. CallBlocking() will call a single function on a single system, registered with RegisterBlockingFunction(). CallBlocking() does not return until the remote system replies or the connection to that system is lost.</p>
+<p>See <em>Samples/RPC4</em> for a demonstration of this plugin</p></TD>
+</TR></TABLE>
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+
+  <p><A HREF="index.html">Index</A><BR>
+      <A HREF="RPC3Video.htm">RPC3</A><a href="readyevent.html"></a><BR>
+  </p>
+  </TD></TR></TABLE>
+</BODY>
+</HTML>

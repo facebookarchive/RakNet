@@ -1,0 +1,21 @@
+
+material PopcornKernelMaterial
+{
+	technique
+	{
+		pass
+		{
+			ambient 0 0 0 1
+			specular 0 0 0 1 10
+			alpha_rejection greater 128
+
+			texture_unit
+			{
+				texture_alias 0
+				texture KernelTexture.dds
+			}
+		}
+
+	}
+
+}

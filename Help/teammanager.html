@@ -1,0 +1,62 @@
+<HTML>
+<HEAD>
+
+<TITLE>TeamManager</TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</HEAD>
+<link href="RaknetManual.css" rel="stylesheet" type="text/css">
+<meta name="title" content="RakNet - Advanced multiplayer game networking API">
+</HEAD>
+<BODY BGCOLOR="#ffffff" LINK="#003399" vlink="#003399" alink="#003399" LEFTMARGIN="0" TOPMARGIN="0" MARGINWIDTH="0" MARGINHEIGHT="0"">
+<span style="background-color: rgb(255, 255, 255);"><img src="RakNet_Icon_Final-copy.jpg" alt="Oculus VR, Inc." width="150" height="150"></span><BR>
+<BR>
+
+<table width="100%" border="0"><tr>
+  <td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">TeamManager Overview</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR>
+  <TD>
+    <p><span class="RakNetBlueHeader">Manages lists of teams and team members. Supports client/server and peer to peer</span></p>
+	<p>TeamManager reduces the work involved with managing teams and team members. Functionality includes:</p>
+	<UL>
+	<LI>Support for any number of teams with join conditions on each.
+	<LI>Support for team members being on multiple teams at the same time, or no team at all.
+	<LI>Support for independent worlds, enabling you to host multiple game sessions simultaneously.
+	<LI>The ability to lock, unlock, and resize teams.
+	<LI>Team requests for locked or full teams are buffered and filled in first-come first-server order, including the ability to swap teams.
+	<LI>The state of all teams and all team members are fully replicated to all systems.
+	<LI>Flexible architecture, with support client/server, <A HREF="replicamanager3.html">ReplicaManager3</A> and the use of either composition or inheritance.
+	</UL>
+	
+	<p>Usage</p>
+	<OL>
+	<LI>Define your game classes to represent teams and team members. Your game classes should hold game-specific information such as team name and color.
+	<LI>Have those game classes contain a corresponding TM_Team or TM_TeamMember instance. Operations on teams will be performed by those instances. Use SetOwner() to refer to the parent object when using composition.
+	<LI>Call TeamManager::SetTopology() for client/server or peer to peer.
+	<LI>Call AddWorld() to instantiate a TM_World object which will contain references to your TM_TeamMember and TM_Team instances.
+	<LI>When you instantiate a TM_TeamMember or TM_Team object, call ReferenceTeam() and ReferenceTeamMember() for each corresponding object. If using ReplicaManager3, the Reference calls should be at the top of DeserializeConstruction(), as well as when creating the object locally.
+	<LI>When sending world state to a new connection, for example in ReplicaManager3::SerializeConstruction(), call TM_SerializeConstruction() on the corresponding TM_TeamMember and TM_Team objects. TM_Team instances on the new connection must be created before TM_TeamMember instances.
+	<LI>Call TM_DeserializeConstruction() on your new corresponding TM_TeamMember and TM_Team instances.
+	<LI>Execute team operations. ID_TEAM_BALANCER_REQUESTED_TEAM_FULL, ID_TEAM_BALANCER_REQUESTED_TEAM_LOCKED, ID_TEAM_BALANCER_TEAM_REQUESTED_CANCELLED, and ID_TEAM_BALANCER_TEAM_ASSIGNED are returned to all systems when the corresponding event occurs for a team member.
+	<LI>As the peer to peer session host changes, call SetHost() (Not necessary if using FullyConnectedMesh2). If using client/server, you must set the host
+	<LI>DeserializeConstruction must be called on TM_Team before DeserializeConstruction is called on TM_TeamMember that is a member of that team. If using ReplicaManager3, you can simply call ReplicaManager3::Reference() on TM_TeamMember later than any ReplicaManager3::Reference() calls to TM_Team
+	</OL>
+	
+<p>See the header file TeamManager.h for more information and complete documentation of each parameter and function, as well as messages returned to the user.</p>
+<p><em>See the sample project Samples\TeamManager for an implementation of this system.</em></p></TD>
+</TR></TABLE>
+
+
+<table width="100%" border="0"><tr><td bgcolor="#2c5d92" class="RakNetWhiteHeader">
+<img src="spacer.gif" width="8" height="1">See Also</td>
+</tr></table>
+<TABLE BORDER="0" CELLPADDING="10" CELLSPACING="0" WIDTH="100%"><TR><TD>
+<A HREF="index.html">Index</A><BR>
+  <a href="plugininterface.html">PluginInterface</a><BR>
+  <a href="replicamanager3.html">ReplicaManager3</a><BR>
+  <a href="teammanager.html">TeamManager</a>
+  </TD></TR>
+  </TABLE>
+</BODY>
+</HTML>

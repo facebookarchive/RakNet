@@ -1,0 +1,42 @@
+From: "Tim Flohrer" <flohrer@zplane.de>
+To: "Phil Burk" <philburk@softsynth.com>
+Subject: Re: suggestion - multiple backends
+Date: Friday, August 17, 2001 7:48 AM
+
+Hi Phil,
+
+here is what I did:
+
+1. I changed the pa_lib.c and portaudio.h in order to provide a dll api 
+  if wanted
+
+2. in my application I had a couple of function pointers defined (see 
+excerpt loadPA_DLL.cpp) that get their value when the dll is loaded
+
+3. all other files that use the PortAudio-functions had the PaDllEntry.h 
+included
+
+I extracted the loadPA_DLL.cpp out of my source so I hope it's 
+understandable somehow. If not feel free to ask.
+
+There are also functions for checking if DirectX is available. I am not 
+really sure if this is 100% correct, but I noticed that on NT systems it 
+is missing the function no. 7 in the dsound.dll so I just check if it's 
+there ;O) On the other hand this doesn't tell you if Dsound is emulated 
+or not (Dsound gets really bad when emulated, but i suppose you know that).
+Hope I didn't forget anything
+
+cheers
+
+tim
+
+--
+tim flohrer
+flohrer@zplane.de
+
+zplane.development
+holsteinische str. 39-42
+12161 berlin
+  fon: +49.30.854 09 15.0
+  fax: +49.30.854 09 15.5
+
