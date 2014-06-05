@@ -1,5 +1,4 @@
 # Visual Studio
-[Bb]in/
 [Dd]ebug/
 [Rr]elease/
 x64/
@@ -28,6 +27,5 @@ DerivedData
 contents.xcworkspacedata
 Debug/
 Release/
-Lib/
 .DS_Store
 .Trashes
