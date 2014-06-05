@@ -1,9 +1,17 @@
+/*
+ *  Copyright (c) 2014, Oculus VR, Inc.
+ *  All rights reserved.
+ *
+ *  This source code is licensed under the BSD-style license found in the
+ *  LICENSE file in the root directory of this source tree. An additional grant 
+ *  of patent rights can be found in the PATENTS file in the same directory.
+ *
+ */
+
 /// \file
 /// \brief This will write all incoming and outgoing network messages the SQLiteClientLoggerPlugin
 ///
-/// This file is part of RakNet Copyright (c) 2014, Oculus VR, Inc.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
+
 
 
 #ifndef __SQL_LITE_CLIENT_LOGGER_PACKET_LOGGER_H_

@@ -11,9 +11,7 @@
 /// \file
 /// \brief An implementation of the AutopatcherRepositoryInterface to use MySQL to store the relevant data
 ///
-/// This file is part of RakNet Copyright (c) 2014, Oculus VR, Inc.
-///
-/// Usage of RakNet is subject to the appropriate license agreement.
+
 
 
 #ifndef __MYSQL_REPOSITORY_H
