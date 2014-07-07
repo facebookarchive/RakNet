@@ -222,8 +222,9 @@ int main(void)
 		// All messages to all clients come from the server either directly or by being
 		// relayed from other clients
 		message2[0]=0;
-		strcpy(message2, "Server: ");
-		strcat(message2, message);
+		const static char prefix[] = "Server: ";
+		strncpy(message2, prefix, sizeof(message2));
+		strncat(message2, message, sizeof(message2) - strlen(prefix) - 1);
 	
 		// message2 is the data to send
 		// strlen(message2)+1 is to send the null terminator
