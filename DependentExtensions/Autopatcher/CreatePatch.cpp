@@ -576,7 +576,7 @@ int TestDiffInMemory(int argc,char *argv[])
 	fwrite(out,outSize,1,pf);
 	fclose(pf);
 
-	free(out);
+	delete[] out;
 	return res;
 }
 
