@@ -99,7 +99,7 @@ int main()
 		{
 			printf("Test failed, ID_NEW_INCOMING_CONNECTION is true for both instances\n");
 		}
-		else if (gotConnectionRequestAccepted[0]==0 && gotConnectionRequestAccepted[1]==0)
+		else if (gotNewIncomingConnection[0]==0 && gotNewIncomingConnection[1]==0)
 		{
 			printf("Test failed, ID_NEW_INCOMING_CONNECTION is false for both instances\n");
 		}
