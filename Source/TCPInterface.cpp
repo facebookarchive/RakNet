@@ -1366,8 +1366,10 @@ bool RemoteClient::InitSSL(SSL_CTX* ctx, SSL_METHOD *meth)
 				// http://www.openssl.org/docs/ssl/SSL_get_error.html
 				char buff[1024];
 				unsigned long ege = ERR_get_error();
-				if (ege==0)
-					printf("SSL_ERROR_SYSCALL SSL_get_error ret=\n", res);
+				if (ege==0 && res==0)
+					printf("SSL_ERROR_SYSCALL EOF in violation of the protocol\n");
+				else if (ege==0 && res==-1)
+					printf("SSL_ERROR_SYSCALL %s\n", strerror(errno));
 				else
 					printf("SSL_ERROR_SYSCALL %s\n", ERR_error_string(ege, buff));
 			}
