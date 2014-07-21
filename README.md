@@ -21,18 +21,9 @@ Upgrading from version 3
 
 See 3.x_to_4.x_upgrade.txt
 
-### Building Static Libraries for C++
-
-1. Open the solution file, RakNet_vc8.sln
-2. Right click "LibStatic"
-3. Click build.
-4. The binary will be under the /Lib directory.
-If you want to use source (recommended), just include all header and cpp files under /Source
-See Help/compilersetup.html
-
 Windows users (Visual Studio 2008 and 2010)
 -----------------------------------------
-Load RakNet_VS2008.sln and convert if necessary.  
+Load RakNet_VS2008.sln and convert if necessary.
 
 After the project conversion, if you encounter error MSB4006,
 follow the steps below to fix it:
@@ -44,14 +35,6 @@ follow the steps below to fix it:
 5. Change the "Copy Local" flag from "True" to "False"
 
 For other compiler issues, please see Help/compilersetup.html
-
-Windows users (Visual Studio 2005)
------------------------------------------
-Load RakNet_VS2005.sln
-
-Windows users (.NET 2003)
------------------------------------------
-Load RakNet_VS2003.sln
 
 Windows users (VC6)
 -----------------------------------------
@@ -166,14 +149,6 @@ Series of commands for a new server:
     cd RakNet_Install_Directory\Source
     g++ -m64 -g -pthread -I./ "../Samples/Chat Example/Chat Example Server.cpp" *.cpp
     ./a.out
-
-DevCPP Users
------------------------------------------
-Load RakNet.dev
-
-CodeBlocks Users
------------------------------------------
-Load RakNet.cbp
 
 Mac Users
 -----------------------------------------
