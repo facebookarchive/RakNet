@@ -5585,20 +5585,19 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 
 	// This is here so RecvFromBlocking actually gets data from the same thread
 
-	#if   defined(WINDOWS_STORE_RT)
-	#elif defined(_WIN32)
-		if (socketList[0]->GetSocketType()==RNS2T_WINDOWS && ((RNS2_Windows*)socketList[0])->GetSocketLayerOverride())
-		{
-			int len;
-			SystemAddress sender;
-			char dataOut[ MAXIMUM_MTU_SIZE ];
-			do {
-				len = ((RNS2_Windows*)socketList[0])->GetSocketLayerOverride()->RakNetRecvFrom(dataOut,&sender,true);
-				if (len>0)
-					ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], RakNet::GetTimeUS(), updateBitStream );
-			} while (len>0);
-		}
-	#endif
+#if !defined(WINDOWS_STORE_RT) && !defined(__native_client__)
+	if (socketList[0]->IsBerkleySocket() && static_cast<RNS2_Berkley*>(socketList[0])->GetSocketLayerOverride())
+	{
+		int len;
+		SystemAddress sender;
+		char dataOut[ MAXIMUM_MTU_SIZE ];
+		do {
+			len = static_cast<RNS2_Berkley*>(socketList[0])->GetSocketLayerOverride()->RakNetRecvFrom(dataOut,&sender,true);
+			if (len>0)
+				ProcessNetworkPacket( sender, dataOut, len, this, socketList[0], RakNet::GetTimeUS(), updateBitStream );
+		} while (len>0);
+	}
+#endif
 
 //	unsigned int socketListIndex;
 	RNS2RecvStruct *recvFromStruct;
