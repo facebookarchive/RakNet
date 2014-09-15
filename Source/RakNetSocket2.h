@@ -264,6 +264,9 @@ public:
 	/// Called when RecvFrom would otherwise occur. Return number of bytes read. Write data into dataOut
 	// Return -1 to use RakNet's normal recvfrom, 0 to abort RakNet's normal recvfrom, and positive to return data
 	virtual int RakNetRecvFrom( char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread )=0;
+
+	// RakNet needs to know whether an address is a dummy override address, so it won't be added as an external addresses
+	virtual bool IsOverrideAddress(const SystemAddress &systemAddress) const = 0;
 };
 
 struct RNS2_BerkleyBindParameters

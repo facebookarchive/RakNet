@@ -6029,12 +6029,29 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 							//					RakNet::BitStream nICS_BS( data, NewIncomingConnectionStruct_Size, false );
 							//					newIncomingConnectionStruct.Deserialize( nICS_BS );
 
+							bool usesOverride = false;
+#if defined(WINDOWS_STORE_RT) || defined(__native_client__)
 							remoteSystem->myExternalSystemAddress = bsSystemAddress;
+#else
+							// A dummy override address should never be added as an external address. When
+							// communicating through a socket overlay dummy addresses are needed which can be
+							// mapped to the underlying layer (e.g. a Steam user ID). Upon connecting RakNet
+							// communicates the address used to reach the recipient so it can be added to it's list
+							// of external addresses. Should two peers communicate using the same dummy override
+							// address for each other, they will send messages to the loopback, assuming the target
+							// address is their own external address.
+							if (remoteSystem->rakNetSocket->IsBerkleySocket())
+							{
+								const SocketLayerOverride* socketOverride = static_cast<RNS2_Berkley*>(remoteSystem->rakNetSocket)->GetSocketLayerOverride();
+								usesOverride = socketOverride && socketOverride->IsOverrideAddress(bsSystemAddress);
+							}
+							remoteSystem->myExternalSystemAddress = usesOverride ? UNASSIGNED_SYSTEM_ADDRESS : bsSystemAddress;
+#endif
 
 							// Bug: If A connects to B through R, A's firstExternalID is set to R. If A tries to send to R, sends to loopback because R==firstExternalID
 							// Correct fix is to specify in Connect() if target is through a proxy.
 							// However, in practice you have to connect to something else first anyway to know about the proxy. So setting once only is good enough
-							if (firstExternalID==UNASSIGNED_SYSTEM_ADDRESS)
+							if (firstExternalID==UNASSIGNED_SYSTEM_ADDRESS && !usesOverride)
 							{
 								firstExternalID=bsSystemAddress;
 								firstExternalID.debugPort=ntohs(firstExternalID.address.addr4.sin_port);
@@ -6168,13 +6185,24 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 								//	systemAddress.GetPort() = remotePort;
 
 								// The remote system told us our external IP, so save it
+								bool usesOverride = false;
+#if defined(WINDOWS_STORE_RT) || defined(__native_client__)
 								remoteSystem->myExternalSystemAddress = externalID;
+#else
+								if (remoteSystem->rakNetSocket->IsBerkleySocket())
+								{
+									const SocketLayerOverride* socketOverride = static_cast<RNS2_Berkley*>(remoteSystem->rakNetSocket)->GetSocketLayerOverride();
+									usesOverride = socketOverride && socketOverride->IsOverrideAddress(externalID);
+								}
+								remoteSystem->myExternalSystemAddress = usesOverride ? UNASSIGNED_SYSTEM_ADDRESS : externalID;
+#endif
 								remoteSystem->connectMode=RemoteSystemStruct::CONNECTED;
+
 
 								// Bug: If A connects to B through R, A's firstExternalID is set to R. If A tries to send to R, sends to loopback because R==firstExternalID
 								// Correct fix is to specify in Connect() if target is through a proxy.
 								// However, in practice you have to connect to something else first anyway to know about the proxy. So setting once only is good enough
-								if (firstExternalID==UNASSIGNED_SYSTEM_ADDRESS)
+								if (firstExternalID==UNASSIGNED_SYSTEM_ADDRESS && !usesOverride)
 								{
 									firstExternalID=externalID;
 									firstExternalID.debugPort=ntohs(firstExternalID.address.addr4.sin_port);
