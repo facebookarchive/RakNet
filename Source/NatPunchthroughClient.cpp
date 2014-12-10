@@ -826,6 +826,7 @@ char *TestModeToString(NatPunchthroughClient::SendPing::TestMode tm)
 	}
 	return "";
 }
+
 void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 {
 	if (sa==UNASSIGNED_SYSTEM_ADDRESS)
@@ -855,9 +856,9 @@ void NatPunchthroughClient::SendOutOfBand(SystemAddress sa, MessageID oobId)
 		RakNet::Time serverTime = RakNet::GetTime() + clockDifferential;
 
 		if (oobId==ID_NAT_ESTABLISH_UNIDIRECTIONAL)
-			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("%I64d: %s: OOB ID_NAT_ESTABLISH_UNIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
+            natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString(TIME_FORMAT_STRING ": %s: OOB ID_NAT_ESTABLISH_UNIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
 		else
-			natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString("%I64d: %s: OOB ID_NAT_ESTABLISH_BIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
+            natPunchthroughDebugInterface->OnClientMessage(RakNet::RakString(TIME_FORMAT_STRING ": %s: OOB ID_NAT_ESTABLISH_BIDIRECTIONAL to guid %s, system address %s.\n", serverTime, TestModeToString(sp.testMode), guidString, ipAddressString));
 	}
 }
 void NatPunchthroughClient::OnNewConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, bool isIncoming)
