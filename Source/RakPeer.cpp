@@ -5899,6 +5899,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 						packet->data[ 0 ] = ID_CONNECTION_ATTEMPT_FAILED; // Attempted a connection and couldn't
 					else if (remoteSystem->connectMode==RemoteSystemStruct::CONNECTED)
 						packet->data[ 0 ] = ID_CONNECTION_LOST; // DeadConnection
+                    else if (remoteSystem->connectMode==RemoteSystemStruct::DISCONNECT_ASAP_SILENTLY || remoteSystem->connectMode==RemoteSystemStruct::DISCONNECT_ASAP)
+                    packet->data[ 0 ] = ID_DISCONNECTION_BY_USER; // UserInitiated
 					else
 						packet->data[ 0 ] = ID_DISCONNECTION_NOTIFICATION; // DeadConnection
 
@@ -6414,6 +6416,9 @@ void RakPeer::CallPluginCallbacks(DataStructures::List<PluginInterface2*> &plugi
 	{
 		switch (packet->data[0])
 		{
+        case ID_DISCONNECTION_BY_USER:
+            pluginList[i]->OnClosedConnection(packet->systemAddress, packet->guid, LCR_CLOSED_BY_USER);
+            break;
 		case ID_DISCONNECTION_NOTIFICATION:
 			pluginList[i]->OnClosedConnection(packet->systemAddress, packet->guid, LCR_DISCONNECTION_NOTIFICATION);
 			break;

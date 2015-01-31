@@ -120,6 +120,8 @@ enum DefaultMessageIDTypes
 	/// RakPeer - The system specified in Packet::systemAddress has disconnected from us.  For the client, this would mean the
 	/// server has shutdown. 
 	ID_DISCONNECTION_NOTIFICATION,
+    /// RakPeer - we initiated disconnect
+    ID_DISCONNECTION_BY_USER,
 	/// RakPeer - Reliable packets cannot be delivered to the system specified in Packet::systemAddress.  The connection to that
 	/// system has been closed. 
 	ID_CONNECTION_LOST,
