@@ -59,6 +59,8 @@ public:
 	/// Called when RecvFrom would otherwise occur. Return number of bytes read. Write data into dataOut
 	virtual int RakNetRecvFrom( char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread);
 
+	virtual bool IsOverrideAddress(const SystemAddress &systemAddress) const;
+
 	virtual void OnRakPeerShutdown(void);
 	virtual void OnClosedConnection(const SystemAddress &systemAddress, RakNetGUID rakNetGUID, PI2_LostConnectionReason lostConnectionReason );
 	virtual void OnFailedConnectionAttempt(Packet *packet, PI2_FailedConnectionAttemptReason failedConnectionAttemptReason);

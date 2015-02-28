@@ -549,6 +549,11 @@ int Lobby2Client_Steam_Impl::RakNetRecvFrom( char dataOut[ MAXIMUM_MTU_SIZE ], S
 	return 0;
 }
 
+bool Lobby2Client_Steam_Impl::IsOverrideAddress(const SystemAddress &systemAddress) const
+{
+	return (systemAddress.GetPort() == STEAM_UNUSED_PORT);
+}
+
 void Lobby2Client_Steam_Impl::OnRakPeerShutdown(void)
 {
 	ClearRoom();

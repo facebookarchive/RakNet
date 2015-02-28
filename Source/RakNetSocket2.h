@@ -252,6 +252,23 @@ protected:
 };
 #else // defined(WINDOWS_STORE_RT)
 
+class RAK_DLL_EXPORT SocketLayerOverride
+{
+public:
+	SocketLayerOverride() {}
+	virtual ~SocketLayerOverride() {}
+
+	/// Called when SendTo would otherwise occur.
+	virtual int RakNetSendTo( const char *data, int length, const SystemAddress &systemAddress )=0;
+
+	/// Called when RecvFrom would otherwise occur. Return number of bytes read. Write data into dataOut
+	// Return -1 to use RakNet's normal recvfrom, 0 to abort RakNet's normal recvfrom, and positive to return data
+	virtual int RakNetRecvFrom( char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread )=0;
+
+	// RakNet needs to know whether an address is a dummy override address, so it won't be added as an external addresses
+	virtual bool IsOverrideAddress(const SystemAddress &systemAddress) const = 0;
+};
+
 struct RNS2_BerkleyBindParameters
 {
 	// Input parameters
@@ -294,6 +311,9 @@ public:
 	RNS2Socket GetSocket(void) const;
 	void SetDoNotFragment( int opt );
 
+	void SetSocketLayerOverride(SocketLayerOverride *_slo);
+	SocketLayerOverride* GetSocketLayerOverride(void);
+
 protected:
 	// Used by other classes
 	RNS2BindResult BindShared( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
@@ -325,6 +345,7 @@ protected:
 	CFSocketRef             _cfSocket;
 #endif
 
+	SocketLayerOverride *slo;
 	static RAK_THREAD_DECLARATION(RecvFromLoop);
 };
 
@@ -397,21 +418,9 @@ protected:
 
 
 
+
+
 #if   defined(_WIN32)
-
-class RAK_DLL_EXPORT SocketLayerOverride
-{
-public:
-	SocketLayerOverride() {}
-	virtual ~SocketLayerOverride() {}
-
-	/// Called when SendTo would otherwise occur.
-	virtual int RakNetSendTo( const char *data, int length, const SystemAddress &systemAddress )=0;
-
-	/// Called when RecvFrom would otherwise occur. Return number of bytes read. Write data into dataOut
-	// Return -1 to use RakNet's normal recvfrom, 0 to abort RakNet's normal recvfrom, and positive to return data
-	virtual int RakNetRecvFrom( char dataOut[ MAXIMUM_MTU_SIZE ], SystemAddress *senderOut, bool calledFromMainThread )=0;
-};
 
 class RNS2_Windows : public RNS2_Berkley, public RNS2_Windows_Linux_360
 {
@@ -420,14 +429,11 @@ public:
 	virtual ~RNS2_Windows();
 	RNS2BindResult Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line );
 	RNS2SendResult Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line );
-	void SetSocketLayerOverride(SocketLayerOverride *_slo);
-	SocketLayerOverride* GetSocketLayerOverride(void);
 	// ----------- STATICS ------------
 	static void GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 protected:
 	static void GetMyIPIPV4( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
 	static void GetMyIPIPV4And6( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] );
-	SocketLayerOverride *slo;
 };
 
 #else

@@ -379,6 +379,7 @@ unsigned RNS2_Berkley::RecvFromLoopInt(void)
 RNS2_Berkley::RNS2_Berkley()
 {
 	rns2Socket=(RNS2Socket)INVALID_SOCKET;
+	slo = 0;
 }
 RNS2_Berkley::~RNS2_Berkley()
 {
@@ -434,6 +435,10 @@ void RNS2_Berkley::BlockOnStopRecvPollingThread(void)
 }
 const RNS2_BerkleyBindParameters *RNS2_Berkley::GetBindings(void) const {return &binding;}
 RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
+
+void RNS2_Berkley::SetSocketLayerOverride(SocketLayerOverride *_slo) {slo = _slo;}
+SocketLayerOverride* RNS2_Berkley::GetSocketLayerOverride(void) {return slo;}
+
 // See RakNetSocket2_Berkley.cpp for WriteSharedIPV4, BindSharedIPV4And6 and other implementations
 
 
@@ -479,7 +484,7 @@ RNS2Socket RNS2_Berkley::GetSocket(void) const {return rns2Socket;}
 
 
 #if   defined(_WIN32)
-RNS2_Windows::RNS2_Windows() {slo=0;}
+RNS2_Windows::RNS2_Windows() {}
 RNS2_Windows::~RNS2_Windows() {}
 RNS2BindResult RNS2_Windows::Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {
 	RNS2BindResult bindResult = BindShared(bindParameters, file, line);
@@ -502,11 +507,18 @@ RNS2SendResult RNS2_Windows::Send( RNS2_SendParameters *sendParameters, const ch
 	return Send_Windows_Linux_360NoVDP(rns2Socket,sendParameters, file, line);
 }
 void RNS2_Windows::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {return GetMyIP_Windows_Linux(addresses);}
-void RNS2_Windows::SetSocketLayerOverride(SocketLayerOverride *_slo) {slo = _slo;}
-SocketLayerOverride* RNS2_Windows::GetSocketLayerOverride(void) {return slo;}
 #else
 RNS2BindResult RNS2_Linux::Bind( RNS2_BerkleyBindParameters *bindParameters, const char *file, unsigned int line ) {return BindShared(bindParameters, file, line);}
-RNS2SendResult RNS2_Linux::Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line ) {return Send_Windows_Linux_360NoVDP(rns2Socket,sendParameters, file, line);}
+RNS2SendResult RNS2_Linux::Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line ) {
+	if (slo)
+	{
+		RNS2SendResult len;
+		len = slo->RakNetSendTo(sendParameters->data, sendParameters->length,sendParameters->systemAddress);
+		if (len>=0)
+			return len;
+	}
+	return Send_Windows_Linux_360NoVDP(rns2Socket,sendParameters, file, line);
+}
 void RNS2_Linux::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {return GetMyIP_Windows_Linux(addresses);}
 #endif // Linux
 
