@@ -5179,11 +5179,11 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 #endif // LIBCAT_SECURITY
 				bsOut.Write((unsigned char) 0);  // HasCookie oN
 
-			// MTU. Lower MTU if it is exceeds our own limit
-			if (length+UDP_HEADER_SIZE > MAXIMUM_MTU_SIZE)
-				bsOut.WriteCasted<uint16_t>(MAXIMUM_MTU_SIZE);
-			else
-				bsOut.WriteCasted<uint16_t>(length+UDP_HEADER_SIZE);
+			// MTU. Lower MTU if it exceeds our own limit.
+			uint16_t mtu = (length+UDP_HEADER_SIZE > MAXIMUM_MTU_SIZE) ? MAXIMUM_MTU_SIZE : length+UDP_HEADER_SIZE;
+			bsOut.WriteCasted<uint16_t>(mtu);
+			// Pad response with zeros to MTU size so the connection's MTU will be tested in both directions
+			bsOut.PadWithZeroToByteLength(mtu - bsOut.GetNumberOfBytesUsed());
 
 			for (i=0; i < rakPeer->pluginListNTS.Size(); i++)
 				rakPeer->pluginListNTS[i]->OnDirectSocketSend((const char*) bsOut.GetData(), bsOut.GetNumberOfBitsUsed(), systemAddress);
@@ -5193,7 +5193,15 @@ bool ProcessOfflineNetworkPacket( SystemAddress systemAddress, const char *data,
 			bsp.data = (char*) bsOut.GetData();
 			bsp.length = bsOut.GetNumberOfBytesUsed();
 			bsp.systemAddress = systemAddress;
+#if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
+			if (rakNetSocket->IsBerkleySocket())
+				((RNS2_Berkley*)rakNetSocket)->SetDoNotFragment(1);
+#endif
 			rakNetSocket->Send(&bsp, _FILE_AND_LINE_);
+#if !defined(__native_client__) && !defined(WINDOWS_STORE_RT)
+			if (rakNetSocket->IsBerkleySocket())
+				((RNS2_Berkley*)rakNetSocket)->SetDoNotFragment(0);
+#endif
 		}
 		else if ((unsigned char)(data)[0] == ID_OPEN_CONNECTION_REQUEST_2)
 		{
