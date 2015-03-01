@@ -33,7 +33,7 @@ void DomainNameToIP_Berkley_IPV4And6( const char *domainName, char ip[65] )
 	hints.ai_socktype = SOCK_DGRAM;
 
 	if ((status = getaddrinfo(domainName, NULL, &hints, &res)) != 0) {
-		memset(ip, 0, sizeof(ip));
+		memset(ip, 0, 65); // sizeof(ip) returns pointer size, not array size
 		return;
 	}
 
