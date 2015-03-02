@@ -20,10 +20,12 @@ namespace RakNet {
 // You would want to do this if your system is going to run long enough to overflow the millisecond counter (over a month)
 #if __GET_TIME_64BIT==1
 typedef uint64_t Time;
+#define RAK_TIME_FORMAT_STRING "%I64u"
 typedef uint32_t TimeMS;
 typedef uint64_t TimeUS;
 #else
 typedef uint32_t Time;
+#define RAK_TIME_FORMAT_STRING "%I32u"
 typedef uint32_t TimeMS;
 typedef uint64_t TimeUS;
 #endif
