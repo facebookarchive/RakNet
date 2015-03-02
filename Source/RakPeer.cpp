@@ -1685,28 +1685,41 @@ void RakPeer::CloseConnection( const AddressOrGUID target, bool sendDisconnectio
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::CancelConnectionAttempt( const SystemAddress target )
 {
-	unsigned int i;
+	requestedConnectionCancelQueueMutex.Lock();
+	requestedConnectionCancelQueue.Push(target, _FILE_AND_LINE_ );
+	requestedConnectionCancelQueueMutex.Unlock();
+}
 
-	// Cancel pending connection attempt, if there is one
-	i=0;
-	requestedConnectionQueueMutex.Lock();
-	while (i < requestedConnectionQueue.Size())
+void RakPeer::HandleConnectionCancelQueue( )
+{
+	requestedConnectionCancelQueueMutex.Lock();
+	while (requestedConnectionCancelQueue.Size() > 0)
 	{
-		if (requestedConnectionQueue[i]->systemAddress==target)
-		{
-#if LIBCAT_SECURITY==1
-			CAT_AUDIT_PRINTF("AUDIT: Deleting requestedConnectionQueue %i client_handshake %x\n", i, requestedConnectionQueue[ i ]->client_handshake);
-			RakNet::OP_DELETE(requestedConnectionQueue[i]->client_handshake, _FILE_AND_LINE_ );
-#endif
-			RakNet::OP_DELETE(requestedConnectionQueue[i], _FILE_AND_LINE_ );
-			requestedConnectionQueue.RemoveAtIndex(i);
-			break;
-		}
-		else
-			i++;
-	}
-	requestedConnectionQueueMutex.Unlock();
+		unsigned int i;
 
+		// Cancel pending connection attempt, if there is one
+		i=0;
+		requestedConnectionQueueMutex.Lock();
+		while (i < requestedConnectionQueue.Size())
+		{
+			if (requestedConnectionQueue[i]->systemAddress==requestedConnectionCancelQueue[0])
+			{
+#if LIBCAT_SECURITY==1
+				CAT_AUDIT_PRINTF("AUDIT: Deleting requestedConnectionQueue %i client_handshake %x\n", i, requestedConnectionQueue[ i ]->client_handshake);
+				RakNet::OP_DELETE(requestedConnectionQueue[i]->client_handshake, _FILE_AND_LINE_ );
+#endif
+				RakNet::OP_DELETE(requestedConnectionQueue[i], _FILE_AND_LINE_ );
+				requestedConnectionQueue.RemoveAtIndex(i);
+				break;
+			}
+			else
+				i++;
+		}
+		requestedConnectionQueueMutex.Unlock();
+
+		requestedConnectionCancelQueue.RemoveAtIndex(0);
+	}
+	requestedConnectionCancelQueueMutex.Unlock();
 }
 
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -5687,6 +5700,8 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 
 		bufferedCommands.Deallocate(bcs, _FILE_AND_LINE_);
 	}
+
+	HandleConnectionCancelQueue();
 
 	if (requestedConnectionQueue.IsEmpty()==false)
 	{
