@@ -4495,31 +4495,38 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 
 
 
+	uint64_t g;
 #if   defined(_WIN32)
-	uint64_t g=RakNet::GetTimeUS();
+	g = RakNet::GetTimeUS();
+#else
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	g = tv.tv_usec + tv.tv_sec * 1000000;
+#endif
 
 	RakNet::TimeUS lastTime, thisTime;
 	int j;
 	// Sleep a small random time, then use the last 4 bits as a source of randomness
-	for (j=0; j < 8; j++)
+	for (j=0; j < 4; j++)
 	{
-		lastTime = RakNet::GetTimeUS();
-		RakSleep(1);
-		RakSleep(0);
-		thisTime = RakNet::GetTimeUS();
-		RakNet::TimeUS diff = thisTime-lastTime;
-		unsigned int diff4Bits = (unsigned int) (diff & 15);
-		diff4Bits <<= 32-4;
-		diff4Bits >>= j*4;
-		((char*)&g)[j] ^= diff4Bits;
+		unsigned char diffByte = 0;
+		for (int i=0; i < 4; i++)
+		{
+			lastTime = RakNet::GetTimeUS();
+			RakSleep(1);
+			RakSleep(0);
+			thisTime = RakNet::GetTimeUS();
+			RakNet::TimeUS diff = thisTime-lastTime;
+			diffByte ^= (unsigned char) ((diff & 15) << (i * 2));
+			if (i == 3)
+			{
+				diffByte ^= (unsigned char) ((diff & 15) >> 2);
+			}
+		}
+
+		((char*)&g)[4 + j] ^= diffByte;
 	}
 	return g;
-
-#else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
-	return tv.tv_usec + tv.tv_sec * 1000000;
-#endif
 }
 // --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 void RakPeer::GenerateGUID(void)
