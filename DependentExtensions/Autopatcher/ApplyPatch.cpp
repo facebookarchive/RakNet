@@ -297,6 +297,10 @@ int TestPatchInMemory(int argc,char *argv[])
 	fclose(newFile);
 	fclose(oldFile);
 
+	delete[] patch;
+	delete[] old;
+	delete[] _new;
+
 	return res;
 }
 
