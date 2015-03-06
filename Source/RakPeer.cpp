@@ -114,8 +114,6 @@ static const int mtuSizes[NUM_MTU_SIZES]={MAXIMUM_MTU_SIZE, 1200, 576};
 
 using namespace RakNet;
 
-static RakNetRandom rnr;
-
 /*
 struct RakPeerAndIndex
 {
@@ -399,11 +397,6 @@ StartupResult RakPeer::Startup( unsigned int maxConnections, SocketDescriptor *s
 
 
 	FillIPList();
-
-	if (myGuid==UNASSIGNED_RAKNET_GUID)
-	{
-		rnr.SeedMT( GenerateSeedFromGuid() );
-	}
 
 	//RakPeerAndIndex rpai[32];
 	//RakAssert(socketDescriptorCount<32);
@@ -5459,7 +5452,7 @@ void ProcessNetworkPacket( SystemAddress systemAddress, const char *data, const 
 		{
 			remoteSystem->reliabilityLayer.HandleSocketReceiveFromConnectedPlayer(
 				data, length, systemAddress, rakPeer->pluginListNTS, remoteSystem->MTUSize,
-				rakNetSocket, &rnr, timeRead, updateBitStream);
+				rakNetSocket, timeRead, updateBitStream);
 		}
 	}
 	else
@@ -5868,7 +5861,7 @@ bool RakPeer::RunUpdateCycle(BitStream &updateBitStream )
 				}
 			}
 
-			remoteSystem->reliabilityLayer.Update( remoteSystem->rakNetSocket, systemAddress, remoteSystem->MTUSize, timeNS, maxOutgoingBPS, pluginListNTS, &rnr, updateBitStream ); // systemAddress only used for the internet simulator test
+			remoteSystem->reliabilityLayer.Update( remoteSystem->rakNetSocket, systemAddress, remoteSystem->MTUSize, timeNS, maxOutgoingBPS, pluginListNTS, updateBitStream ); // systemAddress only used for the internet simulator test
 
 			// Check for failure conditions
 			if ( remoteSystem->reliabilityLayer.IsDeadConnection() ||

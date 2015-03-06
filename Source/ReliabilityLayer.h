@@ -57,7 +57,6 @@ namespace RakNet {
 
 	/// Forward declarations
 class PluginInterface2;
-class RakNetRandom;
 typedef uint64_t reliabilityHeapWeightType;
 
 // int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const &data );
@@ -147,7 +146,7 @@ public:
 	/// \retval false Modified packet
 	bool HandleSocketReceiveFromConnectedPlayer(
 		const char *buffer, unsigned int length, SystemAddress &systemAddress, DataStructures::List<PluginInterface2*> &messageHandlerList, int MTUSize,
-		RakNetSocket2 *s, RakNetRandom *rnr, CCTimeType timeRead, BitStream &updateBitStream);
+		RakNetSocket2 *s, CCTimeType timeRead, BitStream &updateBitStream);
 
 	/// This allocates bytes and writes a user-level message to those bytes.
 	/// \param[out] data The message
@@ -177,7 +176,7 @@ public:
 	void Update( RakNetSocket2 *s, SystemAddress &systemAddress, int MTUSize, CCTimeType time,
 		unsigned bitsPerSecondLimit,
 		DataStructures::List<PluginInterface2*> &messageHandlerList,
-		RakNetRandom *rnr, BitStream &updateBitStream);
+		BitStream &updateBitStream);
 	
 	/// Were you ever unable to deliver a packet despite retries?
 	/// \return true means the connection has been lost.  Otherwise not.
@@ -223,7 +222,7 @@ private:
 	/// \param[in] s The socket used for sending data
 	/// \param[in] systemAddress The address and port to send to
 	/// \param[in] bitStream The data to send.
-	void SendBitStream( RakNetSocket2 *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, RakNetRandom *rnr, CCTimeType currentTime);
+	void SendBitStream( RakNetSocket2 *s, SystemAddress &systemAddress, RakNet::BitStream *bitStream, CCTimeType currentTime);
 
 	///Parse an internalPacket and create a bitstream to represent this data
 	/// \return Returns number of bits used
@@ -275,7 +274,7 @@ private:
 
 	/// Take all split chunks with the specified splitPacketId and try to reconstruct a packet. If we can, allocate and return it.  Otherwise return 0
 	InternalPacket * BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
-		RakNetSocket2 *s, SystemAddress &systemAddress, RakNetRandom *rnr, BitStream &updateBitStream);
+		RakNetSocket2 *s, SystemAddress &systemAddress, BitStream &updateBitStream);
 	InternalPacket * BuildPacketFromSplitPacketList( SplitPacketChannel *splitPacketChannel, CCTimeType time );
 
 	/// Delete any unreliable split packets that have long since expired
@@ -540,7 +539,7 @@ private:
 	void PopListHead(bool modifyUnacknowledgedBytes);
 	bool IsResendQueueEmpty(void) const;
 	void SortSplitPacketList(DataStructures::List<InternalPacket*> &data, unsigned int leftEdge, unsigned int rightEdge) const;
-	void SendACKs(RakNetSocket2 *s, SystemAddress &systemAddress, CCTimeType time, RakNetRandom *rnr, BitStream &updateBitStream);
+	void SendACKs(RakNetSocket2 *s, SystemAddress &systemAddress, CCTimeType time, BitStream &updateBitStream);
 
 	DataStructures::List<InternalPacket*> packetsToSendThisUpdate;
 	DataStructures::List<bool> packetsToDeallocThisUpdate;
