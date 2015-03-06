@@ -280,7 +280,7 @@ namespace DataStructures
 				if (row==0)
 				{
 					path.Insert(startNode, _FILE_AND_LINE_);
-					for (col=0; outputQueue.Size(); col++)
+					while (!outputQueue.Empty())
 						path.Insert(outputQueue.Pop(), _FILE_AND_LINE_);
 					return true;
 				}
@@ -296,7 +296,7 @@ namespace DataStructures
 		}
 
 		path.Insert(startNode, _FILE_AND_LINE_);
-		for (col=0; outputQueue.Size(); col++)
+		while (!outputQueue.Empty())
 			path.Insert(outputQueue.Pop(), _FILE_AND_LINE_);
 		return true;
 	}
