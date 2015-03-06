@@ -2022,7 +2022,7 @@ namespace RakNet
 	}
 
 	template <class templateType>
-	BitStream& operator<<(BitStream& out, templateType& c)
+	BitStream& operator<<(BitStream& out, const templateType& c)
 	{
 		out.Write(c);
 		return out;
