@@ -77,12 +77,11 @@ namespace DataStructures
 	template<class MemoryBlockType>
 	MemoryPool<MemoryBlockType>::MemoryPool()
 	{
-#ifndef _DISABLE_MEMORY_POOL
-		//AllocateFirst();
+	  availablePages=NULL;
+	  unavailablePages=NULL;
 		availablePagesSize=0;
 		unavailablePagesSize=0;
 		memoryPoolPageSize=16384;
-#endif
 	}
 	template<class MemoryBlockType>
 	MemoryPool<MemoryBlockType>::~MemoryPool()
