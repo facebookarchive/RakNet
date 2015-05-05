@@ -44,6 +44,7 @@ NatPunchthroughClient::NatPunchthroughClient()
 	sp.nextActionTime=0;
 	portStride=0;
 	hasPortStride=UNKNOWN_PORT_STRIDE;
+	portStrideCalTimeout=0;
 }
 NatPunchthroughClient::~NatPunchthroughClient()
 {
