@@ -62,7 +62,7 @@ namespace DataStructures
 
 		struct Node
 		{
-			Node(key_type strIn, const data_type &_data) {string=strIn; data=_data;}
+			Node(key_type strIn, const data_type &_data) {string=strIn; data=_data; next=NULL;}
 			key_type  string;
 			data_type data;
 			// Next in the list for this key

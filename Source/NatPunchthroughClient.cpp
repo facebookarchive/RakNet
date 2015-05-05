@@ -44,6 +44,7 @@ NatPunchthroughClient::NatPunchthroughClient()
 	sp.nextActionTime=0;
 	portStride=0;
 	hasPortStride=UNKNOWN_PORT_STRIDE;
+	portStrideCalTimeout=0;
 }
 NatPunchthroughClient::~NatPunchthroughClient()
 {
@@ -792,7 +793,7 @@ void NatPunchthroughClient::SendTTL(const SystemAddress &sa)
 	rakPeerInterface->SendTTL(ipAddressString,sa.GetPort(), 2);
 }
 
-char *TestModeToString(NatPunchthroughClient::SendPing::TestMode tm)
+const char* TestModeToString(NatPunchthroughClient::SendPing::TestMode tm)
 {
 	switch (tm)
 	{

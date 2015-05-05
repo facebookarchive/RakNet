@@ -418,8 +418,9 @@ namespace DataStructures
 	template <class BinarySearchTreeType>
 	BinarySearchTree<BinarySearchTreeType>::BinarySearchTree()
 	{
+    root = 0;
+    direction = NOT_FOUND;
 		BinarySearchTree_size = 0;
-		root = 0;
 	}
 	
 	template <class BinarySearchTreeType>

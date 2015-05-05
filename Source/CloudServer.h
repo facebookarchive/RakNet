@@ -146,7 +146,7 @@ protected:
 	// ----------------------------------------------------------------------------
 	struct CloudData
 	{
-		CloudData() {}
+		CloudData() : dataPtr(NULL), allocatedData(NULL), isUploaded(false), dataLengthBytes(0) {}
 		~CloudData() {if (allocatedData) rakFree_Ex(allocatedData, _FILE_AND_LINE_);}
 		bool IsUnused(void) const {return isUploaded==false && specificSubscribers.Size()==0;}
 		void Clear(void) {if (dataPtr==allocatedData) rakFree_Ex(allocatedData, _FILE_AND_LINE_); allocatedData=0; dataPtr=0; dataLengthBytes=0; isUploaded=false;}

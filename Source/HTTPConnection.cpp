@@ -29,7 +29,7 @@ using namespace RakNet;
 
 STATIC_FACTORY_DEFINITIONS(HTTPConnection,HTTPConnection);
 
-HTTPConnection::HTTPConnection() : connectionState(CS_NONE)
+HTTPConnection::HTTPConnection() : port(0), connectionState(CS_NONE)
 {
 	tcp=0;
 }

@@ -32,6 +32,12 @@ using namespace RakNet;
 // ****************************************************** PUBLIC METHODS ******************************************************
 
 CCRakNetSlidingWindow::CCRakNetSlidingWindow()
+: MAXIMUM_MTU_INCLUDING_UDP_HEADER(0), cwnd(0.0), ssThresh(0.0),
+  oldestUnsentAck(0), nextDatagramSequenceNumber(0),
+  nextCongestionControlBlock(0), backoffThisBlock(false),
+  speedUpThisBlock(false), expectedNextSequenceNumber(0),
+  _isContinuousSend(false), lastRtt(UNSET_TIME_US), estimatedRTT(UNSET_TIME_US),
+  deviationRtt(UNSET_TIME_US)
 {
 }
 // ----------------------------------------------------------------------------------------------------------------------------

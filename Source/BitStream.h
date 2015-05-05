@@ -900,7 +900,10 @@ namespace RakNet
 
 	private:
 
-		BitStream( const BitStream &invalid) {
+		BitStream(const BitStream &invalid)
+	  : numberOfBitsUsed(0), numberOfBitsAllocated(0), readOffset(0), data(NULL),
+	    copyData(true)
+	  {
 			(void) invalid;
 			RakAssert(0);
 		}
