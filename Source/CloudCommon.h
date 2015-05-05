@@ -45,7 +45,7 @@ public:
 /// \ingroup CLOUD_GROUP
 struct RAK_DLL_EXPORT CloudKey
 {
-	CloudKey() {}
+	CloudKey() : secondaryKey(0) {}
 	CloudKey(RakNet::RakString _primaryKey, uint32_t _secondaryKey) : primaryKey(_primaryKey), secondaryKey(_secondaryKey) {}
 	~CloudKey() {}
 
