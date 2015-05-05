@@ -35,7 +35,7 @@ public:
 	char outputSubdir[512];
 	FileListTransferCBInterface *onFileCallback;
 
-	DDTCallback() {}
+	DDTCallback() : subdirLen(0), onFileCallback(NULL) {}
 	virtual ~DDTCallback() {}
 	
 	virtual bool OnFile(OnFileStruct *onFileStruct)
@@ -84,6 +84,7 @@ DirectoryDeltaTransfer::DirectoryDeltaTransfer()
 	priority=HIGH_PRIORITY;
 	orderingChannel=0;
 	incrementalReadInterface=0;
+	chunkSize=0;
 }
 DirectoryDeltaTransfer::~DirectoryDeltaTransfer()
 {
