@@ -1185,6 +1185,7 @@ PluginReceiveResult ReplicaManager3::OnConstruction(Packet *packet, unsigned cha
 			}
 		}
 	}
+	bsIn.AlignReadToByteBoundary();
 
 	for (index=0; index < constructionObjectListSize; index++)
 	{
