@@ -252,9 +252,9 @@ int RakNet::SplitPacketChannelComp( SplitPacketIdType const &key, SplitPacketCha
 	if (key == data->returnedPacket->splitPacketId)
 		return 0;
 #else
-	if (key < data->splitPacketList[0]->splitPacketId)
+	if (key < data->splitPacketList.PacketId())
 		return -1;
-	if (key == data->splitPacketList[0]->splitPacketId)
+	if (key == data->splitPacketList.PacketId())
 		return 0;
 #endif
 	return 1;
@@ -297,6 +297,8 @@ if (key == data->splitPacketIndex)
 return 0;
 return 1;
 }
+
+
 
 //-------------------------------------------------------------------------------------------------------
 // Constructor
@@ -474,10 +476,14 @@ void ReliabilityLayer::FreeThreadSafeMemory( void )
 
 	for (i=0; i < splitPacketChannelList.Size(); i++)
 	{
-		for (j=0; j < splitPacketChannelList[i]->splitPacketList.Size(); j++)
+		for (j=0; j < splitPacketChannelList[i]->splitPacketList.AllocSize(); j++)
 		{
-			FreeInternalPacketData(splitPacketChannelList[i]->splitPacketList[j], _FILE_AND_LINE_ );
-			ReleaseToInternalPacketPool( splitPacketChannelList[i]->splitPacketList[j] );
+            internalPacket = splitPacketChannelList[i]->splitPacketList.Get(j);
+            if (internalPacket != NULL)
+            {
+                FreeInternalPacketData(splitPacketChannelList[i]->splitPacketList.Get(j), _FILE_AND_LINE_);
+                ReleaseToInternalPacketPool(splitPacketChannelList[i]->splitPacketList.Get(j));
+            }
 		}
 #if PREALLOCATE_LARGE_MESSAGES==1
 		if (splitPacketChannelList[i]->returnedPacket)
@@ -2241,6 +2247,7 @@ void ReliabilityLayer::Update( RakNetSocket2 *s, SystemAddress &systemAddress, i
 	//DeleteOldUnreliableSplitPackets( time );
 }
 
+
 //-------------------------------------------------------------------------------------------------------
 // Writes a bitstream to the socket
 //-------------------------------------------------------------------------------------------------------
@@ -3055,7 +3062,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		newChannel->firstPacket=0;
 		index=splitPacketChannelList.Insert(internalPacket->splitPacketId, newChannel, true, __FILE__,__LINE__);
 		// Preallocate to the final size, to avoid runtime copies
-		newChannel->splitPacketList.Preallocate(internalPacket->splitPacketCount, __FILE__,__LINE__);
+		newChannel->splitPacketList.Preallocate(internalPacket, __FILE__,__LINE__);
 
 #endif
 	}
@@ -3138,7 +3145,12 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 	}
 #else
 	// Insert the packet into the SplitPacketChannel
-	splitPacketChannelList[index]->splitPacketList.Insert(internalPacket, __FILE__, __LINE__ );
+    if (!splitPacketChannelList[index]->splitPacketList.Add(internalPacket, __FILE__, __LINE__ ))
+    {
+        FreeInternalPacketData(internalPacket, _FILE_AND_LINE_);
+        ReleaseToInternalPacketPool(internalPacket);
+        return;
+    }
 	splitPacketChannelList[index]->lastUpdateTime=time;
 
 	// If the index is 0, then this is the first packet. Record this so it can be returned to the user with download progress
@@ -3148,8 +3160,8 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 	// Return download progress if we have the first packet, the list is not complete, and there are enough packets to justify it
 	if (splitMessageProgressInterval &&
 		splitPacketChannelList[index]->firstPacket &&
-		splitPacketChannelList[index]->splitPacketList.Size()!=splitPacketChannelList[index]->firstPacket->splitPacketCount &&
-		(splitPacketChannelList[index]->splitPacketList.Size()%splitMessageProgressInterval)==0)
+		splitPacketChannelList[index]->splitPacketList.AddedPacketsCount()!=splitPacketChannelList[index]->firstPacket->splitPacketCount &&
+		(splitPacketChannelList[index]->splitPacketList.AddedPacketsCount()%splitMessageProgressInterval)==0)
 	{
 		// Return ID_DOWNLOAD_PROGRESS
 		// Write splitPacketIndex (SplitPacketIndexType)
@@ -3162,7 +3174,7 @@ void ReliabilityLayer::InsertIntoSplitPacketList( InternalPacket * internalPacke
 		progressIndicator->dataBitLength=BYTES_TO_BITS(length);
 		progressIndicator->data[0]=(MessageID)ID_DOWNLOAD_PROGRESS;
 		unsigned int temp;
-		temp=splitPacketChannelList[index]->splitPacketList.Size();
+		temp=splitPacketChannelList[index]->splitPacketList.AddedPacketsCount();
 		memcpy(progressIndicator->data+sizeof(MessageID), &temp, sizeof(unsigned int));
 		temp=(unsigned int)internalPacket->splitPacketCount;
 		memcpy(progressIndicator->data+sizeof(MessageID)+sizeof(unsigned int)*1, &temp, sizeof(unsigned int));
@@ -3194,33 +3206,35 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketCh
 	// int splitPacketPartLength;
 
 	// Reconstruct
-	internalPacket = CreateInternalPacketCopy( splitPacketChannel->splitPacketList[0], 0, 0, time );
+	internalPacket = CreateInternalPacketCopy( splitPacketChannel->splitPacketList.Get(0), 0, 0, time );
 	internalPacket->dataBitLength=0;
-	for (j=0; j < splitPacketChannel->splitPacketList.Size(); j++)
-		internalPacket->dataBitLength+=splitPacketChannel->splitPacketList[j]->dataBitLength;
+	for (j=0; j < splitPacketChannel->splitPacketList.AllocSize(); j++)
+		internalPacket->dataBitLength+=splitPacketChannel->splitPacketList.Get(j)->dataBitLength;
 	// splitPacketPartLength=BITS_TO_BYTES(splitPacketChannel->firstPacket->dataBitLength);
 
 	internalPacket->data = (unsigned char*) rakMalloc_Ex( (size_t) BITS_TO_BYTES( internalPacket->dataBitLength ), _FILE_AND_LINE_ );
 	internalPacket->allocationScheme=InternalPacket::NORMAL;
 
     BitSize_t offset = 0;
-	for (j=0; j < splitPacketChannel->splitPacketList.Size(); j++)
+	for (j=0; j < splitPacketChannel->splitPacketList.AllocSize(); j++)
 	{
-		splitPacket=splitPacketChannel->splitPacketList[j];
-        memcpy(internalPacket->data + BITS_TO_BYTES(offset), splitPacket->data, (size_t)BITS_TO_BYTES(splitPacketChannel->splitPacketList[j]->dataBitLength));
-        offset += splitPacketChannel->splitPacketList[j]->dataBitLength;
+		splitPacket = splitPacketChannel->splitPacketList.Get(j);
+        memcpy(internalPacket->data + BITS_TO_BYTES(offset), splitPacket->data, (size_t)BITS_TO_BYTES(splitPacket->dataBitLength));
+        offset += splitPacket->dataBitLength;
 	}
 
-	for (j=0; j < splitPacketChannel->splitPacketList.Size(); j++)
+	for (j=0; j < splitPacketChannel->splitPacketList.AllocSize(); j++)
 	{
-		FreeInternalPacketData(splitPacketChannel->splitPacketList[j], _FILE_AND_LINE_ );
-		ReleaseToInternalPacketPool(splitPacketChannel->splitPacketList[j]);
+		FreeInternalPacketData(splitPacketChannel->splitPacketList.Get(j), _FILE_AND_LINE_ );
+		ReleaseToInternalPacketPool(splitPacketChannel->splitPacketList.Get(j));
 	}
 	RakNet::OP_DELETE(splitPacketChannel, __FILE__, __LINE__);
 
 	return internalPacket;
 #endif
 }
+
+
 //-------------------------------------------------------------------------------------------------------
 InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketIdType splitPacketId, CCTimeType time,
 																  RakNetSocket2 *s, SystemAddress &systemAddress, RakNetRandom *rnr, 
@@ -3238,7 +3252,7 @@ InternalPacket * ReliabilityLayer::BuildPacketFromSplitPacketList( SplitPacketId
 #if PREALLOCATE_LARGE_MESSAGES==1
 	if (splitPacketChannel->splitPacketsArrived==splitPacketChannel->returnedPacket->splitPacketCount)
 #else
-	if (splitPacketChannel->splitPacketList.Size()==splitPacketChannel->splitPacketList[0]->splitPacketCount)
+	if (splitPacketChannel->splitPacketList.AllocSize() == splitPacketChannel->splitPacketList.AddedPacketsCount())
 #endif
 	{
 		// Ack immediately, because for large files this can take a long time
