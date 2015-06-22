@@ -44,7 +44,7 @@ int UDPProxyCoordinator::ForwardingRequestComp( const SenderAndTargetAddress &ke
 	if (key.senderClientAddress < data->sata.senderClientAddress )
 		return -1;
 	if (key.senderClientAddress > data->sata.senderClientAddress )
-		return -1;
+		return 1;
 	if (key.targetClientAddress < data->sata.targetClientAddress )
 		return -1;
 	if (key.targetClientAddress > data->sata.targetClientAddress )
