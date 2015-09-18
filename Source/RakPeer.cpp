@@ -5497,7 +5497,7 @@ void RakPeer::DerefAllSockets(void)
 	unsigned int i;
 	for (i=0; i < socketList.Size(); i++)
 	{
-		delete socketList[i];
+		RakNet::OP_DELETE(socketList[i], _FILE_AND_LINE_);
 	}
 	socketList.Clear(false, _FILE_AND_LINE_);
 }
