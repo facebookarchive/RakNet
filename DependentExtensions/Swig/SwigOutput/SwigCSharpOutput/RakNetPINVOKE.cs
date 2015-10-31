@@ -1586,6 +1586,7 @@ class RakNetPINVOKE {
   [DllImport("RakNet", EntryPoint="CSharp_new_BitStream__SWIG_2")]
   public static extern IntPtr new_BitStream__SWIG_2([In, Out, MarshalAs(UnmanagedType.LPArray)]byte[] jarg1, uint jarg2, bool jarg3);
 
+        // Part of crash fix
  [DllImport("RakNet", EntryPoint = "CSharp_new_BitStream__SWIG_2")]
  public static extern IntPtr new_BitStream__SWIG_2([In, Out, MarshalAs(UnmanagedType.LPArray)]IntPtr jarg1, uint jarg2, bool jarg3);
 
