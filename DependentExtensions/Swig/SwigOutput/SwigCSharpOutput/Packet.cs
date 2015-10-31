@@ -130,7 +130,7 @@ public class Packet : IDisposable {
         }
  
   }
-    
+   // Access to internals
         public IntPtr Ptr { get { return RakNetPINVOKE.Packet_data_get(swigCPtr); } }
 
   public bool deleteData {
