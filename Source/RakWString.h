@@ -37,7 +37,7 @@ namespace RakNet
 		~RakWString();
 
 		/// Implicit return of wchar_t*
-		operator wchar_t* () const {if (c_str) return c_str; return (wchar_t*) L"";}
+		//operator wchar_t* () const {if (c_str) return c_str; return (wchar_t*) L"";}
 
 		/// Same as std::string::c_str
 		const wchar_t* C_String(void) const {if (c_str) return c_str; return (const wchar_t*) L"";}
@@ -117,7 +117,7 @@ namespace RakNet
 
 }
 
-const RakNet::RakWString RAK_DLL_EXPORT operator+(const RakNet::RakWString &lhs, const RakNet::RakWString &rhs);
+//const RakNet::RakWString RAK_DLL_EXPORT operator+(const RakNet::RakWString &lhs, const RakNet::RakWString &rhs);
 
 
 #endif
