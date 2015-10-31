@@ -9,8 +9,10 @@
 	#define SWIG_ADDITIONAL_AUTOPATCHER
 #endif
 
+%include "wchar.i"
 %include "RakNetCSharpCPlusIncludes.i"
 //----------------Includes for swig functions -----------
+
 %include cpointer.i
 %include "arrays_csharp.i"
 %include "typemaps.i"

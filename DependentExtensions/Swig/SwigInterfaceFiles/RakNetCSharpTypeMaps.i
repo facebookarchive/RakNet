@@ -1412,3 +1412,4 @@ STRUCT_UNSIGNED_CHAR_ARRAY_ONLY_CSCODE(dataIsCached,dataCache)*/
 	%}
 
 #endif
+

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="12.0">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -14,7 +14,8 @@
     </FileUpgradeFlags>
     <UpgradeBackupLocation>
     </UpgradeBackupLocation>
-    <OldToolsVersion>2.0</OldToolsVersion>
+    <OldToolsVersion>3.5</OldToolsVersion>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -134,6 +135,7 @@
     <Compile Include="SwigFiles\RakPeer.cs" />
     <Compile Include="SwigFiles\RakPeerInterface.cs" />
     <Compile Include="SwigFiles\RakString.cs" />
+    <Compile Include="SwigFiles\RakWString.cs" />
     <Compile Include="SwigFiles\ReadyEvent.cs" />
     <Compile Include="SwigFiles\ReadyEventSystemStatus.cs" />
     <Compile Include="SwigFiles\RemoteSystemIndex.cs" />
@@ -147,12 +149,15 @@
     <Compile Include="SwigFiles\StartupResult.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_bool.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNetSocket2_p_t.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNet__BitStream_p_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNet__TM_TeamMember_p_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_DataStructures__ListT_RakNet__TM_Team_p_t.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_double.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_FILE.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_p_RakNet__TM_Team.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_p_RakNet__TM_TeamMember.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_p_RakNet__TM_World.cs" />
+    <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__NatPunchthroughClient__SendPing.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__ReadyEvent__RemoteSystem.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__TCPInterface.cs" />
     <Compile Include="SwigFiles\SWIGTYPE_p_RakNet__TM_World__JoinRequestHelper.cs" />
