@@ -690,7 +690,7 @@ bool BitStream::ReadCompressed( unsigned char* inOutByteArray,
 			{
 				// Read the rest of the bytes
 				ReadBits(data, (currentByte + 1) << 3);
-				return;
+				return true;
 			}
 		}
 	}
@@ -711,7 +711,7 @@ bool BitStream::ReadCompressed( unsigned char* inOutByteArray,
 			{
 				// Read the rest of the bytes
 				ReadBits(data, size - (currentByte << 3));
-				return;
+				return true;
 			}
 		}
 	}
