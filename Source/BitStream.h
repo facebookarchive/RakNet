@@ -1314,7 +1314,7 @@ namespace RakNet
 	template <>
 	inline void BitStream::WriteCompressed(const uint24_t &var)
 	{
-		Write(var);
+       WriteCompressed(var.val);
 	}
 
 	template <>
@@ -1646,7 +1646,7 @@ namespace RakNet
 	template <>
 	inline bool BitStream::ReadCompressed(uint24_t &outTemplateVar)
 	{
-		return Read(outTemplateVar);
+		ReadCompressed(outTemplateVar.val);
 	}
 
 	template <>
