@@ -489,7 +489,10 @@ void BitStream::SetData( unsigned char *inByteArray )
 void BitStream::WriteCompressed( const unsigned char* inByteArray,
 								const unsigned int size, const bool unsignedData )
 {
-	BitSize_t currentByte = ( size >> 3 ) - 1; // PCs
+	static bool truee = true;
+	static bool falsee = false;
+
+	BitSize_t currentByte;
 
 	unsigned char byteMatch;
 
@@ -505,27 +508,61 @@ void BitStream::WriteCompressed( const unsigned char* inByteArray,
 
 	// Write upper bytes with a single 1
 	// From high byte to low byte, if high byte is a byteMatch then write a 1 bit. Otherwise write a 0 bit and then write the remaining bytes
-	while ( currentByte > 0 )
+	if (!IsBigEndian())
 	{
-		if ( inByteArray[ currentByte ] == byteMatch )   // If high byte is byteMatch (0 of 0xff) then it would have the same value shifted
+		/// get the highest byte with highest index  PCs
+		currentByte = (size >> 3) - 1;
+
+		/// From high byte to low byte, 
+		/// if high byte is a byteMatch then write a 1 bit.
+		/// Otherwise write a 0 bit and then write the remaining bytes
+		while (currentByte > 0)
 		{
-			bool b = true;
-			Write( b );
+			///  If high byte is byteMatch (0 or 0xff)
+			/// then it would have the same value shifted
+			if (inByteArray[currentByte] == byteMatch)
+			{
+				Write(truee);
+				currentByte--;
+			}
+			else /// the first byte is not matched
+			{
+				Write(falsee);
+				// Write the remainder of the data after writing bit false
+				WriteBits(inByteArray, (currentByte + 1) << 3, true);
+				return;
+			}
 		}
-		else
+		/// make sure we are now on the lowest byte (index 0)
+		RakAssert(currentByte == 0);
+	}
+	else
+	{
+		/// get the highest byte with highest index  PCs
+		currentByte = 0;
+
+		/// From high byte to low byte, 
+		/// if high byte is a byteMatch then write a 1 bit.
+		/// Otherwise write a 0 bit and then write the remaining bytes
+		while (currentByte < ((size >> 3) - 1))
 		{
-			// Write the remainder of the data after writing 0
-			bool b = false;
-			Write( b );
-
-			WriteBits( inByteArray, ( currentByte + 1 ) << 3, true );
-			//  currentByte--;
-
-
-			return ;
+			///  If high byte is byteMatch (0 or 0xff)
+			/// then it would have the same value shifted
+			if (inByteArray[currentByte] == byteMatch)
+			{
+				Write(truee);
+				currentByte++;
+			}
+			else /// the first byte is not matched
+			{
+				Write(falsee);
+				// Write the remainder of the data after writing bit false
+				WriteBits(inByteArray + currentByte, size - (currentByte << 3), true);
+				return;
+			}
 		}
-
-		currentByte--;
+		/// make sure we are now on the lowest byte (index highest)
+		RakAssert(currentByte == ((size >> 3) - 1));
 	}
 
 	// If the upper half of the last byte is a 0 (positive) or 16 (negative) then write a 1 and the remaining 4 bits.  Otherwise write a 0 and the 8 bites.
@@ -617,7 +654,7 @@ bool BitStream::ReadBits( unsigned char *inOutByteArray, BitSize_t numberOfBitsT
 bool BitStream::ReadCompressed( unsigned char* inOutByteArray,
 							   const unsigned int size, const bool unsignedData )
 {
-	unsigned int currentByte = ( size >> 3 ) - 1;
+	unsigned int currentByte;
 
 
 	unsigned char byteMatch, halfByteMatch;
@@ -636,28 +673,46 @@ bool BitStream::ReadCompressed( unsigned char* inOutByteArray,
 
 	// Upper bytes are specified with a single 1 if they match byteMatch
 	// From high byte to low byte, if high byte is a byteMatch then write a 1 bit. Otherwise write a 0 bit and then write the remaining bytes
-	while ( currentByte > 0 )
+	if (!IsBigEndian())
 	{
-		// If we read a 1 then the data is byteMatch.
-
-		bool b;
-
-		if ( Read( b ) == false )
-			return false;
-
-		if ( b )   // Check that bit
+		currentByte = (size >> 3) - 1;
+		while (currentByte > 0)
 		{
-			inOutByteArray[ currentByte ] = byteMatch;
-			currentByte--;
+			// If we read a 1 then the data is byteMatch.
+			bool b;
+			Read(b);
+			if (b)   // Check that bit
+			{
+				data[currentByte] = byteMatch;
+				currentByte--;
+			}
+			else /// the first byte is not matched 
+			{
+				// Read the rest of the bytes
+				ReadBits(data, (currentByte + 1) << 3);
+				return true;
+			}
 		}
-		else
+	}
+	else
+	{
+		currentByte = 0;
+		while (currentByte < ((size >> 3) - 1))
 		{
-			// Read the rest of the bytes
-
-			if ( ReadBits( inOutByteArray, ( currentByte + 1 ) << 3 ) == false )
-				return false;
-
-			return true;
+			// If we read a 1 then the data is byteMatch.
+			bool b;
+			Read(b);
+			if (b)   // Check that bit
+			{
+				data[currentByte] = byteMatch;
+				currentByte++;
+			}
+			else /// the first byte is not matched 
+			{
+				// Read the rest of the bytes
+				ReadBits(data, size - (currentByte << 3));
+				return true;
+			}
 		}
 	}
 
