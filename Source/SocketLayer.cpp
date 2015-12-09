@@ -233,7 +233,8 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 	ifc.ifc_buf = buf;
 	if(ioctl(fd2, SIOCGIFCONF, &ifc) < 0)
 	{
-		return "";
+    	close(fd2);
+    	return "";
 	}
 
 	struct ifreq *ifr;
