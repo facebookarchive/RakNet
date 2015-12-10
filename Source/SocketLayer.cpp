@@ -233,8 +233,7 @@ RakNet::RakString SocketLayer::GetSubNetForSocketAndIp(__UDPSOCKET__ inSock, Rak
 	ifc.ifc_buf = buf;
 	if(ioctl(fd2, SIOCGIFCONF, &ifc) < 0)
 	{
-    	close(fd2);
-    	return "";
+		return "";
 	}
 
 	struct ifreq *ifr;
@@ -595,7 +594,7 @@ bool SocketLayer::GetFirstBindableIP(char firstBindable[128], int ipProto)
 			break;
 	}
 
-	if (l==MAXIMUM_NUMBER_OF_INTERNAL_IDS || ipList[l]==UNASSIGNED_SYSTEM_ADDRESS)
+	if (ipList[l]==UNASSIGNED_SYSTEM_ADDRESS || l==MAXIMUM_NUMBER_OF_INTERNAL_IDS)
 		return false;
 // 	RAKNET_DEBUG_PRINTF("%i %i %i %i\n",
 // 		((char*)(&ipList[l].address.addr4.sin_addr.s_addr))[0],

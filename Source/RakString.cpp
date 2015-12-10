@@ -76,13 +76,11 @@ RakString::RakString(const unsigned char *format, ...){
 	va_list ap;
 	va_start(ap, format);
 	Assign((const char*) format,ap);
-    va_end(ap);
 }
 RakString::RakString(const char *format, ...){
 	va_list ap;
 	va_start(ap, format);
 	Assign(format,ap);
-    va_end(ap);
 }
 RakString::RakString( const RakString & rhs)
 {
@@ -379,7 +377,6 @@ void RakString::Set(const char *format, ...)
 	va_start(ap, format);
 	Clear();
 	Assign(format,ap);
-    va_end(ap);
 }
 bool RakString::IsEmpty(void) const
 {
