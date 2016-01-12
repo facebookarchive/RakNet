@@ -106,7 +106,6 @@
 		1025320E16A6775E0000C5BD /* RPC4Plugin.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025317B16A6775E0000C5BD /* RPC4Plugin.cpp */; };
 		1025320F16A6775E0000C5BD /* SecureHandshake.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025317D16A6775E0000C5BD /* SecureHandshake.cpp */; };
 		1025321016A6775E0000C5BD /* SendToThread.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025317F16A6775E0000C5BD /* SendToThread.cpp */; };
-		1025321116A6775E0000C5BD /* SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025318116A6775E0000C5BD /* SHA1.cpp */; };
 		1025321216A6775E0000C5BD /* SignaledEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025318316A6775E0000C5BD /* SignaledEvent.cpp */; };
 		1025321316A6775E0000C5BD /* SimpleMutex.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025318516A6775E0000C5BD /* SimpleMutex.cpp */; };
 		1025321416A6775E0000C5BD /* SocketLayer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1025318B16A6775E0000C5BD /* SocketLayer.cpp */; };
@@ -130,6 +129,7 @@
 		1025322616A6775E0000C5BD /* VariadicSQLParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 102531B216A6775E0000C5BD /* VariadicSQLParser.cpp */; };
 		1025322716A6775E0000C5BD /* VitaIncludes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 102531B416A6775E0000C5BD /* VitaIncludes.cpp */; };
 		1025322816A6775E0000C5BD /* WSAStartupSingleton.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 102531B716A6775E0000C5BD /* WSAStartupSingleton.cpp */; };
+		8A40EF091C4572F6001864D2 /* DR_SHA1.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8A40EF071C4572F6001864D2 /* DR_SHA1.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -413,6 +413,8 @@
 		102531B716A6775E0000C5BD /* WSAStartupSingleton.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WSAStartupSingleton.cpp; sourceTree = "<group>"; };
 		102531B816A6775E0000C5BD /* WSAStartupSingleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WSAStartupSingleton.h; sourceTree = "<group>"; };
 		102531B916A6775E0000C5BD /* XBox360Includes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = XBox360Includes.h; sourceTree = "<group>"; };
+		8A40EF071C4572F6001864D2 /* DR_SHA1.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DR_SHA1.cpp; sourceTree = "<group>"; };
+		8A40EF081C4572F6001864D2 /* DR_SHA1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DR_SHA1.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -488,6 +490,8 @@
 		102530B216A6775E0000C5BD /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				8A40EF071C4572F6001864D2 /* DR_SHA1.cpp */,
+				8A40EF081C4572F6001864D2 /* DR_SHA1.h */,
 				102530B316A6775E0000C5BD /* _FindFirst.cpp */,
 				102530B416A6775E0000C5BD /* _FindFirst.h */,
 				102530B516A6775E0000C5BD /* AutopatcherPatchContext.h */,
@@ -864,6 +868,7 @@
 				102531D916A6775E0000C5BD /* GridSectorizer.cpp in Sources */,
 				102531DA16A6775E0000C5BD /* HTTPConnection.cpp in Sources */,
 				102531DB16A6775E0000C5BD /* HTTPConnection2.cpp in Sources */,
+				8A40EF091C4572F6001864D2 /* DR_SHA1.cpp in Sources */,
 				102531DC16A6775E0000C5BD /* IncrementalReadInterface.cpp in Sources */,
 				102531DD16A6775E0000C5BD /* Itoa.cpp in Sources */,
 				102531DE16A6775E0000C5BD /* LinuxStrings.cpp in Sources */,
@@ -914,7 +919,6 @@
 				1025320E16A6775E0000C5BD /* RPC4Plugin.cpp in Sources */,
 				1025320F16A6775E0000C5BD /* SecureHandshake.cpp in Sources */,
 				1025321016A6775E0000C5BD /* SendToThread.cpp in Sources */,
-				1025321116A6775E0000C5BD /* SHA1.cpp in Sources */,
 				1025321216A6775E0000C5BD /* SignaledEvent.cpp in Sources */,
 				1025321316A6775E0000C5BD /* SimpleMutex.cpp in Sources */,
 				1025321416A6775E0000C5BD /* SocketLayer.cpp in Sources */,
@@ -1062,6 +1066,7 @@
 				102530B116A675EE0000C5BD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
