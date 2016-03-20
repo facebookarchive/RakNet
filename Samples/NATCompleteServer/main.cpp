@@ -641,7 +641,8 @@ int main(int argc, char **argv)
 	printf("Quitting.\n");
 	for (i=0; i < FEATURE_LIST_COUNT; i++)
 	{
-		samples[i]->Shutdown(rakPeer);
+		if (samples[i]->isSupported==SUPPORTED)
+			samples[i]->Shutdown(rakPeer);
 	}
 	rakPeer->Shutdown(100);
 	RakNet::RakPeerInterface::DestroyInstance(rakPeer);
