@@ -6,7 +6,19 @@ if "%swigPath%"=="" goto :SKIPADDSLASH
 if "%swigPath:~-1%"=="\" goto :SKIPADDSLASH 
 SET swigPath=%swigPath%\
 :SKIPADDSLASH
-del /F /Q SwigOutput\SwigCSharpOutput\*
+
+set swigOutputCsharp=SwigOutput\SwigCSharpOutput
+set swigOutputCplusDLL=SwigOutput\CplusDLLIncludes
+set swigInterface=SwigInterfaceFiles
+set swigFiles=SwigWindowsCSharpSample\SwigTestApp\SwigFiles
+
+if not exist %swigOutputCsharp% ( mkdir %swigOutputCsharp% )
+if not exist %swigOutputCplusDLL% ( mkdir %swigOutputCplusDLL% )
+if not exist %swigInterface% ( mkdir %swigInterface% )
+if not exist %swigFiles% ( mkdir %swigFiles% )
+
+del /F /Q %swigOutputCsharp%\*
+
 if "%3"=="" goto :NOSQL
 %swigPath%swig -c++ -csharp -namespace RakNet -I"%1" -I"SwigInterfaceFiles" -I"%3" -DSWIG_ADDITIONAL_SQL_LITE -outdir SwigOutput\SwigCSharpOutput -o SwigOutput\CplusDLLIncludes\RakNet_wrap.cxx SwigInterfaceFiles\RakNet.i
 copy /Y SwigOutput\SwigCSharpOutput\* SwigWindowsCSharpSample\SwigTestApp\SwigFiles\*
