@@ -25,7 +25,6 @@
 #include "Itoa.h"
 #include <time.h>
 #include "SocketIncludes.h"
-#include "gettimeofday.h"
 
 #ifdef _MSC_VER
 #pragma warning( push )
@@ -435,10 +434,10 @@ void PacketLogger::GetLocalTime(char buffer[128])
 {
 #if defined(_WIN32) && !defined(__GNUC__)  && !defined(__GCCXML__)
     time_t rawtime;
-	struct timeval tv;
+    RakNet::TimeVal tv;
 	// If you get an arror about an incomplete type, just delete this file
-	struct timezone tz;
-	gettimeofday(&tv, &tz);
+    RakNet::TimeZone tz;
+    RakNet::gettimeofday(&tv, &tz);
 	// time ( &rawtime );
 	rawtime=tv.tv_sec;
 

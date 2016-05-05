@@ -7,12 +7,10 @@
  *  of patent rights can be found in the PATENTS file in the same directory.
  *
  */
-
-#if defined(_WIN32) && !defined(__GNUC__)  &&!defined(__GCCXML__)
-
 #include "gettimeofday.h"
 
 // From http://www.openasthra.com/c-tidbits/gettimeofday-function-for-windows/
+#if defined(_MSC_VER)
 
 #include "WindowsIncludes.h"
 
@@ -21,14 +19,31 @@
 #else
   #define DELTA_EPOCH_IN_MICROSECS  11644473600000000ULL
 #endif
+#endif
 
-int gettimeofday(struct timeval *tv, struct timezone *tz)
+#include <time.h>
+
+int RakNet::gettimeofday(TimeVal *tv, TimeZone *tz)
 {
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
-	// _tzset not supported
-	(void) tv;
-	(void) tz;
-#else
+    if (tv)
+    {
+        SYSTEMTIME wtm;
+        GetLocalTime(&wtm);
+
+        struct tm tTm;
+        tTm.tm_year = wtm.wYear - 1900;
+        tTm.tm_mon = wtm.wMonth - 1;
+        tTm.tm_mday = wtm.wDay;
+        tTm.tm_hour = wtm.wHour;
+        tTm.tm_min = wtm.wMinute;
+        tTm.tm_sec = wtm.wSecond;
+        tTm.tm_isdst = -1;
+
+        tv->tv_sec = (long)mktime(&tTm);       // time_t is 64-bit on win32
+        tv->tv_usec = wtm.wMilliseconds * 1000;
+    }
+#elif defined(_WIN32)
 
   FILETIME ft;
   unsigned __int64 tmpres = 0;
@@ -59,11 +74,10 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     tz->tz_minuteswest = _timezone / 60;
     tz->tz_dsttime = _daylight;
   }
-
+#else
+    return ::gettimeofday((struct timeval*)tv, (struct timezone*)tz);
 #endif
 
   return 0;
 }
-
-#endif
 

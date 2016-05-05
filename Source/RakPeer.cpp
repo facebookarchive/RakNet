@@ -48,7 +48,7 @@
 #include "RakAssert.h"
 #include "RakNetVersion.h"
 #include "NetworkIDManager.h"
-#include "gettimeofday.h"
+#include "GetTime.h"
 #include "SignaledEvent.h"
 #include "SuperFastHash.h"
 #include "RakAlloca.h"
@@ -4465,36 +4465,6 @@ union Buff6AndBuff8
 uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 {
 	// Mac address is a poor solution because you can't have multiple connections from the same system
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(_WIN32)
 	uint64_t g=RakNet::GetTimeUS();
 
@@ -4516,8 +4486,8 @@ uint64_t RakPeerInterface::Get64BitUniqueRandomNumber(void)
 	return g;
 
 #else
-	struct timeval tv;
-	gettimeofday(&tv, NULL);
+    RakNet::TimeVal tv;
+    RakNet::gettimeofday(&tv, NULL);
 	return tv.tv_usec + tv.tv_sec * 1000000;
 #endif
 }

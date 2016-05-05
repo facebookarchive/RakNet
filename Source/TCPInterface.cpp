@@ -39,6 +39,7 @@
 #include "Itoa.h"
 #include "SocketLayer.h"
 #include "SocketDefines.h"
+#include "GetTime.h"
 #if (defined(__GNUC__)  || defined(__GCCXML__)) && !defined(__WIN32__)
 #include <netdb.h>
 #endif
@@ -963,7 +964,7 @@ RAK_THREAD_DECLARATION(RakNet::UpdateTCPInterfaceLoop)
 	int selectResult;
 
 
-	timeval tv;
+	RakNet::TimeVal tv;
 	tv.tv_sec=0;
 	tv.tv_usec=30000;
 
