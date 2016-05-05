@@ -77,16 +77,6 @@ public:
 	/// Character index. Do not use to change the string however.
 	unsigned char operator[] ( const unsigned int position ) const;
 
-#ifdef _WIN32
-	// Return as Wide char
-	// Deallocate with DeallocWideChar
-	WCHAR * ToWideChar(void);
-	void DeallocWideChar(WCHAR * w);
-
-	void FromWideChar(const wchar_t *source);
-	static RakNet::RakString FromWideChar_S(const wchar_t *source);
-#endif
-	
 	/// String class find replacement
 	/// Searches the string for the content specified in stringToFind and returns the position of the first occurrence in the string.
 	/// Search only includes characters on or after position pos, ignoring any possible occurrences in previous locations.

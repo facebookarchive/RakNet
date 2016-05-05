@@ -37,6 +37,64 @@ using namespace Windows::Storage::Streams;
 
 namespace RakNet
 {
+    std::wstring StringUtf8ToWideChar(const std::string& strUtf8)
+    {
+        std::wstring ret;
+        if (!strUtf8.empty())
+        {
+            int nNum = MultiByteToWideChar(CP_UTF8, 0, strUtf8.c_str(), -1, nullptr, 0);
+            if (nNum)
+            {
+                WCHAR* wideCharString = new WCHAR[nNum + 1];
+                wideCharString[0] = 0;
+
+                nNum = MultiByteToWideChar(CP_UTF8, 0, strUtf8.c_str(), -1, wideCharString, nNum + 1);
+
+                ret = wideCharString;
+                delete[] wideCharString;
+            }
+            else
+            {
+                RakAssert("StringUtf8ToWideChar Wrong convert to WideChar" && 0);
+            }
+        }
+        return ret;
+    }
+
+    std::string StringWideCharToUtf8(const std::wstring& strWideChar)
+    {
+        std::string ret;
+        if (!strWideChar.empty())
+        {
+            int nNum = WideCharToMultiByte(CP_UTF8, 0, strWideChar.c_str(), -1, nullptr, 0, nullptr, FALSE);
+            if (nNum)
+            {
+                char* utf8String = new char[nNum + 1];
+                utf8String[0] = 0;
+
+                nNum = WideCharToMultiByte(CP_UTF8, 0, strWideChar.c_str(), -1, utf8String, nNum + 1, nullptr, FALSE);
+
+                ret = utf8String;
+                delete[] utf8String;
+            }
+            else
+            {
+                RakAssert("StringUtf8ToWideChar Wrong convert to Utf8" && 0);
+            }
+        }
+
+        return ret;
+    }
+
+    std::string PlatformStringToString(Platform::String^ s) {
+        return StringWideCharToUtf8(std::wstring(s->Data()));
+    }
+
+    Platform::String^ PlatformStringFromString(const std::string& s)
+    {
+        std::wstring ws = StringUtf8ToWideChar(s);
+        return ref new Platform::String(ws.data(), ws.length());
+    }
 
 public ref class OutputStreamAndDataWriter sealed
 {
@@ -64,7 +122,7 @@ public ref class ListenerContext sealed
 public:
     ListenerContext(Windows::Networking::Sockets::DatagramSocket^ listener);
     void OnMessage(Windows::Networking::Sockets::DatagramSocket^ socket, Windows::Networking::Sockets::DatagramSocketMessageReceivedEventArgs^ eventArguments);
-	OutputStreamAndDataWriter ^GetOutputStreamAndDataWriter(uint64_t s_addr);
+	OutputStreamAndDataWriter ^GetOutputStreamAndDataWriter(uint64_t s_addrVar);
 
 private:
 	~ListenerContext();
@@ -102,22 +160,22 @@ ListenerContext::~ListenerContext()
 //    DeleteCriticalSection(&lock);
 }
 
-OutputStreamAndDataWriter ^ListenerContext::GetOutputStreamAndDataWriter(uint64_t s_addr)
+OutputStreamAndDataWriter ^ListenerContext::GetOutputStreamAndDataWriter(uint64_t s_addrVar)
 {
 	outputStreamMapMutex.Lock();
-	if (outputStreamMap->HasKey(s_addr))
+	if (outputStreamMap->HasKey(s_addrVar))
 	{
-		OutputStreamAndDataWriter ^o = outputStreamMap->Lookup(s_addr);
+		OutputStreamAndDataWriter ^o = outputStreamMap->Lookup(s_addrVar);
 		outputStreamMapMutex.Unlock();
 		return o;
 	}
 	outputStreamMapMutex.Unlock();
-	uint16_t port = s_addr & 0xFFFF;
-	uint32_t addr = (uint32_t) (s_addr >> 32);
+	uint16_t port = s_addrVar & 0xFFFF;
+	uint32_t addr = (uint32_t) (s_addrVar >> 32);
 	//addr = ntohl(addr);
-	char buf[64];
+	char bufIP[64];
 	unsigned char *ucp = (unsigned char *)&addr;
-	sprintf(buf, "%d.%d.%d.%d",
+	sprintf(bufIP, "%d.%d.%d.%d",
 		ucp[0] & 0xff,
 		ucp[1] & 0xff,
 		ucp[2] & 0xff,
@@ -125,31 +183,25 @@ OutputStreamAndDataWriter ^ListenerContext::GetOutputStreamAndDataWriter(uint64_
 	char portStr[32];
 	_itoa(port, portStr, 10);
 
-	RakNet::RakString rs1(buf);
-	WCHAR *w_char1 = rs1.ToWideChar();
-	HostName ^hostName = ref new HostName(ref new Platform::String(w_char1));
-	RakNet::RakString rs2(portStr);
-	WCHAR *w_char2 = rs2.ToWideChar();
-	task< IOutputStream^ > op(listener->GetOutputStreamAsync(hostName, ref new Platform::String(w_char2)));
+    
+	HostName ^hostName = ref new HostName(PlatformStringFromString(bufIP));
+	task< IOutputStream^ > op(listener->GetOutputStreamAsync(hostName, PlatformStringFromString(portStr)));
 	op.wait();
 	OutputStreamAndDataWriter ^outputStreamAndDataWriter = ref new OutputStreamAndDataWriter;
 	outputStreamAndDataWriter->outputStream = op.get();
 	outputStreamAndDataWriter->dataWriter = ref new DataWriter(outputStreamAndDataWriter->outputStream);
 	
-	rs1.DeallocWideChar(w_char1);
-	rs2.DeallocWideChar(w_char2);
-
 	outputStreamMapMutex.Lock();
-	if (outputStreamMap->HasKey(s_addr)==false)
+	if (outputStreamMap->HasKey(s_addrVar)==false)
 	{
-		outputStreamMap->Insert(s_addr, outputStreamAndDataWriter);
+		outputStreamMap->Insert(s_addrVar, outputStreamAndDataWriter);
 		outputStreamMapMutex.Unlock();
 		return outputStreamAndDataWriter;
 	}
 	else
 	{
 		// Just use the one that was inserted from another thread
-		OutputStreamAndDataWriter ^o = outputStreamMap->Lookup(s_addr);
+		OutputStreamAndDataWriter ^o = outputStreamMap->Lookup(s_addrVar);
 		outputStreamMapMutex.Unlock();
 		return o;
 	}
@@ -177,15 +229,8 @@ void ListenerContext::OnMessage(Windows::Networking::Sockets::DatagramSocket^ so
     for(unsigned int i = 0; i < uselessBuffer->Length; i++)
         recvFromStruct->data[i] = managedBytes[i];
 	recvFromStruct->bytesRead = uselessBuffer->Length;
-	char ip[64];
-	RakString rs2;
-	rs2.FromWideChar(eventArguments->RemoteAddress->DisplayName->Data());
-	strcpy(ip, rs2.C_String());
-	recvFromStruct->systemAddress.address.addr4.sin_addr.s_addr = RNS2_WindowsStore8::WinRTInet_Addr(ip);
-	char portStr[64];
-	rs2.FromWideChar(eventArguments->RemotePort->Data());
-	strcpy(portStr, rs2.C_String());
-	recvFromStruct->systemAddress.SetPortHostOrder(atoi(portStr));
+	recvFromStruct->systemAddress.address.addr4.sin_addr.s_addr = RNS2_WindowsStore8::WinRTInet_Addr(PlatformStringToString(eventArguments->RemoteAddress->DisplayName).c_str());
+	recvFromStruct->systemAddress.SetPortHostOrder(atoi(PlatformStringToString(eventArguments->RemotePort).c_str()));
 	recvFromStruct->timeRead=RakNet::GetTimeUS();
 	recvFromStruct->socket = rns2;
 	eventHandler->OnRNS2Recv(recvFromStruct);
@@ -232,12 +277,12 @@ void ListenerContext::OnMessage(Windows::Networking::Sockets::DatagramSocket^ so
 void ListenerContext::EchoMessage(DatagramSocketMessageReceivedEventArgs^ eventArguments)
 {
 }
-RakNet::DataStructures::List<RNS2_WindowsStore8*> RNS2_WindowsStore8::rns2List;
+DataStructures::List<RakNet::RNS2_WindowsStore8*> RakNet::RNS2_WindowsStore8::rns2List;
 SimpleMutex RNS2_WindowsStore8::rns2ListMutex;
 RNS2_WindowsStore8::RNS2_WindowsStore8()
 {
 	rns2ListMutex.Lock();
-	rns2List.Insert(this, _FILE_AND_LINE_);
+    rns2List.Insert(this, _FILE_AND_LINE_);
 	rns2ListMutex.Unlock();
 }
 RNS2_WindowsStore8::~RNS2_WindowsStore8()
@@ -290,10 +335,10 @@ RNS2BindResult RNS2_WindowsStore8::Bind( Platform::String ^localServiceName ) {
 }
 void RNS2_WindowsStore8::GetMyIP( SystemAddress addresses[MAXIMUM_NUMBER_OF_INTERNAL_IDS] ) {RakAssert("GetMyIP Unsupported" && 0);}
 RNS2SendResult RNS2_WindowsStore8::Send( RNS2_SendParameters *sendParameters, const char *file, unsigned int line ) {
-	uint64_t s_addr = sendParameters->systemAddress.address.addr4.sin_addr.s_addr;
-	s_addr <<=32;
-	s_addr |= sendParameters->systemAddress.debugPort;
-	OutputStreamAndDataWriter ^outputStreamAndDataWriter = listenerContext->GetOutputStreamAndDataWriter(s_addr);
+	uint64_t s_addrVar = sendParameters->systemAddress.address.addr4.sin_addr.s_addr;
+	s_addrVar <<=32;
+	s_addrVar |= sendParameters->systemAddress.debugPort;
+	OutputStreamAndDataWriter ^outputStreamAndDataWriter = listenerContext->GetOutputStreamAndDataWriter(s_addrVar);
 	// DataWriter ^dataWriter = ref new DataWriter(outputStream);
 
 	auto platformBuffer = ref new Platform::Array<BYTE>((unsigned char*) sendParameters->data, (UINT)sendParameters->length);
@@ -328,9 +373,6 @@ void RNS2_WindowsStore8::DomainNameToIP( const char *domainName, char ip[65] ) {
 //	std::string s_str = std::string(domainName);
 //	std::wstring wid_str = std::wstring(s_str.begin(), s_str.end());
 //	const wchar_t* w_char = wid_str.c_str();
-
-	RakNet::RakString rs(domainName);
-	WCHAR *w_char = rs.ToWideChar();
 	
 //	DatagramSocket ^listener = ref new DatagramSocket();
 
@@ -338,7 +380,7 @@ void RNS2_WindowsStore8::DomainNameToIP( const char *domainName, char ip[65] ) {
 //	task<void> bindOp(listener->BindServiceNameAsync(ref new Platform::String()));
 	//bindOp.wait();
 
-	HostName ^hostName = ref new HostName(ref new Platform::String(w_char));
+	HostName ^hostName = ref new HostName(PlatformStringFromString(domainName));
 	//HostName ^hostName = ref new HostName(ref new Platform::String(L"microsoft.com"));
 	//HostName ^hostName = ref new HostName(ref new Platform::String(L"127.0.0.1"));
 	//task< Windows::Foundation::Collections::IVectorView<EndpointPair^>^ > op(listener->GetEndpointPairsAsync(hostName, L"42"));
@@ -356,10 +398,7 @@ void RNS2_WindowsStore8::DomainNameToIP( const char *domainName, char ip[65] ) {
 		Windows::Foundation::Collections::IVectorView<Windows::Networking::EndpointPair^>^ result2 = result->GetResults();
 		if (result2->Size>0)
 		{
-			Platform::String ^name = result2->GetAt(0)->RemoteHostName->DisplayName;
-			RakString rs2;
-			rs2.FromWideChar(name->Data());
-			strcpy(ip, rs2.C_String());
+			strcpy(ip, PlatformStringToString(result2->GetAt(0)->RemoteHostName->DisplayName).c_str());
 		}
 		else
 		{
@@ -406,8 +445,6 @@ void RNS2_WindowsStore8::DomainNameToIP( const char *domainName, char ip[65] ) {
 		ip[0]=0;
 	}
 	*/
-	
-	rs.DeallocWideChar(w_char);
 
 }
 
