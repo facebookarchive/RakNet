@@ -35,7 +35,6 @@
 	typedef Windows::Networking::Sockets::StreamSocket^ __TCPSOCKET__;
 	typedef unsigned int socklen_t;
 	#define FORMAT_MESSAGE_ALLOCATE_BUFFER 0
-	#define FIONBIO 0
 	#define LocalFree(x)
 	// using Windows.Networking;
 	// using Windows.Networking.Sockets;
