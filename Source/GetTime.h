@@ -18,6 +18,7 @@
 
 #include "Export.h"
 #include "RakNetTime.h" // For RakNet::TimeMS
+#include "gettimeofday.h"
 
 namespace RakNet
 {

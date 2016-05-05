@@ -26,20 +26,10 @@
 #include "GetTime.h"
 
 
-
-
 #if defined(_WIN32)
 //DWORD mProcMask;
 //DWORD mSysMask;
 //HANDLE mThread;
-
-
-
-
-
-
-
-
 
 #else
 #include <sys/time.h>
@@ -89,53 +79,6 @@ RakNet::TimeMS RakNet::GetTimeMS( void )
 	return (RakNet::TimeMS)(GetTimeUS()/1000);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #if   defined(_WIN32)
 RakNet::TimeUS GetTimeUS_Windows( void )
 {
@@ -180,10 +123,10 @@ RakNet::TimeUS GetTimeUS_Windows( void )
 #elif defined(__GNUC__)  || defined(__GCCXML__) || defined(__S3E__)
 RakNet::TimeUS GetTimeUS_Linux( void )
 {
-	timeval tp;
+    RakNet::TimeVal tp;
 	if ( initialized == false)
 	{
-		gettimeofday( &tp, 0 );
+        RakNet::gettimeofday( &tp, 0 );
 		initialized=true;
 		// I do this because otherwise RakNet::Time in milliseconds won't work as it will underflow when dividing by 1000 to do the conversion
 		initialTime = ( tp.tv_sec ) * (RakNet::TimeUS) 1000000 + ( tp.tv_usec );
@@ -191,7 +134,7 @@ RakNet::TimeUS GetTimeUS_Linux( void )
 
 	// GCC
 	RakNet::TimeUS curTime;
-	gettimeofday( &tp, 0 );
+    RakNet::gettimeofday( &tp, 0 );
 
 	curTime = ( tp.tv_sec ) * (RakNet::TimeUS) 1000000 + ( tp.tv_usec );
 

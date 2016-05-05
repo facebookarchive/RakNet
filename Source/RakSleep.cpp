@@ -26,6 +26,7 @@ pthread_cond_t fakeCond = PTHREAD_COND_INITIALIZER;
 #endif
 
 #include "RakSleep.h"
+#include "GetTime.h"
 
 
 #if defined(WINDOWS_PHONE_8) || defined(WINDOWS_STORE_RT)
@@ -36,7 +37,7 @@ using namespace ThreadEmulation;
 void RakSleep(unsigned int ms)
 {
 #ifdef _WIN32
-	Sleep(ms);
+	::Sleep(ms);
 
 
 
@@ -48,10 +49,10 @@ void RakSleep(unsigned int ms)
 	//Single thread sleep code thanks to Furquan Shaikh, http://somethingswhichidintknow.blogspot.com/2009/09/sleep-in-pthread.html
 	//Modified slightly from the original
 	struct timespec timeToWait;
-	struct timeval now;
+    RakNet::TimeVal now;
 	int rt;
 
-	gettimeofday(&now,NULL);
+    RakNet::gettimeofday(&now,NULL);
 
 	long seconds = ms/1000;
 	long nanoseconds = (ms - seconds * 1000) * 1000000;
