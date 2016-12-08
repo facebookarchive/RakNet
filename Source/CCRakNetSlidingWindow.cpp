@@ -22,7 +22,7 @@ static const CCTimeType SYN=10000;
 
 #include "MTUSize.h"
 #include <stdio.h>
-#include <math.h>
+#include <cmath>
 #include <stdlib.h>
 #include "RakAssert.h"
 #include "RakAlloca.h"
