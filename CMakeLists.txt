@@ -24,7 +24,7 @@ ENDIF(WIN32 AND NOT UNIX)
 
 
 # Options
-option( RAKNET_ENABLE_SAMPLES 	"Generate RakNet sample projects if true." 		TRUE  )
+option( RAKNET_ENABLE_SAMPLES 	"Generate RakNet sample projects if true." 		FALSE )
 option( RAKNET_ENABLE_DLL		"Generate the DLL project if true." 			TRUE )
 option( RAKNET_ENABLE_STATIC	"Generate the static library project if true." 	TRUE )
 option( RAKNET_GENERATE_INCLUDE_ONLY_DIR "Setup a include/RakNet/ directory in which all the headers are copied." FALSE )
@@ -53,6 +53,6 @@ add_subdirectory(Lib)
 
 set(RAKNET_COMMON_LIBS RakNetLibStatic)
 
-if( RAKNET_GENERATE_SAMPLES )
+if( RAKNET_ENABLE_SAMPLES )
 	add_subdirectory(Samples)
 endif()
