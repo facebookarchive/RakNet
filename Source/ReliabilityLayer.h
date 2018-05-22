@@ -60,12 +60,86 @@ class PluginInterface2;
 class RakNetRandom;
 typedef uint64_t reliabilityHeapWeightType;
 
+
+
+class SortedSplittedPackets
+{
+private:
+	InternalPacket ** data;
+	unsigned int allocation_size;	
+	unsigned int addedPacketsCount;
+	SplitPacketIdType packetId;
+
+public:
+	SortedSplittedPackets()
+	{
+		data = NULL;
+		allocation_size = 0;
+		addedPacketsCount = 0;
+	}
+	~SortedSplittedPackets()
+	{
+		if (allocation_size > 0)
+		{
+			RakNet::OP_DELETE_ARRAY(data, _FILE_AND_LINE_);
+		}
+	}
+
+	void Preallocate(InternalPacket * internalPacket, const char *file, unsigned int line)
+	{
+		RakAssert(data == NULL);
+		allocation_size = internalPacket->splitPacketCount;
+		data = RakNet::OP_NEW_ARRAY<InternalPacket*>(allocation_size, file, line);
+		packetId = internalPacket->splitPacketId;
+
+		for (int i = 0; i < allocation_size; ++i)
+		{
+			data[i] = NULL;
+		}
+	}
+	bool Add(InternalPacket * internalPacket, const char *file, unsigned int line)
+	{
+		RakAssert(data != NULL);
+		RakAssert(internalPacket->splitPacketIndex < allocation_size);
+		RakAssert(packetId == internalPacket->splitPacketId);
+		RakAssert(data[internalPacket->splitPacketIndex] == NULL);
+		if (data[internalPacket->splitPacketIndex] == NULL)
+		{
+			data[internalPacket->splitPacketIndex] = internalPacket;
+			++addedPacketsCount;
+            return true;
+		}
+        return false;
+	}
+
+	unsigned int AllocSize()
+	{
+		return allocation_size;
+	}
+	unsigned int AddedPacketsCount()
+	{
+		return addedPacketsCount;
+	}
+	InternalPacket * Get(unsigned int index)
+	{
+		RakAssert(data != NULL);
+		RakAssert(index < allocation_size);
+		return data[index];
+	}
+	SplitPacketIdType PacketId()
+	{
+		RakAssert(data != NULL);
+		return packetId;	
+	}
+};
+
+
 // int SplitPacketIndexComp( SplitPacketIndexType const &key, InternalPacket* const &data );
 struct SplitPacketChannel//<SplitPacketChannel>
 {
 	CCTimeType lastUpdateTime;
 
-	DataStructures::List<InternalPacket*> splitPacketList;
+	SortedSplittedPackets splitPacketList;
 
 #if PREALLOCATE_LARGE_MESSAGES==1
 	InternalPacket *returnedPacket;
