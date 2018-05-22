@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="miniupnpc-1.5">
+      <UniqueIdentifier>{8c521a45-8908-48a3-a4a8-be81a91a0eb7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\miniupnpc-1.5\connecthostport.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\igd_desc_parse.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\minisoap.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\miniupnpc.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\miniwget.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\minixml.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\upnpcommands.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\upnperrors.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="..\miniupnpc-1.5\upnpreplyparse.c">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClCompile>
+    <ClCompile Include="CDemo.cpp" />
+    <ClCompile Include="CMainMenu.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RakNetStuff.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\miniupnpc-1.5\connecthostport.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\igd_desc_parse.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\minisoap.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\miniupnpc.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\miniwget.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\minixml.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\upnpcommands.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\upnperrors.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="..\miniupnpc-1.5\upnpreplyparse.h">
+      <Filter>miniupnpc-1.5</Filter>
+    </ClInclude>
+    <ClInclude Include="CDemo.h" />
+    <ClInclude Include="CMainMenu.h" />
+    <ClInclude Include="RakNetStuff.h" />
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+</Project>

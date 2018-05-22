@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{ca678f45-dd96-4824-a444-32a7d2aaa3b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Lobby2Message_PGSQL">
+      <UniqueIdentifier>{0a30473a-786c-40e1-a6d1-a42728451df5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="PostgreSQLInterface">
+      <UniqueIdentifier>{b6df7677-95df-4815-b9be-516e859d73f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RoomsPlugin">
+      <UniqueIdentifier>{ddf2e9da-7e30-4b2f-9967-c7abe8aac49e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Lobby2Message.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Lobby2Plugin.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Lobby2ResultCode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Lobby2Server.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\PGSQL\Lobby2Server_PGSQL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Lobby2ServerSample_PGSQL.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\PGSQL\Lobby2Message_PGSQL.cpp">
+      <Filter>Lobby2Message_PGSQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Lobby2Presence.cpp">
+      <Filter>Lobby2Message_PGSQL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\PostgreSQLInterface\PostgreSQLInterface.cpp">
+      <Filter>PostgreSQLInterface</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Rooms\IntervalTimer.cpp">
+      <Filter>RoomsPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Rooms\ProfanityFilter.cpp">
+      <Filter>RoomsPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Rooms\RoomsContainer.cpp">
+      <Filter>RoomsPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Rooms\RoomsErrorCodes.cpp">
+      <Filter>RoomsPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Rooms\RoomsPlugin.cpp">
+      <Filter>RoomsPlugin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Lobby2\Rooms\RoomTypes.cpp">
+      <Filter>RoomsPlugin</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Lobby2Message.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Lobby2Plugin.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Lobby2Presence.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Lobby2ResultCode.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Lobby2Server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\PGSQL\Lobby2Server_PGSQL.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\PGSQL\Lobby2Message_PGSQL.h">
+      <Filter>Lobby2Message_PGSQL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\PostgreSQLInterface\PostgreSQLInterface.h">
+      <Filter>PostgreSQLInterface</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Rooms\IntervalTimer.h">
+      <Filter>RoomsPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Rooms\ProfanityFilter.h">
+      <Filter>RoomsPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Rooms\RoomsContainer.h">
+      <Filter>RoomsPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Rooms\RoomsErrorCodes.h">
+      <Filter>RoomsPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Rooms\RoomsPlugin.h">
+      <Filter>RoomsPlugin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Lobby2\Rooms\RoomTypes.h">
+      <Filter>RoomsPlugin</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,275 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="jpeg">
+      <UniqueIdentifier>{bc2410de-457c-400c-9cfc-8f221f774262}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="DXTCompressor">
+      <UniqueIdentifier>{93d4c277-9c5c-4401-aeb3-c55c8dd162e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="SQLite">
+      <UniqueIdentifier>{c23aa191-f739-4770-8dd4-f946e2793d6d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\jpeg-7\cderror.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\cdjpeg.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jconfig.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jdct.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jerror.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jinclude.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jmemsys.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jmorecfg.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jpegint.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jpeglib.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\jversion.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\jpeg-7\transupp.h">
+      <Filter>jpeg</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DXTCompressor\Src\DDSHeader.h">
+      <Filter>DXTCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DXTCompressor\Src\DXTCompressor.h">
+      <Filter>DXTCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DXTCompressor\Src\FrameBufferRenderBuffer.hpp">
+      <Filter>DXTCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DXTCompressor\Src\OpenGLWindow.hpp">
+      <Filter>DXTCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\DXTCompressor\Src\ShaderSource.h">
+      <Filter>DXTCompressor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sqlite3.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\sqlite3ext.h">
+      <Filter>SQLite</Filter>
+    </ClInclude>
+    <ClInclude Include="jpeg_memory_dest.h" />
+    <ClInclude Include="..\..\SQLite3PluginCommon.h" />
+    <ClInclude Include="..\..\SQLite3ServerPlugin.h" />
+    <ClInclude Include="..\SQLiteLoggerCommon.h" />
+    <ClInclude Include="SQLiteServerLoggerPlugin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\jpeg-7\cdjpeg.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jaricom.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcapimin.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcapistd.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcarith.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jccoefct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jccolor.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcdctmgr.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jchuff.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcinit.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcmainct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcmarker.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcmaster.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcomapi.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcparam.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcprepct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jcsample.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jctrans.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdapimin.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdapistd.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdarith.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdatadst.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdatasrc.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdcoefct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdcolor.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jddctmgr.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdhuff.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdinput.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdmainct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdmarker.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdmaster.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdmerge.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdpostct.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdsample.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jdtrans.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jerror.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jfdctflt.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jfdctfst.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jfdctint.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jidctflt.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jidctfst.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jidctint.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jmemansi.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jmemmgr.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jquant1.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jquant2.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\jutils.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\memsrc.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdbmp.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdcolmap.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdgif.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdppm.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdrle.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdswitch.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\rdtarga.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\transupp.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\wrbmp.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\wrgif.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\wrppm.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\wrrle.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\jpeg-7\wrtarga.c">
+      <Filter>jpeg</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\DXTCompressor\Src\DXTCompressor.cpp">
+      <Filter>DXTCompressor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\sqlite3.c">
+      <Filter>SQLite</Filter>
+    </ClCompile>
+    <ClCompile Include="jpeg_memory_dest.cpp" />
+    <ClCompile Include="..\..\SQLite3PluginCommon.cpp" />
+    <ClCompile Include="..\..\SQLite3ServerPlugin.cpp" />
+    <ClCompile Include="..\SQLiteLoggerCommon.cpp" />
+    <ClCompile Include="SQLiteServerLoggerPlugin.cpp" />
+    <ClCompile Include="SQLiteServerLoggerSample.cpp" />
+  </ItemGroup>
+</Project>

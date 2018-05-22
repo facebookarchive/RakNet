@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="App3D">
+      <UniqueIdentifier>{c9eb1f7e-6185-4257-896b-8ca239335059}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RakNet">
+      <UniqueIdentifier>{e09b138e-6e47-4cef-a48f-613802def3f5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="TransformationHistory.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="WinMain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="App3D.cpp">
+      <Filter>App3D</Filter>
+    </ClCompile>
+    <ClCompile Include="AppInterface.cpp">
+      <Filter>App3D</Filter>
+    </ClCompile>
+    <ClCompile Include="FSM.cpp">
+      <Filter>App3D</Filter>
+    </ClCompile>
+    <ClCompile Include="OverlayHelper.cpp">
+      <Filter>App3D</Filter>
+    </ClCompile>
+    <ClCompile Include="RunnableState.cpp">
+      <Filter>App3D</Filter>
+    </ClCompile>
+    <ClCompile Include="State.cpp">
+      <Filter>App3D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\FormatString.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RakSleep.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\Rand.cpp">
+      <Filter>RakNet</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="TransformationHistory.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="App3D.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="AppInterface.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="AppTypes.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="FSM.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="OverlayHelper.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="RunnableState.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="State.h">
+      <Filter>App3D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\FormatString.h">
+      <Filter>RakNet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\RakSleep.h">
+      <Filter>RakNet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\Rand.h">
+      <Filter>RakNet</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+</Project>

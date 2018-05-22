@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{1E7A1DCE-807E-474B-B065-14F8C93A1D6C}</ProjectGuid>
+    <RootNamespace>Lobby2Client</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27428.2015</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)DependentExtensions\XML;$(SolutionDir)Source;$(SolutionDir)DependentExtensions/Lobby2/Rooms;$(SolutionDir)DependentExtensions/GFx3;$(SolutionDir)Samples/RoomsBrowserGFx3;$(ProjectDir);$(SolutionDir)DependentExtensions/Lobby2;$(GFXSDK)\Src\GRenderer;$(GFXSDK)\Src\GKernel;$(GFXSDK)\Src\GFxXML;$(GFXSDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)lib/RakNetLibStaticDebug.lib;ws2_32.lib;libgfx.lib;libjpeg.lib;zlib.lib;imm32.lib;winmm.lib;libgrenderer_d3d9.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(GFXSDK)\3rdParty\expat-2.0.1\lib;$(GFXSDK)\Lib\$(Platform)\Msvc80\Debug\;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(Platform)\Msvc80\Debug;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(Platform)\Msvc80\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)DependentExtensions\XML;$(SolutionDir)Source;$(SolutionDir)DependentExtensions/Lobby2/Rooms;$(SolutionDir)DependentExtensions/GFx3;$(SolutionDir)Samples/RoomsBrowserGFx3;$(ProjectDir);$(SolutionDir)DependentExtensions/Lobby2;$(GFXSDK)\Src\GRenderer;$(GFXSDK)\Src\GKernel;$(GFXSDK)\Src\GFxXML;$(GFXSDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)lib/RakNetLibStatic.lib;ws2_32.lib;libgfx.lib;libjpeg.lib;zlib.lib;imm32.lib;winmm.lib;libgrenderer_d3d9.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(GFXSDK)\3rdParty\expat-2.0.1\lib;$(GFXSDK)\Lib\$(Platform)\Msvc80\Release\;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(Platform)\Msvc80\Release;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(Platform)\Msvc80\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\DependentExtensions\Lobby2\Rooms\IntervalTimer.cpp" />
+    <ClCompile Include="..\..\..\DependentExtensions\Lobby2\Rooms\ProfanityFilter.cpp" />
+    <ClCompile Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomsContainer.cpp" />
+    <ClCompile Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomsErrorCodes.cpp" />
+    <ClCompile Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomsPlugin.cpp" />
+    <ClCompile Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomTypes.cpp" />
+    <ClCompile Include="..\..\..\DependentExtensions\XML\xmlParser.cpp" />
+    <ClCompile Include="..\GFxPlayerTinyD3D9.cpp" />
+    <ClCompile Include="..\RoomsBrowserGFx3.cpp" />
+    <ClCompile Include="RoomsBrowserGFx3_RakNet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\DependentExtensions\Lobby2\Rooms\IntervalTimer.h" />
+    <ClInclude Include="..\..\..\DependentExtensions\Lobby2\Rooms\ProfanityFilter.h" />
+    <ClInclude Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomsContainer.h" />
+    <ClInclude Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomsErrorCodes.h" />
+    <ClInclude Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomsPlugin.h" />
+    <ClInclude Include="..\..\..\DependentExtensions\Lobby2\Rooms\RoomTypes.h" />
+    <ClInclude Include="..\..\..\DependentExtensions\XML\xmlParser.h" />
+    <ClInclude Include="..\RoomsBrowserGFx3.h" />
+    <ClInclude Include="RoomsBrowserGFx3_RakNet.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

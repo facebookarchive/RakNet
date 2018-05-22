@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="miniupnpc-1.6.20120410">
+      <UniqueIdentifier>{5f00d9cb-a54b-4ed4-b248-141e599afb48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="jansson">
+      <UniqueIdentifier>{3c2747cc-ad59-437c-b069-a15dc1079cb3}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ComprehensivePCGame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\connecthostport.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\igd_desc_parse.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\minisoap.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\miniupnpc.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\miniwget.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\minixml.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\portlistingparse.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\receivedata.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnpcommands.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnperrors.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnpreplyparse.c">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\dump.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\error.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\hashtable.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\load.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\memory.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\pack_unpack.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\strbuffer.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\strconv.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\utf.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\jansson-2.4\src\value.c">
+      <Filter>jansson</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\bsdqueue.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\codelength.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\connecthostport.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\declspec.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\igd_desc_parse.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\minissdpc.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\miniupnpc.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\miniupnpcstrings.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\miniupnpctypes.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\miniwget.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\minixml.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\portlistingparse.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\receivedata.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnpcommands.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnperrors.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\miniupnpc-1.6.20120410\upnpreplyparse.h">
+      <Filter>miniupnpc-1.6.20120410</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\jansson-2.4\src\hashtable.h">
+      <Filter>jansson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\jansson-2.4\src\jansson.h">
+      <Filter>jansson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\jansson-2.4\src\jansson_config.h">
+      <Filter>jansson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\jansson-2.4\src\jansson_private.h">
+      <Filter>jansson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\jansson-2.4\src\strbuffer.h">
+      <Filter>jansson</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\jansson-2.4\src\utf.h">
+      <Filter>jansson</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+</Project>
