@@ -306,6 +306,11 @@ void TCPInterface::Stop(void)
 	RakNet::OP_DELETE_ARRAY(remoteClients,_FILE_AND_LINE_);
 	remoteClients=0;
 
+	Packet* packet = incomingMessages.Pop();
+	while (packet != nullptr) {
+		DeallocatePacket(packet);
+		packet = incomingMessages.Pop();
+	}
 	incomingMessages.Clear(_FILE_AND_LINE_);
 	newIncomingConnections.Clear(_FILE_AND_LINE_);
 	newRemoteClients.Clear(_FILE_AND_LINE_);
