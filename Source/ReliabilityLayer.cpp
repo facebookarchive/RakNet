@@ -733,6 +733,24 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 
 			return false;
 		}
+
+		unsigned int k = 0;
+		while (k < unreliableWithAckReceiptHistory.Size()) {
+			if (incomingAcks.IsWithinRange(unreliableWithAckReceiptHistory[k].datagramNumber)) {
+				InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
+				AllocInternalPacketData(ackReceipt, 5, false, _FILE_AND_LINE_);
+				ackReceipt->dataBitLength = BYTES_TO_BITS(5);
+				ackReceipt->data[0] = (MessageID)ID_SND_RECEIPT_ACKED;
+				memcpy(ackReceipt->data + sizeof(MessageID), &unreliableWithAckReceiptHistory[k].sendReceiptSerial, sizeof(uint32_t));
+				outputQueue.Push(ackReceipt, _FILE_AND_LINE_);
+				// Remove, swap with last
+				unreliableWithAckReceiptHistory.RemoveAtIndex(k);
+			}
+			else {
+				k++;
+			}
+		}
+
 		for (i=0; i<incomingAcks.ranges.Size();i++)
 		{
             if (incomingAcks.ranges[i].minIndex>incomingAcks.ranges[i].maxIndex || (incomingAcks.ranges[i].maxIndex == (uint24_t)(0xFFFFFFFF)))
@@ -745,30 +763,14 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 			}
 			for (datagramNumber=incomingAcks.ranges[i].minIndex; datagramNumber >= incomingAcks.ranges[i].minIndex && datagramNumber <= incomingAcks.ranges[i].maxIndex; datagramNumber++)
 			{
-				CCTimeType whenSent;
-				
-				if (unreliableWithAckReceiptHistory.Size()>0)
-				{
-					unsigned int k=0;
-					while (k < unreliableWithAckReceiptHistory.Size())
-					{
-						if (unreliableWithAckReceiptHistory[k].datagramNumber == datagramNumber)
-						{
-							InternalPacket *ackReceipt = AllocateFromInternalPacketPool();
-							AllocInternalPacketData(ackReceipt, 5,  false, _FILE_AND_LINE_ );
-							ackReceipt->dataBitLength=BYTES_TO_BITS(5);
-							ackReceipt->data[0]=(MessageID)ID_SND_RECEIPT_ACKED;
-							memcpy(ackReceipt->data+sizeof(MessageID), &unreliableWithAckReceiptHistory[k].sendReceiptSerial, sizeof(uint32_t));
-							outputQueue.Push(ackReceipt, _FILE_AND_LINE_ );
-
-							// Remove, swap with last
-							unreliableWithAckReceiptHistory.RemoveAtIndex(k);
-						}
-						else
-							k++;
-					}
+				const DatagramSequenceNumberType offsetIntoList = datagramNumber - datagramHistoryPopCount;
+				if (offsetIntoList >= datagramHistory.Size()) {
+					// reached the end of the datagramHistory list - hence, we are done
+					receivePacketCount++;
+					return true;
 				}
 
+				CCTimeType whenSent;
 				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(datagramNumber, &whenSent);
 				if (messageNumberNode)
 				{
@@ -835,6 +837,12 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 				// REMOVEME
 				//				printf("%p NAK %i\n", this, dhf.datagramNumber.val);
 
+				const DatagramSequenceNumberType offsetIntoList = messageNumber - datagramHistoryPopCount;
+				if (offsetIntoList >= datagramHistory.Size()) {
+					// reached the end of the datagramHistory list - hence, we are done
+					receivePacketCount++;
+					return true;
+				}
 
 				CCTimeType timeSent;
 				MessageNumberNode *messageNumberNode = GetMessageNumberNodeByDatagramIndex(messageNumber, &timeSent);
