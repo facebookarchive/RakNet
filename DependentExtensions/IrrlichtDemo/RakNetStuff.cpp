@@ -228,7 +228,9 @@ void PlayerReplica::PostDeserializeConstruction(RakNet::BitStream *constructionB
 	model->setVisible(true);
 	model->setAnimationEndCallback(this);
 	wchar_t playerNameWChar[1024];
-	mbstowcs(playerNameWChar, playerName.C_String(), 1024);
+	mbstowcs(playerNameWChar, playerName.C_String(), 1023);
+	// ensure wide-character string is null terminated (i.e. if playerName length is >= 1023)
+	playerNameWChar[1023] = L'\0';
 	scene::IBillboardSceneNode *bb = sm->addBillboardTextSceneNode(0, playerNameWChar, model);
 	bb->setSize(core::dimension2df(40,20));
 	bb->setPosition(core::vector3df(0,model->getBoundingBox().MaxEdge.Y+bb->getBoundingBox().MaxEdge.Y-bb->getBoundingBox().MinEdge.Y+5.0,0));
