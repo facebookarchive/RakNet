@@ -192,4 +192,12 @@
 
 //#define USE_THREADED_SEND
 
+// Controls the maximum retrievable filesize for incoming files using FileListTransfer.
+// The configured limit only applies for files which are transferred incrementally (which basically applies to any larger file).
+// Note that this also impacts the upper limit for memory allocations. It's suggested to redefine the value to a reasonable smaller size in the RakNetDefineOverrides.h header file.
+// For backwards compatibility with RakNet, the default is set to 4 GiB-1.
+#ifndef RAKNET_MAX_RETRIEVABLE_FILESIZE
+#define RAKNET_MAX_RETRIEVABLE_FILESIZE (0xFFFFFFFF)
+#endif
+
 #endif // __RAKNET_DEFINES_H
