@@ -759,7 +759,10 @@ void FileListTransfer::OnReferencePush(Packet *packet, bool isTheFullFile)
 	FLR_MemoryBlock mb;
 	if (fileListReceiver->pushedFiles.Has(onFileStruct.fileIndex)==false)
 	{
-		mb.flrMemoryBlock=(char*) rakMalloc_Ex(onFileStruct.byteLengthOfThisFile, _FILE_AND_LINE_);
+		if (onFileStruct.byteLengthOfThisFile <= RAKNET_MAX_RETRIEVABLE_FILESIZE)
+			mb.flrMemoryBlock=(char*) rakMalloc_Ex(onFileStruct.byteLengthOfThisFile, _FILE_AND_LINE_);
+		else
+			mb.flrMemoryBlock = nullptr;
 		fileListReceiver->pushedFiles.SetNew(onFileStruct.fileIndex, mb);
 	}
 	else
