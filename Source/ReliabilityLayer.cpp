@@ -817,12 +817,12 @@ bool ReliabilityLayer::HandleSocketReceiveFromConnectedPlayer(
 		}
 		for (i=0; i<incomingNAKs.ranges.Size();i++)
 		{
-			if (incomingNAKs.ranges[i].minIndex>incomingNAKs.ranges[i].maxIndex)
+			if (incomingNAKs.ranges[i].minIndex > incomingNAKs.ranges[i].maxIndex || (incomingNAKs.ranges[i].maxIndex == (uint24_t)(0xFFFFFFFF)))
 			{
 				RakAssert(incomingNAKs.ranges[i].minIndex<=incomingNAKs.ranges[i].maxIndex);
 
 				for (unsigned int messageHandlerIndex=0; messageHandlerIndex < messageHandlerList.Size(); messageHandlerIndex++)
-					messageHandlerList[messageHandlerIndex]->OnReliabilityLayerNotification("incomingNAKs minIndex>maxIndex", BYTES_TO_BITS(length), systemAddress, true);			
+					messageHandlerList[messageHandlerIndex]->OnReliabilityLayerNotification("incomingNAKs minIndex > maxIndex or maxIndex is max value", BYTES_TO_BITS(length), systemAddress, true);
 
 				return false;
 			}
