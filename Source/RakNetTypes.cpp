@@ -75,7 +75,7 @@ bool RakNet::NonNumericHostString( const char *host )
 	unsigned int i=0;
 	while (host[i])
 	{
-		// IPV4: natpunch.jenkinssoftware.com
+		// IPV4: natpunch.slikesoft.com
 		// IPV6: fe80::7c:31f7:fec4:27de%14
 		if ((host[i]>='g' && host[i]<='z') ||
 			(host[i]>='A' && host[i]<='Z'))

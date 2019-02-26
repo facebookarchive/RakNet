@@ -51,7 +51,7 @@ void main(void)
 		RakSleep(30);
 	}
 
-	RakNet::ConnectionAttemptResult car = rakPeer->Connect("natpunch.jenkinssoftware.com", 61111, 0, 0);
+	RakNet::ConnectionAttemptResult car = rakPeer->Connect("natpunch.slikesoft.com", 61111, 0, 0);
 	(void) car;
 	while (1)
 	{

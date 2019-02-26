@@ -118,7 +118,7 @@ int main(int argc, char **argv)
 		Gets(ip, sizeof(ip));
 		if (ip[0]==0)
 			strcpy(ip, "127.0.0.1");
-			// strcpy(ip, "natpunch.jenkinssoftware.com");
+			// strcpy(ip, "natpunch.slikesoft.com");
 		
 		printf("Enter remote port: ");
 		Gets(str, sizeof(str));

@@ -209,7 +209,7 @@ int main(int argc, char **argv)
 		printf("Enter server IP: ");
 		Gets(buff,sizeof(buff));
 		if (buff[0]==0)
-			//strcpy(buff, "natpunch.jenkinssoftware.com");
+			//strcpy(buff, "natpunch.slikesoft.com");
 			strcpy(buff, "127.0.0.1");
 	}
 	else

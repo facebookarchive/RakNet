@@ -43,7 +43,7 @@
 
 #define DEFAULT_SERVER_PORT "61111"
 // Public test server
-#define DEFAULT_SERVER_ADDRESS "natpunch.jenkinssoftware.com"
+#define DEFAULT_SERVER_ADDRESS "natpunch.slikesoft.com"
 #define NAT_TYPE_DETECTION_SERVER 0
 #define USE_UPNP 1
 #define MASTER_SERVER_ADDRESS "masterserver2.raknet.com"
