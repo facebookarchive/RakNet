@@ -55,7 +55,7 @@ int main(void)
 		printf("Enter remote IP: ");
 		Gets(text,BIG_PACKET_SIZE);
 		if (text[0]==0)
-			strcpy(text, "natpunch.jenkinssoftware.com"); // dx in Europe
+			strcpy(text, "natpunch.slikesoft.com"); // dx in Europe
 	}
 	else if (ch=='s')
 	{

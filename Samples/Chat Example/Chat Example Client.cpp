@@ -88,7 +88,7 @@ int main(void)
 	client->AllowConnectionResponseIPMigration(false);
 	if (ip[0]==0)
 		strcpy(ip, "127.0.0.1");
-	// strcpy(ip, "natpunch.jenkinssoftware.com");
+	// strcpy(ip, "natpunch.slikesoft.com");
 	
 		
 	puts("Enter the port to connect to");
