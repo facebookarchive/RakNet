@@ -11,11 +11,15 @@
 #include "NativeFeatureIncludes.h"
 #if _RAKNET_SUPPORT_PacketizedTCP==1 && _RAKNET_SUPPORT_TCPInterface==1
 
+#include <algorithm> // used for std::min
 #include "PacketizedTCP.h"
 #include "NativeTypes.h"
 #include "BitStream.h"
 #include "MessageIdentifiers.h"
 #include "RakAlloca.h"
+#ifdef min
+#undef min
+#endif
 
 using namespace RakNet;
 
@@ -96,7 +100,7 @@ bool PacketizedTCP::SendList( const char **data, const unsigned int *lengths, co
 		dataArray[i+1]=data[i];
 		lengthsArray[i+1]=lengths[i];
 	}	
-	return TCPInterface::SendList(dataArray,lengthsArray,numParameters+1,systemAddress,broadcast);
+	return TCPInterface::SendList(dataArray, lengthsArray, std::min(numParameters, 511) + 1, systemAddress, broadcast);
 }
 void PacketizedTCP::PushNotificationsToQueues(void)
 {
