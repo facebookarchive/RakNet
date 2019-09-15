@@ -511,7 +511,7 @@ namespace RakNet
 		void SetReadOffset( const BitSize_t newReadOffset ) {readOffset=newReadOffset;}
 
 		/// \brief Returns the number of bits left in the stream that haven't been read
-		inline BitSize_t GetNumberOfUnreadBits( void ) const {return numberOfBitsUsed - readOffset;}
+		inline BitSize_t GetNumberOfUnreadBits( void ) const { return readOffset > numberOfBitsUsed ? 0 : numberOfBitsUsed - readOffset; }
 
 		/// \brief Makes a copy of the internal data for you \a _data will point to
 		/// the stream. Partial bytes are left aligned.
@@ -1474,7 +1474,7 @@ namespace RakNet
 	template <>
 		inline bool BitStream::Read(bool &outTemplateVar)
 	{
-		if ( readOffset + 1 > numberOfBitsUsed )
+		if (GetNumberOfUnreadBits() == 0)
 			return false;
 
 		if ( data[ readOffset >> 3 ] & ( 0x80 >> ( readOffset & 7 ) ) )   // Is it faster to just write it out here?
@@ -1524,7 +1524,7 @@ namespace RakNet
 	inline bool BitStream::Read(uint24_t &outTemplateVar)
 	{
 		AlignReadToByteBoundary();
-		if ( readOffset + 3*8 > numberOfBitsUsed )
+		if (GetNumberOfUnreadBits() < 3 * 8)
 			return false;
 
 		if (IsBigEndian()==false)
