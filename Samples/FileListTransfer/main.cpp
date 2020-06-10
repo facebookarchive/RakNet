@@ -24,12 +24,6 @@
 #include <stdio.h>
 #include "Gets.h"
 
-RakNet::RakString file;
-RakNet::RakString fileCopy;
-
-//const char *file = "c:/temp/unittest.vcproj";
-//const char *fileCopy = "c:/temp/unittest_copy.vcproj";
-
 #define USE_TCP
 
 class TestCB : public RakNet::FileListTransferCBInterface
@@ -40,25 +34,27 @@ public:
 	{
 		printf("OnFile: %i. (100%%) %i/%i %s %ib / %ib\n",
 			onFileStruct->setID,
-			onFileStruct->fileIndex+1,
+			onFileStruct->fileIndex + 1,
 			onFileStruct->numberOfFilesInThisSet,
 			onFileStruct->fileName,
 			onFileStruct->byteLengthOfThisFile,
 			onFileStruct->byteLengthOfThisSet);
 
+		RakNet::RakString file = onFileStruct->fileName;
+		RakNet::RakString copy = file + "_copy";
 
-		FILE *fp = fopen(fileCopy.C_String(), "wb");
+		FILE *fp = fopen(copy.C_String(), "wb");
 		fwrite(onFileStruct->fileData, onFileStruct->byteLengthOfThisFile, 1, fp);
 		fclose(fp);
 
 		// Make sure it worked
 		unsigned int hash1 = SuperFastHashFile(file.C_String());
 		if (RakNet::BitStream::DoEndianSwap())
-			RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &hash1, sizeof(hash1));
-		unsigned int hash2 = SuperFastHashFile(fileCopy.C_String());
+			RakNet::BitStream::ReverseBytesInPlace((unsigned char*)&hash1, sizeof(hash1));
+		unsigned int hash2 = SuperFastHashFile(copy.C_String());
 		if (RakNet::BitStream::DoEndianSwap())
-			RakNet::BitStream::ReverseBytesInPlace((unsigned char*) &hash2, sizeof(hash2));
-		RakAssert(hash1==hash2);
+			RakNet::BitStream::ReverseBytesInPlace((unsigned char*)&hash2, sizeof(hash2));
+		RakAssert(hash1 == hash2);
 
 		// Return true to have RakNet delete the memory allocated to hold this file.
 		// False if you hold onto the memory, and plan to delete it yourself later
@@ -69,8 +65,8 @@ public:
 	{
 		printf("OnFileProgress: %i partCount=%i partTotal=%i (%i%%) %i/%i %s %ib/%ib %ib/%ib total\n",
 			fps->onFileStruct->setID,
-			fps->partCount, fps->partTotal, (int) (100.0*(double)fps->onFileStruct->bytesDownloadedForThisFile/(double)fps->onFileStruct->byteLengthOfThisFile),
-			fps->onFileStruct->fileIndex+1,
+			fps->partCount, fps->partTotal, (int)(100.0*(double)fps->onFileStruct->bytesDownloadedForThisFile / (double)fps->onFileStruct->byteLengthOfThisFile),
+			fps->onFileStruct->fileIndex + 1,
 			fps->onFileStruct->numberOfFilesInThisSet,
 			fps->onFileStruct->fileName,
 			fps->onFileStruct->bytesDownloadedForThisFile,
@@ -163,18 +159,27 @@ int main()
 	flt1.StartIncrementalReadThreads(1);
 	RakNet::FileList fileList;
 	RakNet::IncrementalReadInterface incrementalReadInterface;
-	printf("Enter complete filename with path to test:\n");
-	char str[256];
-	Gets(str, sizeof(str));
-	if (str[0]==0)
-		strcpy(str, "D:\\RakNet\\Lib\\RakNetLibStaticDebug.lib");
-	file=str;
-	fileCopy=file+"_copy";
-	// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
-	unsigned int fileLength = GetFileLength(file.C_String());
-	if (fileLength==0)
+	while (true)
 	{
-		printf("Test file %s not found.\n", file.C_String());
+		printf("Enter complete filename with path to transfer (empty filename to finish):\n");
+		char str[256];
+		Gets(str, sizeof(str));
+		if (str[0] == 0)
+			break;
+		RakNet::RakString file = str;
+		// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
+		unsigned int fileLength = GetFileLength(file.C_String());
+		if (fileLength == 0)
+		{
+			printf("Test file %s not found or length is zero.\n", file.C_String());
+			continue;
+		}
+		fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0, 0, 0, 0), true);
+		printf("File added.\n");
+	}
+	if (fileList.fileList.Size() == 0)
+	{
+		printf("No file is specified. Program terminated.\n");
 
 #ifdef USE_TCP
 #else
@@ -183,9 +188,8 @@ int main()
 #endif
 		return 1;
 	}
-	fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0,0,0,0), true);
+
 	// Wait for the connection
-	printf("File added.\n");
 	RakSleep(100);
 	RakNet::Packet *packet1, *packet2;
 	while (1)
