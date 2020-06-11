@@ -348,7 +348,7 @@ void FileList::AddFilesFromDirectory(const char *applicationDirectory, const cha
 					fclose(fp);
 
 					// File data only
-					AddFile(fullPath+rootLen, fullPath, fileData, fileInfo.size, fileInfo.size, context);
+					AddFile(fullPath, fullPath, fileData, fileInfo.size, fileInfo.size, context); // According to FileListTransfer sample project, the first parameter of AddFile() seem to have to be the full path.
 				}
 				else
 				{

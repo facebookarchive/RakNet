@@ -23,6 +23,11 @@
 #include "SocketLayer.h"
 #include <stdio.h>
 #include "Gets.h"
+#include <experimental/filesystem>
+
+namespace fs = std::experimental::filesystem;
+
+bool transferCompleted = false;
 
 #define USE_TCP
 
@@ -79,6 +84,8 @@ public:
 	virtual bool OnDownloadComplete(DownloadCompleteStruct *dcs)
 	{
 		printf("Download complete.\n");
+
+		transferCompleted = true;
 
 		// Returning false automatically deallocates the automatically allocated handler that was created by DirectoryDeltaTransfer
 		return false;
@@ -159,23 +166,33 @@ int main()
 	flt1.StartIncrementalReadThreads(1);
 	RakNet::FileList fileList;
 	RakNet::IncrementalReadInterface incrementalReadInterface;
-	while (true)
+	while (1)
 	{
-		printf("Enter complete filename with path to transfer (empty filename to finish):\n");
+		printf("Enter full path to the file or the directory to transfer (enter empty path to finish):\n");
 		char str[256];
 		Gets(str, sizeof(str));
 		if (str[0] == 0)
 			break;
-		RakNet::RakString file = str;
-		// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
-		unsigned int fileLength = GetFileLength(file.C_String());
-		if (fileLength == 0)
+		fs::path path(str);
+		if (fs::is_directory(path))
 		{
-			printf("Test file %s not found or length is zero.\n", file.C_String());
-			continue;
+			unsigned int numFiles = fileList.fileList.Size();
+			fileList.AddFilesFromDirectory(str, "", false, true, true, FileListNodeContext(0, 0, 0, 0));
+			printf("%d files added.\n", fileList.fileList.Size() - numFiles);
 		}
-		fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0, 0, 0, 0), true);
-		printf("File added.\n");
+		else
+		{
+			RakNet::RakString file = str;
+			// Reference this file, rather than add it in memory. Will send 1000 byte chunks. The reason to do this is so the whole file does not have to be in memory at once
+			unsigned int fileLength = GetFileLength(file.C_String());
+			if (fileLength == 0)
+			{
+				printf("Test file %s not found or length is zero.\n", file.C_String());
+				continue;
+			}
+			fileList.AddFile(file.C_String(), file.C_String(), 0, fileLength, fileLength, FileListNodeContext(0, 0, 0, 0), true);
+			printf("File added.\n");
+		}
 	}
 	if (fileList.fileList.Size() == 0)
 	{
@@ -219,6 +236,9 @@ int main()
 	// When connected, send the file. Since the file is a reference, it will be sent incrementally
 	while (1)
 	{
+		if (transferCompleted)
+			break;
+
 #ifdef USE_TCP
 		packet1=tcp1.Receive();
 		packet2=tcp2.Receive();
