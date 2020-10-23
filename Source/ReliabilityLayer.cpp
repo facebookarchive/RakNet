@@ -2573,6 +2573,9 @@ BitSize_t ReliabilityLayer::GetMessageHeaderLengthBits( const InternalPacket *co
 	//	unsigned short s; s = (unsigned short) internalPacket->dataBitLength; bitStream->WriteAlignedVar16((const char*)& s);
 	bitLength += 8*2;
 
+    if (internalPacket->reliability == RELIABLE_SEQUENCED)
+        bitLength += 8 * 1;
+
 	if ( internalPacket->reliability == RELIABLE ||
 		internalPacket->reliability == RELIABLE_SEQUENCED ||
 		internalPacket->reliability == RELIABLE_ORDERED ||
