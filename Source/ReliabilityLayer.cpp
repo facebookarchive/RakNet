@@ -2573,6 +2573,11 @@ BitSize_t ReliabilityLayer::GetMessageHeaderLengthBits( const InternalPacket *co
 	//	unsigned short s; s = (unsigned short) internalPacket->dataBitLength; bitStream->WriteAlignedVar16((const char*)& s);
 	bitLength += 8*2;
 
+	// When a large packet is of type RELIABLE_SEQUENCED, the byte size can be one byte more than MTU (1501 bytes), which can cause massive network latency.
+	// The change is introduced by observations and experiments, not by thorough understanding of the code.
+    if (internalPacket->reliability == RELIABLE_SEQUENCED)
+        bitLength += 8 * 1;
+
 	if ( internalPacket->reliability == RELIABLE ||
 		internalPacket->reliability == RELIABLE_SEQUENCED ||
 		internalPacket->reliability == RELIABLE_ORDERED ||
