@@ -1,4 +1,5 @@
 # Visual Studio
+.vs
 [Dd]ebug/
 [Rr]elease/
 x64/
@@ -8,8 +9,9 @@ x64/
 *.user
 *.suo
 
-# Xcode and OS X 
 build/
+
+# Xcode and OS X 
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -25,10 +27,14 @@ DerivedData
 *.hmap
 *.ipa
 contents.xcworkspacedata
-Debug/
-Release/
 .DS_Store
 .Trashes
+
 *.pdb
 *.lib
 *.idb
+*.ipdb
+*.iobj
+*.exp
+*.ilk
+*.dll
