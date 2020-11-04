@@ -1,0 +1,93 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Client Files">
+      <UniqueIdentifier>{7e5f3b53-ce4d-4dac-98c6-11f2865a60ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{16c9392c-8d09-4315-a762-fb5615236c69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BZip2">
+      <UniqueIdentifier>{5c12346d-71d0-4773-bf56-660b02883e3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BZip2Wrapper">
+      <UniqueIdentifier>{034647bf-80a2-4c69-8c3a-ba25a946bd2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GFx3">
+      <UniqueIdentifier>{1b487b08-d4f6-4042-b92a-08dffa215315}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\ApplyPatch.cpp">
+      <Filter>Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\AutopatcherClient.cpp">
+      <Filter>Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutopatcherClientGFx3Impl.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\blocksort.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\bzip2.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\compress.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\crctable.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\decompress.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\huffman.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\randtable.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\MemoryCompressor.cpp">
+      <Filter>BZip2Wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\GFx3\FxGameDelegate.cpp">
+      <Filter>GFx3</Filter>
+    </ClCompile>
+    <ClCompile Include="GFxPlayerTinyD3D9.cpp">
+      <Filter>GFx3</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\ApplyPatch.h">
+      <Filter>Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\AutopatcherClient.h">
+      <Filter>Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AutopatcherPatchContext.h">
+      <Filter>Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutopatcherClientGFx3Impl.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib.h">
+      <Filter>BZip2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib_private.h">
+      <Filter>BZip2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\MemoryCompressor.h">
+      <Filter>BZip2Wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\GFx3\FxGameDelegate.h">
+      <Filter>GFx3</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+</Project>

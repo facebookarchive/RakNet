@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{E0B645F2-CDE7-4C1B-A0E2-A0457DCCD0E3}</ProjectGuid>
+    <RootNamespace>SQLiteServerLogger</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27428.2015</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)DependentExtensions\DXTCompressor\Src;$(SolutionDir)DependentExtensions\DXTCompressor\External\include;$(SolutionDir)DependentExtensions\jpeg-7;$(SolutionDir)DependentExtensions\SQLite3Plugin;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger\ServerOnly;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\DependentExtensions\DXTCompressor\External\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)DependentExtensions\DXTCompressor\*.dll .\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>$(SolutionDir)Source;$(SolutionDir)DependentExtensions\DXTCompressor\Src;$(SolutionDir)DependentExtensions\DXTCompressor\External\include;$(SolutionDir)DependentExtensions\jpeg-7;$(SolutionDir)DependentExtensions\SQLite3Plugin;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger;$(SolutionDir)DependentExtensions\SQLite3Plugin\Logger\ServerOnly;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)Lib/RakNet_VS2008_LibStatic_Release_Win32.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)\DependentExtensions\DXTCompressor\External\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+    <PostBuildEvent>
+      <Command>copy $(SolutionDir)DependentExtensions\DXTCompressor\*.dll .\</Command>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\DXTCompressor\Src\DDSHeader.h" />
+    <ClInclude Include="..\..\..\DXTCompressor\Src\DXTCompressor.h" />
+    <ClInclude Include="..\..\..\DXTCompressor\Src\FrameBufferRenderBuffer.hpp" />
+    <ClInclude Include="..\..\..\DXTCompressor\Src\OpenGLWindow.hpp" />
+    <ClInclude Include="..\..\..\DXTCompressor\Src\ShaderSource.h" />
+    <ClInclude Include="..\..\..\jpeg-7\cderror.h" />
+    <ClInclude Include="..\..\..\jpeg-7\cdjpeg.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jconfig.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jdct.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jerror.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jinclude.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jmemsys.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jmorecfg.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jpegint.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jpeglib.h" />
+    <ClInclude Include="..\..\..\jpeg-7\jversion.h" />
+    <ClInclude Include="..\..\..\jpeg-7\transupp.h" />
+    <ClInclude Include="..\..\sqlite3.h" />
+    <ClInclude Include="..\..\sqlite3ext.h" />
+    <ClInclude Include="..\..\SQLite3PluginCommon.h" />
+    <ClInclude Include="..\..\SQLite3ServerPlugin.h" />
+    <ClInclude Include="..\SQLiteLoggerCommon.h" />
+    <ClInclude Include="jpeg_memory_dest.h" />
+    <ClInclude Include="SQLiteServerLoggerPlugin.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\DXTCompressor\Src\DXTCompressor.cpp" />
+    <ClCompile Include="..\..\..\jpeg-7\cdjpeg.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jaricom.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcapimin.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcapistd.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcarith.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jccoefct.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jccolor.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcdctmgr.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jchuff.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcinit.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcmainct.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcmarker.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcmaster.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcomapi.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcparam.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcprepct.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jcsample.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jctrans.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdapimin.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdapistd.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdarith.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdatadst.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdatasrc.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdcoefct.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdcolor.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jddctmgr.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdhuff.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdinput.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdmainct.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdmarker.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdmaster.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdmerge.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdpostct.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdsample.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jdtrans.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jerror.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jfdctflt.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jfdctfst.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jfdctint.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jidctflt.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jidctfst.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jidctint.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jmemansi.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jmemmgr.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jquant1.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jquant2.c" />
+    <ClCompile Include="..\..\..\jpeg-7\jutils.c" />
+    <ClCompile Include="..\..\..\jpeg-7\memsrc.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdbmp.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdcolmap.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdgif.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdppm.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdrle.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdswitch.c" />
+    <ClCompile Include="..\..\..\jpeg-7\rdtarga.c" />
+    <ClCompile Include="..\..\..\jpeg-7\transupp.c" />
+    <ClCompile Include="..\..\..\jpeg-7\wrbmp.c" />
+    <ClCompile Include="..\..\..\jpeg-7\wrgif.c" />
+    <ClCompile Include="..\..\..\jpeg-7\wrppm.c" />
+    <ClCompile Include="..\..\..\jpeg-7\wrrle.c" />
+    <ClCompile Include="..\..\..\jpeg-7\wrtarga.c" />
+    <ClCompile Include="..\..\sqlite3.c" />
+    <ClCompile Include="..\..\SQLite3PluginCommon.cpp" />
+    <ClCompile Include="..\..\SQLite3ServerPlugin.cpp" />
+    <ClCompile Include="..\SQLiteLoggerCommon.cpp" />
+    <ClCompile Include="jpeg_memory_dest.cpp" />
+    <ClCompile Include="SQLiteServerLoggerPlugin.cpp" />
+    <ClCompile Include="SQLiteServerLoggerSample.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Lib\LibStatic\LibStatic_vc9.vcxproj">
+      <Project>{6533bdae-0f0c-45e4-8fe7-add0f37fe063}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

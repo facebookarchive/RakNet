@@ -1,0 +1,75 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Client Files">
+      <UniqueIdentifier>{5de77342-e84f-4d42-9d6e-2d2cd04092b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Main">
+      <UniqueIdentifier>{58f7221a-d6c6-4c67-bf78-f1d4d30d04a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BZip2">
+      <UniqueIdentifier>{bb8bc0b5-c8b4-4e0e-a37d-15da76ba45d5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="BZip2Wrapper">
+      <UniqueIdentifier>{c9239022-6627-4499-a724-39c4fe95c349}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\ApplyPatch.cpp">
+      <Filter>Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\AutopatcherClient.cpp">
+      <Filter>Client Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AutopatcherClientTest.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\blocksort.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\compress.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\crctable.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\decompress.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\huffman.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\randtable.c">
+      <Filter>BZip2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\MemoryCompressor.cpp">
+      <Filter>BZip2Wrapper</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\ApplyPatch.h">
+      <Filter>Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\AutopatcherClient.h">
+      <Filter>Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\AutopatcherPatchContext.h">
+      <Filter>Client Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib.h">
+      <Filter>BZip2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib_private.h">
+      <Filter>BZip2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\MemoryCompressor.h">
+      <Filter>BZip2Wrapper</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+</Project>

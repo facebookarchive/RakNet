@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>RakVoiceDSound</ProjectName>
+    <ProjectGuid>{CC15F4DA-8B51-4A97-9E30-B44DDC966565}</ProjectGuid>
+    <RootNamespace>RakVoiceDSound</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27428.2015</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>./../../Source;./../../DependentExtensions;./../../DependentExtensions/speex-1.1.12/include;./../../DependentExtensions/speex-1.1.12/win32;$(DXSDK_DIR)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib;Winmm.lib;ws2_32.lib;Dsound.lib;Dxguid.lib;Dxerr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/wd4996 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalIncludeDirectories>./../../Source;./../../DependentExtensions;./../../DependentExtensions/speex-1.1.12/include;./../../DependentExtensions/speex-1.1.12/win32;$(DXSDK_DIR)include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;HAVE_CONFIG_H;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib;Winmm.lib;ws2_32.lib;Dsound.lib;Dxguid.lib;Dxerr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\DependentExtensions\RakVoice.cpp" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\bits.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\cb_search.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\exc_10_16_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\exc_10_32_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\exc_20_32_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\exc_5_256_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\exc_5_64_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\exc_8_128_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fftwrap.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\filters.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\gain_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\gain_table_lbr.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\hexc_10_32_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\hexc_table.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\high_lsp_tables.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\jitter.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\kiss_fft.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\kiss_fftr.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lbr_48k_tables.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lpc.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lsp.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lsp_tables_nb.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\ltp.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\math_approx.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\mdf.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\misc.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\modes.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\nb_celp.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\preprocess.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\quant_lsp.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\sb_celp.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\smallft.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\speex.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\speex_callbacks.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\speex_header.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\stereo.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vbr.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vorbis_psy.c" />
+    <ClCompile Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vq.c" />
+    <ClCompile Include="DSoundVoiceAdapter.cpp" />
+    <ClCompile Include="main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DependentExtensions\RakVoice.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\arch.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\cb_search.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\cb_search_arm4.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\cb_search_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\cb_search_sse.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fftwrap.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\filters.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\filters_arm4.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\filters_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\filters_sse.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fixed_arm4.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fixed_arm5e.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fixed_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fixed_debug.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\fixed_generic.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\kiss_fft.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\kiss_fftr.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lpc.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lpc_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\lsp.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\ltp.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\ltp_arm4.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\ltp_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\ltp_sse.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\math_approx.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\misc.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\misc_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\modes.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\nb_celp.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\pseudofloat.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\quant_lsp.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\sb_celp.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\smallft.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\stack_alloc.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vbr.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vorbis_psy.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vq.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vq_arm4.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vq_bfin.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\vq_sse.h" />
+    <ClInclude Include="..\..\DependentExtensions\speex-1.1.12\libspeex\_kiss_fft_guts.h" />
+    <ClInclude Include="DSoundVoiceAdapter.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lib\LibStatic\LibStatic_vc9.vcxproj">
+      <Project>{6533bdae-0f0c-45e4-8fe7-add0f37fe063}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

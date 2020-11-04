@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Sqlite">
+      <UniqueIdentifier>{bac0625a-2576-494d-b33f-2aab87c19301}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="sqlite3.c">
+      <Filter>Sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="SQLite3ClientPlugin.cpp" />
+    <ClCompile Include="SQLite3PluginCommon.cpp" />
+    <ClCompile Include="SQLite3Sample.cpp" />
+    <ClCompile Include="SQLite3ServerPlugin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="sqlite3.h">
+      <Filter>Sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="sqlite3ext.h">
+      <Filter>Sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="SQLite3ClientPlugin.h" />
+    <ClInclude Include="SQLite3PluginCommon.h" />
+    <ClInclude Include="SQLite3ServerPlugin.h" />
+  </ItemGroup>
+</Project>

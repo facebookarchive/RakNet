@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectName>AutopatcherClientGFx3</ProjectName>
+    <ProjectGuid>{5BCE2D70-53B4-42F9-ABFE-1BC26E59C4FD}</ProjectGuid>
+    <RootNamespace>AutopatcherClientGFx3</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(VCTargetsPath)Microsoft.CPP.UpgradeFromVC71.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>15.0.27428.2015</_ProjectFileVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <ExtensionsToDeleteOnClean>*.obj%3b*.ilk%3b*.pdb%3b*.tlb%3b*.tli%3b*.tlh%3b*.tmp%3b*.rsp%3b*.bat%3b$(TargetPath)</ExtensionsToDeleteOnClean>
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(Configuration)\</OutDir>
+    <IntDir>$(Configuration)\</IntDir>
+    <ExtensionsToDeleteOnClean>*.obj%3b*.ilk%3b*.pdb%3b*.tlb%3b*.tli%3b*.tlh%3b*.tmp%3b*.rsp%3b*.bat%3b$(TargetPath)</ExtensionsToDeleteOnClean>
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>./;./../../Source;./../../DependentExtensions/GFx3;./../../DependentExtensions/Autopatcher;./../../DependentExtensions/bzip2-1.0.6;$(GFXSDK)\Src\GRenderer;$(GFXSDK)\Src\GKernel;$(GFXSDK)\Src\GFxXML;$(GFXSDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>./../../Lib/RakNet_VS2008_LibStatic_Debug_Win32.lib;ws2_32.lib;libgfx.lib;libjpeg.lib;zlib.lib;imm32.lib;winmm.lib;libgrenderer_d3d9.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)AutopatcherClientGFx3.exe</OutputFile>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(GFXSDK)\3rdParty\expat-2.0.1\lib;$(GFXSDK)\Lib\$(Platform)\Msvc80\Debug\;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(Platform)\Msvc80\Debug;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(Platform)\Msvc80\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <ProgramDatabaseFile>$(OutDir)AutopatcherClientGFx3.pdb</ProgramDatabaseFile>
+      <SubSystem>Windows</SubSystem>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>./;./../../Source;./../../DependentExtensions/GFx3;./../../DependentExtensions/Autopatcher;./../../DependentExtensions/bzip2-1.0.6;$(GFXSDK)\Src\GRenderer;$(GFXSDK)\Src\GKernel;$(GFXSDK)\Src\GFxXML;$(GFXSDK)\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_DEPRECATE;WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader />
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>./../../Lib/RakNet_VS2008_LibStatic_Release_Win32.lib;ws2_32.lib;libgfx.lib;libjpeg.lib;zlib.lib;imm32.lib;winmm.lib;libgrenderer_d3d9.lib;d3dx9.lib;d3d9.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <OutputFile>$(OutDir)AutopatcherClientGFx3.exe</OutputFile>
+      <AdditionalLibraryDirectories>$(DXSDK_DIR)\Lib\x86;$(GFXSDK)\3rdParty\expat-2.0.1\lib;$(GFXSDK)\Lib\$(Platform)\Msvc80\Release\;$(GFXSDK)\3rdParty\zlib-1.2.3\Lib\$(Platform)\Msvc80\Release;$(GFXSDK)\3rdParty\jpeg-6b\Lib\$(Platform)\Msvc80\Release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <RandomizedBaseAddress>false</RandomizedBaseAddress>
+      <DataExecutionPrevention />
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\ApplyPatch.cpp" />
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\AutopatcherClient.cpp" />
+    <ClCompile Include="..\..\DependentExtensions\Autopatcher\MemoryCompressor.cpp" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\blocksort.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\bzip2.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\compress.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\crctable.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\decompress.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\huffman.c" />
+    <ClCompile Include="..\..\DependentExtensions\bzip2-1.0.6\randtable.c" />
+    <ClCompile Include="..\..\DependentExtensions\GFx3\FxGameDelegate.cpp" />
+    <ClCompile Include="AutopatcherClientGFx3Impl.cpp" />
+    <ClCompile Include="GFxPlayerTinyD3D9.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\ApplyPatch.h" />
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\AutopatcherClient.h" />
+    <ClInclude Include="..\..\DependentExtensions\Autopatcher\MemoryCompressor.h" />
+    <ClInclude Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib.h" />
+    <ClInclude Include="..\..\DependentExtensions\bzip2-1.0.6\bzlib_private.h" />
+    <ClInclude Include="..\..\DependentExtensions\GFx3\FxGameDelegate.h" />
+    <ClInclude Include="..\..\Source\AutopatcherPatchContext.h" />
+    <ClInclude Include="AutopatcherClientGFx3Impl.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Lib\LibStatic\LibStatic_vc9.vcxproj">
+      <Project>{6533bdae-0f0c-45e4-8fe7-add0f37fe063}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
