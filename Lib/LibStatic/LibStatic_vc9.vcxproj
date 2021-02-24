@@ -170,7 +170,7 @@
     <PostBuildEvent>
       <Command>xcopy /s /y $(OutDir)*.lib $(SolutionDir)RakNetBinaries\Lib
 xcopy /s /y $(OutDir)*.pdb $(SolutionDir)RakNetBinaries\Lib
-xcopy /s /y $(SolutionDir)\Source\*.* $(SolutionDir)RakNetBinaries\Source</Command>
+xcopy /s /y $(SolutionDir)\Source\*.h $(SolutionDir)RakNetBinaries\Source</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
