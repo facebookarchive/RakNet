@@ -1,0 +1,3 @@
+[submodule "RakNetBinaries"]
+	path = RakNetBinaries
+	url = C:\\Git\\DFly-Unreal\\VirtualCameraCore\\RakNet\\RakNetBinaries
