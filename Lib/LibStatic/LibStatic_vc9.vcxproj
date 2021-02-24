@@ -70,7 +70,7 @@
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <OutDir>$(ProjectDir)..\</OutDir>
+    <OutDir>$(SolutionDir)Lib\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -78,7 +78,7 @@
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>$(ProjectDir)..\</OutDir>
+    <OutDir>$(SolutionDir)Lib\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -119,12 +119,12 @@
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader />
-      <ProgramDataBaseFileName>$(OutDir)RakNet_VS2008_LibStatic_Debug_$(Platform).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(SolutionName)_$(ProjectName)_$(Configuration)_$(Platform).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Lib>
-      <OutputFile>$(OutDir)RakNet_VS2008_LibStatic_Debug_$(Platform).lib</OutputFile>
+      <OutputFile>$(OutDir)$(SolutionName)_$(ProjectName)_$(Configuration)_$(Platform).lib</OutputFile>
       <IgnoreSpecificDefaultLibraries>LIBCD.lib LIBCMTD.lib MSVCRT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Lib>
   </ItemDefinitionGroup>
@@ -158,14 +158,20 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <PrecompiledHeader />
-      <ProgramDataBaseFileName>$(OutDir)RakNet_VS2008_LibStatic_Release_$(Platform).pdb</ProgramDataBaseFileName>
+      <ProgramDataBaseFileName>$(OutDir)$(SolutionName)_$(ProjectName)_$(Configuration)_$(Platform).pdb</ProgramDataBaseFileName>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Lib>
-      <OutputFile>$(OutDir)RakNet_VS2008_LibStatic_Release_$(Platform).lib</OutputFile>
+      <OutputFile>$(OutDir)$(SolutionName)_$(ProjectName)_$(Configuration)_$(Platform).lib</OutputFile>
       <IgnoreSpecificDefaultLibraries>LIBC.lib LIBCMT.lib MSVCRT.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Lib>
+    <PostBuildEvent>
+      <Command>xcopy /s /y $(OutDir)*.lib $(SolutionDir)RakNetBinaries\Lib
+xcopy /s /y $(OutDir)*.pdb $(SolutionDir)RakNetBinaries\Lib
+xcopy /s /y $(SolutionDir)\Source\*.* $(SolutionDir)RakNetBinaries\Source</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Source\Base64Encoder.cpp" />
