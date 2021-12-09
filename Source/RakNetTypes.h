@@ -86,7 +86,7 @@ enum ConnectionState
 
 /// Given a number of bits, return how many bytes are needed to represent that.
 #define BITS_TO_BYTES(x) (((x)+7)>>3)
-#define BYTES_TO_BITS(x) ((x)<<3)
+#define BYTES_TO_BITS(x) (((uint64_t)(x))<<3)
 
 /// \sa NetworkIDObject.h
 typedef unsigned char UniqueIDType;
@@ -98,7 +98,7 @@ const int UNDEFINED_RPC_INDEX=((RPCIndex)-1);
 /// First byte of a network message
 typedef unsigned char MessageID;
 
-typedef uint32_t BitSize_t;
+typedef uint64_t BitSize_t;
 
 #if defined(_MSC_VER) && _MSC_VER > 0
 #define PRINTF_64_BIT_MODIFIER "I64"
