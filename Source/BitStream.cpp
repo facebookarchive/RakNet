@@ -692,9 +692,9 @@ bool BitStream::ReadCompressed( unsigned char* inOutByteArray,
 // Reallocates (if necessary) in preparation of writing numberOfBitsToWrite
 void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 {
-	BitSize_t newNumberOfBitsAllocated = numberOfBitsToWrite + numberOfBitsUsed;
+	BitSize_t numberOfBitsRequired = numberOfBitsToWrite + numberOfBitsUsed;
 
-	if ( numberOfBitsToWrite + numberOfBitsUsed > 0 && ( ( numberOfBitsAllocated - 1 ) >> 3 ) < ( ( newNumberOfBitsAllocated - 1 ) >> 3 ) )   // If we need to allocate 1 or more new bytes
+	if (numberOfBitsAllocated < numberOfBitsRequired)
 	{
 #ifdef _DEBUG
 		// If this assert hits then we need to specify true for the third parameter in the constructor
@@ -703,13 +703,12 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 		RakAssert( copyData == true );
 #endif
 
-		// Less memory efficient but saves on news and deletes
-		/// Cap to 1 meg buffer to save on huge allocations
-		newNumberOfBitsAllocated = ( numberOfBitsToWrite + numberOfBitsUsed ) * 2;
-		if (newNumberOfBitsAllocated - ( numberOfBitsToWrite + numberOfBitsUsed ) > 1048576 )
-			newNumberOfBitsAllocated = numberOfBitsToWrite + numberOfBitsUsed + 1048576;
+		BitSize_t newNumberOfBitsAllocated = numberOfBitsAllocated * 2;
+		while (newNumberOfBitsAllocated < numberOfBitsRequired)
+		{
+			newNumberOfBitsAllocated *= 2;
+		}
 
-		//		BitSize_t newByteOffset = BITS_TO_BYTES( numberOfBitsAllocated );
 		// Use realloc and free so we are more efficient than delete and new for resizing
 		BitSize_t amountToAllocate = BITS_TO_BYTES( newNumberOfBitsAllocated );
 		if (data==(unsigned char*)stackData)
@@ -731,11 +730,8 @@ void BitStream::AddBitsAndReallocate( const BitSize_t numberOfBitsToWrite )
 #ifdef _DEBUG
 		RakAssert( data ); // Make sure realloc succeeded
 #endif
-		//  memset(data+newByteOffset, 0,  ((newNumberOfBitsAllocated-1)>>3) - ((numberOfBitsAllocated-1)>>3)); // Set the new data block to 0
-	}
-
-	if ( newNumberOfBitsAllocated > numberOfBitsAllocated )
 		numberOfBitsAllocated = newNumberOfBitsAllocated;
+	}
 }
 BitSize_t BitStream::GetNumberOfBitsAllocated(void) const
 {
